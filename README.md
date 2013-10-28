@@ -14,8 +14,12 @@ proyecto y quiere que realiceis vuestro trabajo a partir del mismo pero
 adecuando la documentacion si se detecta algun error. El cliente quiere poder
 seguir el desarrollo del proyecto por lo que demanda este permanentemente
 ctualizado a nivel de documentacion, trabajo, actividades, horas y coste en un
-repositorio en --github-- sourceforge al cual debe tener acceso.
+repositorio en <s>github</s> sourceforge al cual debe tener acceso.
 El trabajo solicitado esta valorado en 200 horas, lo cual equivale a 25 dias de
 un diseñador/programador a tiempo completo. Eso no significa que el proyecto
 deba utilizar esas horas concretas sino que es un detalle estimado de
 horas/persona para realizar el mismo.
+
+Miembros del grupo
+------------------
+[[members]]
