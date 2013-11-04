@@ -1,6 +1,6 @@
 <?php
 
-namespace controllers;
+namespace components;
 
 // AutoLoader de clases siguiendo el estandar PSR-0.
 // Basado en SplClassLoader: https://gist.github.com/jwage/221634
