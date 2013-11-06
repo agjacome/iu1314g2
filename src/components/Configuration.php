@@ -5,25 +5,25 @@ namespace components;
 class Configuration
 {
 
-    private $config;
+    private static $config;
 
-    public function __construct($filename)
+    public static function readConfiguration($filename)
     {
-        $this->config = parse_ini_file($filename, true);
+        self::$config = parse_ini_file($filename, true);
     }
 
-    public function getSection($section)
+    public static function getSection($section)
     {
-        if (array_key_exists($section, $this->config))
-            return $this->config[$section];
+        if (array_key_exists($section, self::$config))
+            return self::$config[$section];
 
         return null;
     }
 
-    public function getValue($section, $key)
+    public static function getValue($section, $key)
     {
-        if (array_key_exists($section, $this->config) && array_key_exists($key, $this->config[$section]))
-            return $this->config[$section][$key];
+        if (array_key_exists($section, self::$config) && array_key_exists($key, self::$config[$section]))
+            return self::$config[$section][$key];
 
         return null;
     }

@@ -11,6 +11,6 @@ $loaders = array(
 
 foreach ($loaders as $loader) $loader->register();
 
-$configuration = new components\Configuration("config.ini");
+components\Configuration::readConfiguration("config.ini");
 
 ?>
