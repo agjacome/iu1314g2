@@ -67,12 +67,12 @@ abstract class SQLDAO implements DAO
 
     public function delete($where)
     {
-
+        trigger_error("delete() aun no implementado", E_USER_ERROR);
     }
 
     public function select($where)
     {
-
+        trigger_error("select() aun no implementado", E_USER_ERROR);
     }
 
 }
