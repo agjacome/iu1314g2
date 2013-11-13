@@ -32,7 +32,8 @@ abstract class SQLDAO implements DAO
         $query->execute();
     }
 
-    public function update($data, $where) {
+    public function update($data, $where)
+    {
         $db = DatabaseConnection::getConnection();
 
         $update = "UPDATE " . $this->tableName . " SET ";
@@ -42,7 +43,7 @@ abstract class SQLDAO implements DAO
         }
 
         if (isset($where)) {
-            $update .= "WHERE ";
+            $update .= " WHERE ";
             foreach ($where as $key => $valor) {
                 $update .= $key . " = ?";
                 if (next($where)) $update .= ", ";
@@ -53,9 +54,12 @@ abstract class SQLDAO implements DAO
 
         $i = 1;
         foreach ($data as $key => $value)
-            $query->bindParam($i++, $data[$key];
-        foreach ($where as $key => $value) {
-            $query->bindParam($i++, $data[$key];
+            $query->bindParam($i++, $data[$key]);
+
+        if (isset($where)) {
+            foreach ($where as $key => $value)
+                $query->bindParam($i++, $where[$key]);
+        }
 
         $query->execute();
     }
