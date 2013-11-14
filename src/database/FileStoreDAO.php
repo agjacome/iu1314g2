@@ -42,12 +42,18 @@ class FileStoreDAO implements DAO
         $xml->save($this->filePath);
     }
 
-    public function update($data, $where)
+    public function update($data, $where = null)
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        $xml = new \DOMDocument();
+        $xml->load($this->filePath);
+
+        foreach ($data as $key => $value)
+            $xml->getElementsByTagName($key)->item(0)->nodeValue = $value;
+
+        $xml->save($this->filePath);
     }
 
-    public function select($where)
+    public function select($data, $where)
     {
         trigger_error("Aun no implementado", E_USER_ERROR);
     }
