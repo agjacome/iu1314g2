@@ -11,7 +11,7 @@ interface DAO
 
     public function delete($where);
 
-    public function select($where);
+    public function select($data, $where);
 
     public function query($statement);
 
