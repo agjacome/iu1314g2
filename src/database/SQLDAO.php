@@ -45,8 +45,8 @@ abstract class SQLDAO implements DAO
         if (isset($where)) {
             $update .= " WHERE ";
             foreach ($where as $key => $valor) {
-                $update .= $key . " = ? ";
-                if (next($where)) $update .= "AND ";
+                $update .= $key . " = ?";
+                if (next($where)) $update .= " AND ";
             }
         }
 
@@ -67,7 +67,27 @@ abstract class SQLDAO implements DAO
 
     public function delete($where)
     {
-        trigger_error("delete() aun no implementado", E_USER_ERROR);
+        $db = DatabaseConnection::getConnection();
+
+        $delete = "DELETE FROM " . $this->tableName;
+
+        if (isset($where)) {
+            $delete .= " WHERE ";
+            foreach($where as $key => $value){
+                $delete .= $key." = ?";
+                if(next($where)) $delete .= " AND ";
+            }
+        }
+
+        $query = $db->prepare($delete);
+
+        $i = 1;
+        if(isset($where)) {
+            foreach($where as $key => $value)
+                $query->bindParam($i++, $where[$key]);
+        }
+
+        $query->execute();
     }
 
     public function select($data, $where)

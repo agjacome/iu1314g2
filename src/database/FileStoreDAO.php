@@ -28,7 +28,18 @@ class FileStoreDAO implements DAO
 
     public function insert($data)
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        $xml = new \DOMDocument();
+        $xml->load($this->filePath);
+        $xml_root = $xml->documentElement;
+
+        foreach ($data as $key => $value) {
+            $elem = $xml->createElement($key);
+            $text = $xml->createTextNode($value);
+            $elem->appendChild($text);
+            $xml_root->appendChild($elem);
+        }
+
+        $xml->save($this->filePath);
     }
 
     public function update($data, $where)
