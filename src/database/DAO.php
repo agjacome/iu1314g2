@@ -13,6 +13,8 @@ interface DAO
 
     public function select($where);
 
+    public function query($statement);
+
 }
 
 ?>

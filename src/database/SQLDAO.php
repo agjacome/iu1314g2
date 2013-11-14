@@ -95,6 +95,27 @@ abstract class SQLDAO implements DAO
         trigger_error("select() aun no implementado", E_USER_ERROR);
     }
 
+    public function query($statement)
+    {
+        $db = DatabaseConnection::getConnection();
+        $query = $db->prepare($statement);
+
+        $args = func_get_args();
+        for ($i = 1; $i < count($args); $i++)
+            $query->bindParam($i + 1, $args[$i]);
+
+        $query->execute();
+
+        if ($row = $query->fetch()) {
+            $result = [$row];
+
+            while ($row = $query->fetch())
+                $result[] = $row;
+
+            return $result;
+        }
+    }
+
 }
 
 
