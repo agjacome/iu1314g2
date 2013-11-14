@@ -14,7 +14,4 @@ foreach ($loaders as $loader) $loader->register();
 
 components\Configuration::readConfiguration("config.ini");
 
-$userdao = new database\SQLUserDAO();
-print_r($userdao->select(array("login"),array("rol" => "usuario")));
-
 ?>
