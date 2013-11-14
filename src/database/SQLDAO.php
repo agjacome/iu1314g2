@@ -77,7 +77,7 @@ abstract class SQLDAO implements DAO
 
     public function query($statement)
     {
-        $db = database\DatabaseConnection::getConnection();
+        $db = DatabaseConnection::getConnection();
         $query = $db->prepare($statement);
 
         $args = func_get_args();
