@@ -32,7 +32,7 @@ abstract class SQLDAO implements DAO
         $query->execute();
     }
 
-    public function update($data, $where)
+    public function update($data, $where = null)
     {
         $db = DatabaseConnection::getConnection();
 
@@ -73,9 +73,9 @@ abstract class SQLDAO implements DAO
 
         if (isset($where)) {
             $delete .= " WHERE ";
-            foreach($where as $key => $value){
+            foreach($where as $key => $_) {
                 $delete .= $key." = ?";
-                if(next($where)) $delete .= " AND ";
+                if (next($where)) $delete .= " AND ";
             }
         }
 
@@ -83,47 +83,48 @@ abstract class SQLDAO implements DAO
 
         $i = 1;
         if(isset($where)) {
-            foreach($where as $key => $value)
+            foreach($where as $key => $_)
                 $query->bindParam($i++, $where[$key]);
         }
 
         $query->execute();
     }
 
-    public function select($data, $where)
+    public function select($data, $where = null)
     {
         $db = DatabaseConnection::getConnection();
 
-        foreach ($data as $key) {
-            $select = "SELECT ? ";
+        $select = "SELECT ";
+        foreach ($data as $column) {
+            $select .= $column;
             if (next($data)) $select .= ", ";
         }
 
-        $select .= " FROM " . $this->tableName . " WHERE ";
-        if(isset($where)) {
-            foreach ($where as $key => $value) {
+        $select .= " FROM " . $this->tableName;
+
+        if (isset($where)) {
+            $select .= " WHERE ";
+
+            foreach ($where as $key => $_) {
                 $select .= $key . " = ?";
                 if (next($where)) $select .= " AND ";
             }
         }
+
         $query = $db->prepare($select);
 
-        $i = 1;
-        foreach ($data as $key)
-            $query->bindParam($i++, $data[$key]);
-
         if (isset($where)) {
-            foreach ($where as $key => $value)
+            $i = 1;
+            foreach ($where as $key => $_)
                 $query->bindParam($i++, $where[$key]);
         }
-        
+
         $query->execute();
 
-        if ($row = $query->fetch()) {
-            $result = [$row];
-            while ($row = $query->fetch())
-                $result[] = $row;
-        }
+        $result = array();
+        while ($row = $query->fetch())
+            $result[] = $row;
+
         return $result;
     }
 
