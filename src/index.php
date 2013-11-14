@@ -14,4 +14,7 @@ foreach ($loaders as $loader) $loader->register();
 
 components\Configuration::readConfiguration("config.ini");
 
+$router = new controllers\Router();
+$router->routeRequest(new components\Request());
+
 ?>
