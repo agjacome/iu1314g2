@@ -2,7 +2,7 @@
 
 namespace database;
 
-class SQLBidDAO extends SQLDAO implements DAO
+class SQLPurchaseDAO extends SQLDAO implements DAO
 {
 
     public function __construct()
