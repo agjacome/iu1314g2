@@ -13,6 +13,8 @@ abstract class Model
         $this->dao = \database\DAOFactory::getDAO($entity);
     }
 
+    public abstract function save();
+
     public abstract function delete();
 
     public abstract function validate();
