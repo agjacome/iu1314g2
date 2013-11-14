@@ -45,8 +45,8 @@ abstract class SQLDAO implements DAO
         if (isset($where)) {
             $update .= " WHERE ";
             foreach ($where as $key => $valor) {
-                $update .= $key . " = ?";
-                if (next($where)) $update .= ", ";
+                $update .= $key . " = ? ";
+                if (next($where)) $update .= "AND ";
             }
         }
 
@@ -70,9 +70,41 @@ abstract class SQLDAO implements DAO
         trigger_error("delete() aun no implementado", E_USER_ERROR);
     }
 
-    public function select($where)
+    public function select($data, $where)
     {
-        trigger_error("select() aun no implementado", E_USER_ERROR);
+        $db = DatabaseConnection::getConnection();
+
+        foreach ($data as $key) {
+            $select = "SELECT ? ";
+            if (next($data)) $select .= ", ";
+        }
+
+        $select .= " FROM " . $this->tableName . " WHERE ";
+        if(isset($where)) {
+            foreach ($where as $key => $value) {
+                $select .= $key . " = ?";
+                if (next($where)) $select .= " AND ";
+            }
+        }
+        $query = $db->prepare($select);
+
+        $i = 1;
+        foreach ($data as $key)
+            $query->bindParam($i++, $data[$key]);
+
+        if (isset($where)) {
+            foreach ($where as $key => $value)
+                $query->bindParam($i++, $where[$key]);
+        }
+        
+        $query->execute();
+
+        if ($row = $query->fetch()) {
+            $result = [$row];
+            while ($row = $query->fetch())
+                $result[] = $row;
+        }
+        return $result;
     }
 
     public function query($statement)
