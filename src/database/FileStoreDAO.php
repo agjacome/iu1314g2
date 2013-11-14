@@ -10,19 +10,17 @@ class FileStoreDAO implements DAO
     public function __construct()
     {
         $this->filePath = \components\Configuration::getValue("store_file", "path");
-        $this->rootElem = \components\Configuration::getValue("store_file", "root");
 
         if (!file_exists($this->filePath))
-            $this->createFile();
+            $this->createFile(\components\Configuration::getValue("store_file", "root"));
     }
 
-    private function createFile()
+    private function createFile($rootElem)
     {
         $xml = new \DOMDocument();
+        $xml->appendChild($xml->createElement($rootElem));
+
         $xml->formatOutput = true;
-
-        $xml->appendChild($xml->createElement($this->rootElem));
-
         $xml->save($this->filePath);
     }
 
@@ -39,6 +37,7 @@ class FileStoreDAO implements DAO
             $xml_root->appendChild($elem);
         }
 
+        $xml->formatOutput = true;
         $xml->save($this->filePath);
     }
 
@@ -50,6 +49,7 @@ class FileStoreDAO implements DAO
         foreach ($data as $key => $value)
             $xml->getElementsByTagName($key)->item(0)->nodeValue = $value;
 
+        $xml->formatOutput = true;
         $xml->save($this->filePath);
     }
 
@@ -67,12 +67,22 @@ class FileStoreDAO implements DAO
 
     public function delete($where)
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        $xml = new \DOMDocument();
+        $xml->load($this->filePath);
+        $xml_root = $xml->documentElement;
+
+        foreach ($where as $key) {
+            foreach ($xml_root->getElementsByTagName($key) as $elem)
+                $xml_root->removeChild($elem);
+        }
+
+        $xml->formatOutput = true;
+        $xml->save($this->filePath);
     }
 
     public function query($statement)
     {
-        trigger_error("No tiene sentido una consulta arbitraria sobre un fichero XML", E_USER_ERROR);
+        trigger_error("No implementado", E_USER_ERROR);
     }
 
 }
