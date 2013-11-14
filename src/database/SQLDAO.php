@@ -69,25 +69,25 @@ abstract class SQLDAO implements DAO
     {
         $db = DatabaseConnection::getConnection();
 
-	$delete = "DELETE FROM " . $this->tableName;
+        $delete = "DELETE FROM " . $this->tableName;
 
-	if (isset($where)){
-		$delete .= " WHERE ";
-		foreach($where as $key => $value){
-			$delete .= $key." = ?";
-			if(next($where)) $delete .= " AND ";
-		}
-	}
+        if (isset($where)) {
+            $delete .= " WHERE ";
+            foreach($where as $key => $value){
+                $delete .= $key." = ?";
+                if(next($where)) $delete .= " AND ";
+            }
+        }
 
-	$query = $db->prepare($delete);
+        $query = $db->prepare($delete);
 
-	$i = 1;
-	if(isset($where)){
-		foreach($where as $key => $value)
-			$query->bindParam($i++, $where[$key]);
-	}
+        $i = 1;
+        if(isset($where)) {
+            foreach($where as $key => $value)
+                $query->bindParam($i++, $where[$key]);
+        }
 
-	$query->execute();
+        $query->execute();
     }
 
     public function select($where)
