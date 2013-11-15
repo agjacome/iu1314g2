@@ -1,24 +1,31 @@
-<?php 
+<?php
 
 namespace controllers;
 
 abstract controller
 {
-	protected $view;
-	protected $session;
-	protected $request;
+    protected $view;
+    protected $session;
+    protected $request;
 
-	protected function setFlash($msg)
-	{
-		$this->session->flash = $msg;
-	}
+    public function __construct($request)
+    {
+        $this->view = null; // View aun no implementada
+        $this->session = new \components\Session();
+        $this->request = $request;
+    }
 
-	public function redirect($url)
-	{
-		header($url);
-	}
+    protected function setFlash($msg)
+    {
+        $this->session->flash = $msg;
+    }
 
-	public abstract function defaultAction();
+    public function redirect($url)
+    {
+        header($url);
+    }
+
+    public abstract function defaultAction();
 }
 
 ?>
