@@ -13,6 +13,8 @@ abstract class Model
         $this->dao = \database\DAOFactory::getDAO($entity);
     }
 
+    public static abstract function findBy($where);
+
     public abstract function save();
 
     public abstract function delete();
