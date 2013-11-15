@@ -26,6 +26,11 @@ class Session
         session_destroy();
     }
 
+    public function __isset($key)
+    {
+        return isset($_SESSION[$key]);
+    }
+
     public function __clone()
     {
         trigger_error("Clonacion no permitida para " . __CLASS__, E_USER_ERROR);
