@@ -2,7 +2,7 @@
 
 namespace controllers;
 
-abstract controller
+abstract class Controller
 {
     protected $view;
     protected $session;
@@ -22,7 +22,7 @@ abstract controller
 
     public function redirect($url)
     {
-        header($url);
+        header('Location: ' . $url);
     }
 
     public abstract function defaultAction();
