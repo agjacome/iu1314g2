@@ -1,30 +1,33 @@
 <?php
-	namespace views;
 
-	class View
-	{
+namespace views;
 
-		private $template;
-		private $data;
+class View
+{
 
-		public function __contruct($template)
-		{
-			$this->template = $template;
-			$this->data = array();
-		}
+    private $template;
+    private $data;
 
-		public  function render()
-		{
-			extract($this->data);
-			ob_start();
-			include $this->template;
-			$renderedView = ob_get_clean();
-			print $renderedView;
-		}
+    public function __contruct($template)
+    {
+        $this->template = $template;
+        $this->data = array();
+    }
 
-		public function assign($key,$value)
-		{
-			$this->data[$key] = $value;
-		}
-	}
+    public  function render()
+    {
+        extract($this->data);
+        ob_start();
+        include $this->template;
+        $renderedView = ob_get_clean();
+        print $renderedView;
+    }
+
+    public function assign($key,$value)
+    {
+        $this->data[$key] = $value;
+    }
+
+}
+
 ?>
