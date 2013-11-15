@@ -25,7 +25,7 @@ private $login;
         $rows = \database\DAOFactory::getDAO("user")->select(["*"], $where);
 
         if (count($rows) < 1)
-            throw new NotFoundException("Usuario no encontrado");
+            throw new exceptions\NotFoundException("Usuario no encontrado");
 
         $found = array();
         foreach ($rows as $row) {
