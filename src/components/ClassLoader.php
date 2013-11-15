@@ -51,7 +51,8 @@ class ClassLoader
             if ($this->includePath !== null)
                 $require .= $this->includePath . DIRECTORY_SEPARATOR;
 
-            require $require . $fileName;
+            if (file_exists($require . $fileName))
+                require $require . $fileName;
         }
     }
 
