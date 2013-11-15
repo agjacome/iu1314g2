@@ -15,7 +15,7 @@ abstract controller
 
 	public function redirect($url)
 	{
-		header($url); GET /index.php?param1=peixe&param2=peixe2
+		header($url);
 	}
 
 	public abstract function defaultAction();
