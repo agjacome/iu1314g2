@@ -22,12 +22,12 @@
 
 		public makePayment()
 		{
-			//FALTA POR IMPLEMENTAR
+			if(!isset($this->payment)) $this->payment=new Payment($price,$payMethod);
 		}
 
 		public rate()
 		{
-			//FALTA POR IMPLEMENTAR
+			if(!isset($this->rate)) $this->rate=new Rate($rate,$commentary);
 		}
 
 		public static function findBy($where)
