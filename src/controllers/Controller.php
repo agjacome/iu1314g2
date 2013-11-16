@@ -13,8 +13,8 @@ abstract class Controller
     {
         $this->request = $request;
 
-        $this->view    = null; // View aun no implementada
         $this->session = new \components\Session();
+        $this->view    = new \views\View($this->session);
         $this->lang    = \components\Language::getStrings($this->session);
     }
 
