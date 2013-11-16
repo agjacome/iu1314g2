@@ -33,11 +33,32 @@ class View
 
     private function loadData()
     {
-        $this->data["lang"] = \components\Language::getStrings($this->session);
-        $this->data["logged_in"] = isset($this->session->logged_in) ? $this->session->logged_in : false;
+        $this->loadLanguage();
+        $this->loadUserSession();
+        $this->loadFlash();
+    }
 
+    private function loadLanguage()
+    {
+        $this->data["lang"] = \components\Language::getStrings($this->session);
+    }
+
+    private function loadUserSession()
+    {
+        $this->data["logged"] = false;
+
+        if (isset($this->session->logged))   $this->data["logged"] = $this->session->logged;
         if (isset($this->session->username)) $this->data["username"] = $this->session->username;
         if (isset($this->session->userrole)) $this->data["userrole"] = $this->session->userrole;
+    }
+
+    private function loadFlash()
+    {
+        $this->data["flash"] = false;
+        if (isset($this->session->flash)) {
+            $this->data["flash"]  = $this->session->flash;
+            $this->session->flash = null;
+        }
     }
 
 }
