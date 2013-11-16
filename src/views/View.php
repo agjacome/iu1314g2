@@ -5,20 +5,19 @@ namespace views;
 class View
 {
 
-    private $template;
+    //private $template;
     private $data;
 
-    public function __contruct($template)
+    public function __construct()
     {
-        $this->template = $template;
         $this->data = array();
     }
 
-    public  function render()
+    public  function render($template)
     {
         extract($this->data);
         ob_start();
-        include $this->template;
+        include $template;
         $renderedView = ob_get_clean();
         print $renderedView;
     }
@@ -29,5 +28,4 @@ class View
     }
 
 }
-
 ?>
