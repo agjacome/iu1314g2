@@ -4,15 +4,18 @@ namespace controllers;
 
 abstract class Controller
 {
-    protected $view;
-    protected $session;
+    protected $lang;
     protected $request;
+    protected $session;
+    protected $view;
 
     public function __construct($request)
     {
-        $this->view = null; // View aun no implementada
-        $this->session = new \components\Session();
         $this->request = $request;
+
+        $this->view    = null; // View aun no implementada
+        $this->session = new \components\Session();
+        $this->lang    = \components\Language::getStrings($this->session);
     }
 
     protected function setFlash($msg)
