@@ -26,7 +26,7 @@ abstract class Controller
     public function redirect($controller, $action = null)
     {
         $url = "/index.php?controller=" . $controller;
-        if (isset($action)) $url .= "action=$action";
+        if (isset($action)) $url .= "&action=$action";
 
         header("Location: " . $url);
     }
