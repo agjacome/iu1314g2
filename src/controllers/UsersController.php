@@ -70,7 +70,7 @@ class UsersController extends Controller
                 $this->session->username  = $this->user->getLogin();
                 $this->session->userrole  = $this->user->role;
 
-                $this->setFlash("Identificado correctamente como {$this->user->getLogin()}");
+                $this->setFlash($this->lang["user"]["identified"] . $this->user->getLogin());
 
                 $this->redirect("user");
 
