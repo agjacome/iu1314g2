@@ -6,13 +6,15 @@ class Language
 {
 
     private static $strings;
+    private static $language = Configuration::getValue("language", "default");
 
     public static function getStrings($session = null)
     {
-        if (!isset(self::$strings)) {
-            $file = isset($session->lang) ? $session->lang : Configuration::getValue("language", "default");
-            return parse_ini_file(__DIR__ . "/../lang/" . $file . ".ini", true);
-        }
+        if (isset($session->lang) && self::$language !== $session->lang)
+            self::$strings = null;
+
+        if (!isset(self::$strings))
+            return parse_ini_file(__DIR__ . "/../lang/" . $language . ".ini", true);
 
         return $strings;
     }
