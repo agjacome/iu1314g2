@@ -10,16 +10,12 @@ class UsersController extends Controller
     public function __construct($request)
     {
         parent::__construct($request);
-        $this->user = new \models\User();
     }
 
     public function defaultAction()
     {
-        // hack temporal para pruebas
-        if (isset($this->session->logged_in) && $this->session->logged_in)
-            print "Identificado como {$this->session->username}.";
-        else
-            print "No identificado.";
+        // FIXME: hack temporal para pruebas
+        $this->view->render("user.php");
     }
 
     public function create()
@@ -49,44 +45,50 @@ class UsersController extends Controller
 
     public function login()
     {
-        if (isset($this->session->logged_in) && $this->session->logged_in)
+        // redirige si usuario ya identificado
+        if (isset($this->session->logged) && $this->session->logged)
             $this->redirect("user");
 
-        if ($this->request->isGet()) {
-            // View aun no implementado
-            // $this->view->render("loginForm.php");
+        // si GET, muestra formulario de login
+        if ($this->request->isGet())
+            $this->view->render("login.php");
 
-            // hack temporal para indicar que debe hacerse un post
-            print "debe hacerse por POST!<br>";
-        }
-
+        // si POST, realiza identificacion y redirige adecuadamente
         if ($this->request->isPost()) {
-            try {
+            $users = \models\User::findBy(["login" => strtolower($this->request->login)]);
 
-                $users = \models\User::findBy(["login" => $this->request->login]);
-                $this->user = $users[0]; // deberia haber un solo usuario con el login
+            // solo hay un usuario con el login
+            if (count($users) === 1) {
+                $this->user = $users[0];
 
-                $this->session->logged_in = true;
-                $this->session->username  = $this->user->getLogin();
-                $this->session->userrole  = $this->user->role;
+                // si contraseña correcta, identifica al usuario
+                if ($this->user->checkPassword($this->request->password)) {
+                    $this->session->logged   = true;
+                    $this->session->username = $this->user->getLogin();
+                    $this->session->userrole = $this->user->role;
 
-                $this->setFlash($this->lang["user"]["identified"] . $this->user->getLogin());
-
-                $this->redirect("user");
-
-            } catch (\models\exceptions\NotFoundException $nfe) {
-
-                $this->session->logged_in = false;
-                $this->setFlash($nfe->message);
-                $this->redirect("user", "login");
-
+                    $this->setFlash($this->lang["user"]["login_ok"] . $this->user->getLogin());
+                    $this->redirect("user");
+                }
             }
+
+            // si algun error, marca sesion como no iniciada y redirige a login
+            // de nuevo
+            $this->session->logged = false;
+            $this->setFlash($this->lang["user"]["login_err"]);
+            $this->redirect("user", "login");
         }
     }
 
     public function logout()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        if (isset($this->session->logged) && $this->session->logged) {
+            $this->session->logged   = false;
+            $this->session->username = null;
+            $this->session->userrole = null;
+        }
+
+        $this->redirect();
     }
 
 }
