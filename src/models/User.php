@@ -62,10 +62,11 @@ class User extends Model
 
         $count = count($this->dao->select(["login"], ["login" => $this->login]));
 
-        if ($count === 0)
-            $this->dao->insert($data);
-        else
-            $this->dao->update($data, ["login" => $this->login]);
+        if     ($count === 0) $this->dao->insert($data);
+        elseif ($count === 1) $this->dao->update($data, ["login" => $this->login]);
+        else   return false;
+
+        return true;
     }
 
     public function delete()
