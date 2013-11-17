@@ -40,14 +40,14 @@ class View
 
     private function loadLanguage()
     {
-        $this->data["lang"] = \components\Language::getStrings($this->session);
+        $this->data["lang"] = \components\Language::getStrings();
     }
 
     private function loadUserSession()
     {
         $this->data["logged"] = false;
 
-        if (isset($this->session->logged))   $this->data["logged"] = $this->session->logged;
+        if (isset($this->session->logged))   $this->data["logged"]   = $this->session->logged;
         if (isset($this->session->username)) $this->data["username"] = $this->session->username;
         if (isset($this->session->userrole)) $this->data["userrole"] = $this->session->userrole;
     }

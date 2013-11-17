@@ -15,7 +15,7 @@ abstract class Controller
 
         $this->session = new \components\Session();
         $this->view    = new \views\View($this->session);
-        $this->lang    = \components\Language::getStrings($this->session);
+        $this->lang    = \components\Language::getStrings($this->session->lang);
     }
 
     protected function setFlash($msg)
