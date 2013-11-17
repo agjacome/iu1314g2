@@ -20,7 +20,7 @@ class View
         extract($this->data);
 
         ob_start();
-        include $template;
+        include "templates/" . $template;
         $rendered = ob_get_clean();
 
         print $rendered;
