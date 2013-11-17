@@ -20,7 +20,32 @@ class UsersController extends Controller
 
     public function create()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // si ya esta loggeado y no es admin, no se permite acceso a registro
+        if (isset($this->session->logged) && $this->session->logged && $this->session->userrole !== "admin")
+            $this->redirect("user");
+
+        // si GET, redirige al formulario de registro
+        if ($this->request->isGet())
+            $this->view->render("register.php");
+
+        // si POST, realiza el registro y redirige
+        if ($this->request->isPost()) {
+            $this->user = new \models\User(strtolower($this->request->login));
+
+            if ($this->user->isNewLogin()) {
+                $this->user->setPassword($this->request->password);
+                $this->user->email = $this->request->email;
+
+                // TODO: validate() antes de save()
+                if ($this->user->save()) {
+                    $this->setFlash($this->lang["user"]["create_ok"]);
+                    $this->redirect("user");
+                }
+            }
+
+            $this->setFlash($this->lang["user"]["create_err"]);
+            $this->redirect("user", "create");
+        }
     }
 
     public function update()
