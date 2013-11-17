@@ -29,6 +29,7 @@ abstract class Controller
         if (isset($action)) $url .= "&action=$action";
 
         header("Location: " . $url);
+        exit();
     }
 
     public abstract function defaultAction();
