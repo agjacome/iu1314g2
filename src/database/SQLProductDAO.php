@@ -2,6 +2,12 @@
 
 namespace database;
 
+/**
+ * Clase que se encarga de las tablas correspondientes a los productos.
+ *
+ * @package  database
+ */
+
 class SQLProductDAO extends SQLDAO implements DAO
 {
 

@@ -2,11 +2,22 @@
 
 namespace database;
 
+/**
+ * Implementa la conexión a la base de datos.
+ * 
+ * @package  database
+ */
+
 class DatabaseConnection
 {
 
     private static $connection;
 
+    /**
+     * Obtiene los parámetros necesarios del archivo de configuración de la base de datos y se conecta a ella 
+     * devolviendo el PHP Data Object (PDO) que corresponda.
+     * @return PDO PHP Data Object, objeto que permite la interacción con la base de datos.
+     */
     public static function getConnection()
     {
         if (!isset(self::$connection)) {

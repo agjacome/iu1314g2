@@ -2,9 +2,20 @@
 
 namespace database;
 
+/**
+ * Clase que implementa los métodos comunes para interactuar con la base de datos. Se usa el patrón DAOs (Data Abstract Object) para aislar
+ * para aislar la interactuación con la base de datos de forma que, si se tiene una base de datos MySQL esta pueda ser facilmente sustituida
+ * por una de Postgre o cualquier otro tipo.
+ *
+ * @package  database
+ */
+
 abstract class SQLDAO implements DAO
 {
-
+    /**
+     * Nombre de la tabla sobre la que se trabaja.
+     * @var [type]
+     */
     protected $tableName;
 
     public function __construct($tableName)
@@ -12,6 +23,10 @@ abstract class SQLDAO implements DAO
         $this->tableName = $tableName;
     }
 
+    /**
+     * Inserta datos en la base de datos @tablename.
+     * @param  array $data Datos a insertar en la base de datos.
+     */
     public function insert($data)
     {
         $db = DatabaseConnection::getConnection();
@@ -32,6 +47,11 @@ abstract class SQLDAO implements DAO
         $query->execute();
     }
 
+    /**
+     * Actualiza los datos de una @tablename.
+     * @param  array $data datos a asignar en los atributos del @tablename.
+     * @param  array $where condición a cumplir. 
+     */
     public function update($data, $where = null)
     {
         $db = DatabaseConnection::getConnection();
@@ -64,7 +84,10 @@ abstract class SQLDAO implements DAO
         $query->execute();
     }
 
-
+    /**
+     * Elimina tablas de la base de datos en base a una o varias condiciones pasadas como parámetro.
+     * @param array $where array con las condiciones necesarias para realizar el borrado.
+     */
     public function delete($where)
     {
         $db = DatabaseConnection::getConnection();
@@ -90,6 +113,12 @@ abstract class SQLDAO implements DAO
         $query->execute();
     }
 
+    /**
+     * Consulta de datos en la base de datos.
+     * @param  array $data  columnas a mostrar.
+     * @param  array $where condiciones impuestas.
+     * @return array con las tuplas resultantes de la consulta.
+     */
     public function select($data, $where = null)
     {
         $db = DatabaseConnection::getConnection();
@@ -128,6 +157,11 @@ abstract class SQLDAO implements DAO
         return $result;
     }
 
+    /**
+     * Realiza una consulta sobre la sentencia pasada como parámetro.
+     * @param  array $statement Sentencia pasada como parámetro.
+     * @return array tuplas resultantes de la consulta.
+     */
     public function query($statement)
     {
         $db = DatabaseConnection::getConnection();

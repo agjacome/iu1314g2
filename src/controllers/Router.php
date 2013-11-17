@@ -2,9 +2,21 @@
 
 namespace controllers;
 
+/**
+ * <p>Esta clase se ocupa de, comprobando el contenido de la petición HTTP, parsearla y crear así los controladores
+ * asociados y llamar a las acciones correspondientes, contenidas en otras clases.</p>
+ * 
+ * @package controllers
+ */
+
 class Router
 {
-
+    /**
+     * Parsea la petición HTTP, crea el controlador asociado en caso de que exista y llama a la acción (método) que
+     * corresponda. En caso de no existir un controlador, se crea uno por defecto que dirigirá al índice. En caso de que
+     * no exista la acción (el método asociado a este controlador), se llamará a una acción por defecto.
+     * @param  [array] $request Array que contiene la petición HTTP.
+     */
     public function routeRequest($request)
     {
         $controller = "controllers\\HomeController";

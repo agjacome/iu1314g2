@@ -2,8 +2,15 @@
 
 namespace components;
 
-// AutoLoader de clases siguiendo el estandar PSR-0.
-// Basado en SplClassLoader: https://gist.github.com/jwage/221634
+/**
+ * <p>Permite cargar clases sin realizar los includes/requieres.</p>
+ *
+ * <p>Cuando se crea una nueva instancia de una clase que no ha sido definida esta clase se encarga de ello.</p>
+ * <p>Este AutoLoader de clases sigue el estandar PSR-0 y se basa en el "SplClassLoader" definido aquí: https://gist.github.com/jwage/221634</p>
+ *
+ * @package components;
+ */
+
 class ClassLoader
 {
 
@@ -12,22 +19,37 @@ class ClassLoader
     private $separator    = "\\";
     private $extension    = ".php";
 
+    /**
+     * Constructor de la clase.
+     * @param string $namespace   Paquete en el que está incluida la clase (opcional).
+     * @param string $includePath directorio donde se encuentra la clase (opcional).
+     */
     public function __construct($namespace = null, $includePath = null)
     {
         $this->namespace   = $namespace;
         $this->includePath = $includePath;
     }
 
+    /**
+     * Registra la función dada en una pila.
+     */
     public function register()
     {
         spl_autoload_register(array($this, 'loadClass'));
     }
 
+    /**
+     * Elimina la función de una pila
+     */
     public function unregister()
     {
         spl_autoload_unregister(array($this, "loadClass"));
     }
 
+    /**
+     * Carga la clase pasada como parámetro en caso de existir en el Path.
+     * @param  string $className nombre de una clase;
+     */
     public function loadClass($className)
     {
         $ns = $this->namespace . $this->separator;

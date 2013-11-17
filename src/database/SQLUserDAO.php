@@ -2,6 +2,12 @@
 
 namespace database;
 
+/**
+ * Clase que se encarga de las tablas correspondientes a los usuarios.
+ *
+ * @package  database
+ */
+
 class SQLUserDAO extends SQLDAO implements DAO
 {
 

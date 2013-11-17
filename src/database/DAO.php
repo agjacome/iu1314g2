@@ -2,6 +2,13 @@
 
 namespace database;
 
+/**
+ * Interfaz para la definición de inserciones, actualizaciones, borrados y consultas a la base de datos.
+ *
+ * @package  database;
+ * 
+ */
+
 interface DAO
 {
 
