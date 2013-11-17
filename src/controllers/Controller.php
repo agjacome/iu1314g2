@@ -23,10 +23,11 @@ abstract class Controller
         $this->session->flash = $msg;
     }
 
-    public function redirect($controller, $action = null)
+    public function redirect($controller = null, $action = null)
     {
-        $url = "/index.php?controller=" . $controller;
-        if (isset($action)) $url .= "&action=$action";
+        $url = "/";
+        if (isset($controller)) $url .= "index.php?controller=" . $controller;
+        if (isset($action))     $url .= "&action=$action";
 
         header("Location: " . $url);
         exit();
