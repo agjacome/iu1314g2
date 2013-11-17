@@ -4,7 +4,8 @@ namespace models;
 
 class User extends Model
 {
-private $login;
+
+    private $login;
     private $hashedPass;
     public  $role;
     public  $email;
@@ -12,9 +13,17 @@ private $login;
     public  $address;
     public  $telephone;
 
-    public function __construct()
+    public function __construct($login)
     {
         parent::__construct();
+
+        $this->login      = strtolower($login);
+        $this->hashedPass = null;
+        $this->role       = null;
+        $this->email      = null;
+        $this->name       = null;
+        $this->address    = null;
+        $this->telephone  = null;
     }
 
     public static function findBy($where)
@@ -24,14 +33,10 @@ private $login;
         // $this->dao definido en la superclase abstracta
         $rows = \database\DAOFactory::getDAO("user")->select(["*"], $where);
 
-        if (count($rows) < 1)
-            throw new exceptions\NotFoundException("Usuario no encontrado");
-
         $found = array();
         foreach ($rows as $row) {
-            $user = new User();
+            $user = new User($row["login"]);
 
-            $user->login      = $row["login"];
             $user->hashedPass = $row["password"];
             $user->role       = $row["rol"];
             $user->email      = $row["email"];
@@ -47,22 +52,41 @@ private $login;
 
     public function save()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        $data = [ "login" => $this->login ];
+        if (isset($this->hashedPass)) $data["password"]  = $this->hashedPass;
+        if (isset($this->email))      $data["email"]     = $this->email;
+        if (isset($this->role))       $data["rol"]       = $this->role;
+        if (isset($this->name))       $data["nombre"]    = $this->name;
+        if (isset($this->address))    $data["direccion"] = $this->address;
+        if (isset($this->telephone))  $data["telefono"]  = $this->telephone;
+
+        $count = count($this->dao->select(["login"], ["login" => $this->login]));
+
+        if ($count === 0)
+            $this->dao->insert($data);
+        else
+            $this->dao->update($data, ["login" => $this->login]);
     }
 
     public function delete()
     {
-        $this->dao->delete(["login" => $this->login]);
+        trigger_error("Aun no implementado", E_USER_ERROR);
     }
 
     public function validate()
     {
+        // TODO: http://php.net/manual/en/function.filter-var.php
         trigger_error("Aun no implementado", E_USER_ERROR);
     }
 
     public function getLogin()
     {
         return $this->login;
+    }
+
+    public function isNewLogin()
+    {
+        return count($this->dao->select(["login"], ["login" => $this->login])) === 0;
     }
 
     public function setPassword($cleanPass)
