@@ -12,7 +12,7 @@ $loaders = array(
 
 foreach ($loaders as $loader) $loader->register();
 
-components\Configuration::readConfiguration("config.ini");
+components\Configuration::readConfiguration(__DIR__ . "/config/config.ini");
 
 $router = new controllers\Router();
 $router->routeRequest(new components\Request());

@@ -30,8 +30,8 @@ class Language
 
         $default = Configuration::getValue("language", "default");
 
-        $file = __DIR__ . "/../lang/" . self::$language . ".ini";
-        if (!file_exists($file)) $file = __DIR__ . "/../lang/" . $default . ".ini";
+        $file = __DIR__ . "/../config/lang/" . self::$language . ".ini";
+        if (!file_exists($file)) $file = __DIR__ . "/../config/lang/" . $default . ".ini";
 
         self::$strings = parse_ini_file($file, true);
     }
