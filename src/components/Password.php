@@ -5,15 +5,38 @@ namespace components;
 define('PASSWORD_BCRYPT', 1);
 define('PASSWORD_DEFAULT', PASSWORD_BCRYPT);
 
-// password_hash() y password_verify() estan disponibles solo a partir de PHP 
-// 5.5, en la maquina virtual esta instalado 5.4. Esta clase implementa dichos 
-// metodos a partir de crypt() proporcionando la misma funcionalidad que esta 
-// presente de forma nativa en 5.5, solo que aislada dentro de una clase y no 
-// como funciones globales.
-// Basada en la libreria password_compat https://github.com/ircmaxell/password_compat
+/**
+ * Clase estatica para el cifrado y verificacion de contraseñas. Implementa la 
+ * misma funcionalidad existente en PHP 5.5 de forma nativa. Es necesaria 
+ * puesto que en la maquina virtual esta instalado PHP 5.4 y no se dispone de 
+ * estas funciones.
+ *
+ * Basada en la libreria password_compat, adaptada a una clase estatica:
+ * https://github.com/ircmaxell/password_compat
+ *
+ * @author Alberto Gutierrez Jacome <agjacome@esei.uvigo.es>
+ * @author Daniel Alvarez Outerelo  <daouterelo@esei.uvigo.es>
+ * @author David Lorenzo Dacal      <dldacal@esei.uvigo.es>
+ * @author Marcos Nuñez Celeiro     <mnceleiro@esei.uvigo.es>
+ */
 class Password
 {
 
+    /**
+     * Implementa una funcionalidad equivalente a password_hash() de PHP 5.5:
+     * http://php.net/manual/en/function.password-hash.php
+     *
+     * @param string $password
+     *     La contraseña a cifrar.
+     * @param constant $algo
+     *     Algoritmo de cifrado a utilizar, definidos como constantes globales: 
+     *     PASSWORD_BCRYPT y PASSWORD_DEFAULT (que apunta a Bcrypt).
+     * @param array $options
+     *     Array de opciones para el algoritmo utilizado.
+     *
+     * @return string
+     *     La contraseña cifrada, o false si se ha producido algun error.
+     */
     public static function hash($password, $algo, array $options = array()) {
         if (!function_exists('crypt')) {
             trigger_error("Crypt must be loaded for password_hash to function", E_USER_WARNING);
@@ -126,6 +149,18 @@ class Password
         return $ret;
     }
 
+    /**
+     * Implementa una funcionalidad equivalente a password_get_info() de PHP 
+     * 5.5: http://us2.php.net/password_get_info
+     *
+     * @param string $hash
+     *     Un hash de contraseña cifrado previamente por hash()
+     *
+     * @return array
+     *     Un array con la informacion sobre el algoritmo utilizado y las 
+     *     opciones pasadas al mismo para crear el hash recibido como 
+     *     parametro.
+     */
     public static function getInfo($hash) {
         $return = array(
             'algo' => 0,
@@ -141,6 +176,21 @@ class Password
         return $return;
     }
 
+    /**
+     * Implementa una funcionalidad equivalente a password_needs_rehash() de 
+     * PHP 5.5: http://us3.php.net/password_needs_rehash
+     *
+     * @param string $hash
+     *     Un hash de contraseña cifrado previamente por hash()
+     * @param constant $algo
+     *     Algoritmo de cifrado (PASSWORD_DEFAULT y PASSWORD_BCRYPT).
+     * @param array $options
+     *     Opciones para el algoritmo de cifrado.
+     *
+     * @return boolean
+     *     True si el hash proporcionado debe ser recalculado para adaptarse al 
+     *     algoritmo y opciones proporcionadas, False en caso contrario.
+     */
     public static function needsRehash($hash, $algo, array $options = array()) {
         $info = password_get_info($hash);
         if ($info['algo'] != $algo) {
@@ -157,6 +207,19 @@ class Password
         return false;
     }
 
+    /**
+     * Implementa una funcionalidad equivalente a password_verify() de PHP 5.5: 
+     * http://us3.php.net/function.password_verify
+     *
+     * @param string $password
+     *     La contraseña a comprobar en texto plano.
+     * @param string $hash
+     *     La contraseña cifrada con hash()
+     *
+     * @return boolean
+     *     True si la contraseña en texto plano y la contraseña cifrada son la 
+     *     misma. False en caso contrario.
+     */
     public static function verify($password, $hash) {
         if (!function_exists('crypt')) {
             trigger_error("Crypt must be loaded for password_verify to function", E_USER_WARNING);

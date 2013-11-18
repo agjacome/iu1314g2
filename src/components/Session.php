@@ -3,21 +3,22 @@
 namespace components;
 
 /**
- * Gestiona los parámetros de una sesión HTTP.
+ * Clase que proporciona un acceso en orientacion a objetos a la variable 
+ * global $_SESSION, para obtener y almacenar parametros de la sesion.
  *
- * @package components;
+ * @author Alberto Gutierrez Jacome <agjacome@esei.uvigo.es>
+ * @author Daniel Alvarez Outerelo  <daouterelo@esei.uvigo.es>
+ * @author David Lorenzo Dacal      <dldacal@esei.uvigo.es>
+ * @author Marcos Nuñez Celeiro     <mnceleiro@esei.uvigo.es>
  */
-
 class Session
 {
-    /**
-     * Almacena la ID de sesión.
-     * @var string
-     */
-    public $sessionID;
+
+    public $sessionID;  // identificador de la sesion
 
     /**
-     * Crea o reanuda una sesión y se almacena su ID de sesión.
+     * Crea una nueva instancia de Session, iniciando o reanudando para ello 
+     * una sesion a traves de session_start().
      */
     public function __construct()
     {
@@ -26,7 +27,8 @@ class Session
     }
 
     /**
-     * Asegura que la sesión se finaliza y se almacenan sus datos correctamente.
+     * Asegura que, cuando el objeto de la clase Session es destruido, los 
+     * datos de la sesion se almacenan correctamente.
      */
     public function __destruct()
     {
@@ -34,7 +36,8 @@ class Session
     }
 
     /**
-     * Vacía los datos de la sesión actual y se destruyen todos los datos almacenados de esta. Es útil para terminar la sesión cuando se cierra el navegador.
+     * Vacía los datos de la sesión actual y se destruyen todos los datos 
+     * asociados a la misma.
      */
     public function destroy()
     {
@@ -45,8 +48,14 @@ class Session
     }
 
     /**
-     * Comprueba si el dato de sesión pasado como parámetro dispone de algún valor asociado.
-     * @param  string $key que permite obtener su valor asociado.
+     * Sobreescribe __isset() para una correcta comprobacion de existencia de 
+     * parametros en la sesion a traves de la funcion global isset() de PHP.
+     *
+     * @param string $key
+     *     El nombre del parametro a comprobar existencia.
+     *
+     * @return boolean
+     *     True si el parametro recibido existe, False en caso contrario.
      */
     public function __isset($key)
     {
@@ -54,7 +63,7 @@ class Session
     }
 
     /**
-     * Elimina la posibilidad de la clonación de clases permitida por PHP.
+     * Elimina la posibilidad de clonación de los objetos de la clase Session.
      */
     public function __clone()
     {
@@ -62,9 +71,15 @@ class Session
     }
 
     /**
-     * Obtiene el valor asociado a la clave de sesión pasada como paŕámetro.
-     * @param  string $key clave para obtener su valor asociado.
-     * @return string|int Valor asociado a la clave pasada como parámetro dentro del array correspondiente a la sesión.
+     * Sobreescribe __get() para un acceso mas adecuado a los parametros de la 
+     * sesion. Asi, dado un objeto $sess de la clase Session y un parametro 
+     * "param", podra accederse al mismo via $sess->param.
+     *
+     * @param string $key
+     *     El nombre del parametro al que acceder.
+     *
+     * @return string
+     *     El valor asociado al parametro solicitado.
      */
     public function __get($key)
     {
@@ -72,9 +87,15 @@ class Session
     }
 
     /**
-     * Almacena un nuevo en el parámetro de sesión que se pasa como parámetro a la función.
-     * @param string $key Clave a la cual se le va a cambiar el valor asociado.
-     * @param string|int $value Valor nuevo asociado a la clave pasada como parámetro. 
+     * Sobreescribe __set() para proporcionar una escritura de parametros mas 
+     * adecuada. Asi, dado un objeto $sess de la clase Session, puede 
+     * almacenarse un nuevo parametro "param" con el valor "XYZ" como: 
+     * $sess->param = "XYZ".
+     *
+     * @param string $key
+     *     Nombre del parametro a almacenar/actualizar.
+     * @param string $value
+     *     Valor del parametro escrito.
      */
     public function __set($key, $value)
     {

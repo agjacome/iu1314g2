@@ -3,20 +3,22 @@
 namespace components;
 
 /**
- * Parsea almacena una petición HTTP.
- * @package components;
+ * Clase que proporciona un acceso en orientacion a objetos a las variables
+ * globales $_GET y $_POST, para obtener parametros de peticiones HTTP.
+ *
+ * @author Alberto Gutierrez Jacome <agjacome@esei.uvigo.es>
+ * @author Daniel Alvarez Outerelo  <daouterelo@esei.uvigo.es>
+ * @author David Lorenzo Dacal      <dldacal@esei.uvigo.es>
+ * @author Marcos Nuñez Celeiro     <mnceleiro@esei.uvigo.es>
  */
-
 class Request
 {
-    /**
-     * Almacena el contenido de la petición HTTP
-     * @var array[string,string]
-     */
-    private $request;
+    private $request; // almacena el contenido de $_GET o $_POST
 
     /**
-     * Almacena en la variable @request la petición HTTP mediante una llamada a initFromHttp().
+     * Construye una nueva instancia de Request a partir de los parametros
+     * recibidos por la peticion HTTP GET/POST, y obtenidos a traves de las
+     * variables globales $_GET y $_POST de PHP.
      */
     public function __construct()
     {
@@ -24,9 +26,12 @@ class Request
     }
 
     /**
-     * Obtiene los parámetros de la petición HTTP de las variables @_GET o @_POST, según la petición. 
-     * En caso de no ser ninguna de las dos devuelve un array vacío.
-     * @return array[clave => valor] con el contenido de la petición HTTP.
+     * Devuelve el contenido de $_POST o $_GET segun el tipo de peticion
+     * recibida. O un array vacio si la peticion no es GET ni POST.
+     *
+     * @return array[string => string]
+     *     Contenido de $_GET o $_POST, segun la peticion recibida. Array vacio
+     *     en caso de no ser GET ni POST.
      */
     private function initFromHttp()
     {
@@ -36,19 +41,33 @@ class Request
     }
 
     /**
-     * [__isset description]
-     * @param  [type]  $key [description]
-     * @return boolean      [description]
+     * Sobreescribe __isset() para proporcionar un acceso mas adecuado a traves
+     * de la funcion global isset() a los valores de la peticion.
+     *
+     * @param string $key
+     *     Clave a comprobar si definida.
+     *
+     * @return boolean
+     *     True si la clave recibida como parametro existe, False en caso
+     *     contrario.
      */
     public function __isset($key)
     {
+        // se sobreescribe con array_key_exists para que devuelva True aun
+        // cuando la clave tenga un valor nulo
         return array_key_exists($key, $this->request);
     }
 
     /**
-     * Accede a @_GET[$key] o @_POST[$key], según proceda, devolviendo el valor correspondiente a la clave
-     * @param  [string] $key de uno de los parámetros de la petición HTTP.
-     * @return [string|int] con el valor asociado a la clave.
+     * Sobreescribe __get() para proporcionar un acceso mas adecuado a los 
+     * parametros de la peticion. Asi, dado un objeto $req de la clase Request 
+     * y un parametro "id", podra accederse al mismo via $req->id.
+     *
+     * @param string $key
+     *     Nombre del parametro a obtener.
+     *
+     * @return string
+     *     El valor asociado al parametro solicitado.
      */
     public function __get($key)
     {
@@ -56,28 +75,36 @@ class Request
     }
 
     /**
-     * Accede a @_GET[$key] o @_POST[$key], según proceda, y modifica el valor correspondiente a la clave.
-     * @param  string $key clave a la que se quiere asignar nuevo valor.
-     * @param  string|int  $value que contiene el valor nuevo a asignar a la clave pasada como primer parámetro
-     */    
+     * Sobreescribe __set() para proporcionar una escritura de parametros mas 
+     * adecuada. Asi, dado un objeto $req de la clase Request, puede 
+     * almacenarse un nuevo parametro "id" con el valor "7" como: $req->id = 7.
+     *
+     * @param string $key
+     *     Nombre del parametro a almacenar/actualizar.
+     * @param string $value
+     *     Valor del parametro escrito.
+     */
     public function __set($key, $value)
     {
         $this->request[$key] = $value;
     }
 
     /**
-     * Comprueba si una petición es GET
-     * @return boolean true si la petición es de tipo GET o false en caso contrario.
+     * Comprueba si la peticion HTTP que el servidor web a recibido es GET.
+     *
+     * @return boolean
+     *     True si la peticion es GET, False en caso contrario.
      */
-    
     public function isGet()
     {
         return $_SERVER["REQUEST_METHOD"] === "GET";
     }
 
     /**
-     * Comprueba si una petición es POST
-     * @return boolean true si la petición es de tipo POST o false en caso contrario.
+     * Comprueba si la peticion HTTP que el servidor web a recibido es POST.
+     *
+     * @return boolean
+     *     True si la peticion es POST, False en caso contrario.
      */
     public function isPost()
     {

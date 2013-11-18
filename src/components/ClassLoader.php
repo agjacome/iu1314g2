@@ -3,14 +3,16 @@
 namespace components;
 
 /**
- * <p>Permite cargar clases sin realizar los includes/requieres.</p>
+ * Permite la carga de clases sin necesidad de incluir/requerir el fichero que 
+ * la define. Se sigue el estandar PSR-0 para la carga automatica de ficheros 
+ * segun su namespace. Implementacion basada en SplClassLoader 
+ * (https://gist.github.com/jwage/221634),
  *
- * <p>Cuando se crea una nueva instancia de una clase que no ha sido definida esta clase se encarga de ello.</p>
- * <p>Este AutoLoader de clases sigue el estandar PSR-0 y se basa en el "SplClassLoader" definido aquí: https://gist.github.com/jwage/221634</p>
- *
- * @package components;
+ * @author Alberto Gutierrez Jacome <agjacome@esei.uvigo.es>
+ * @author Daniel Alvarez Outerelo  <daouterelo@esei.uvigo.es>
+ * @author David Lorenzo Dacal      <dldacal@esei.uvigo.es>
+ * @author Marcos Nuñez Celeiro     <mnceleiro@esei.uvigo.es>
  */
-
 class ClassLoader
 {
 
@@ -20,9 +22,14 @@ class ClassLoader
     private $extension    = ".php";
 
     /**
-     * Constructor de la clase.
-     * @param string $namespace   Paquete en el que está incluida la clase (opcional).
-     * @param string $includePath directorio donde se encuentra la clase (opcional).
+     * Construye una nueva instancia de ClassLoader dados un namespace y el 
+     * fichero raiz que incluye al directorio base del namespace (segun 
+     * estandar PSR-0, namespace "x" estara en directorio "x").
+     *
+     * @param string $namespace
+     *     Namespace para carga automatica de clases.
+     * @param string $includePath
+     *     Raiz desde donde buscar el directorio del namespace.
      */
     public function __construct($namespace = null, $includePath = null)
     {
@@ -31,7 +38,8 @@ class ClassLoader
     }
 
     /**
-     * Registra la función dada en una pila.
+     * Registra el metodo loadClass de este objeto en el listado de 
+     * autoloaders estandar de PHP.
      */
     public function register()
     {
@@ -39,7 +47,8 @@ class ClassLoader
     }
 
     /**
-     * Elimina la función de una pila
+     * Elimina el metodo loadClass de este objeto del listado de autoloaders 
+     * estandar de PHP.
      */
     public function unregister()
     {
@@ -47,8 +56,12 @@ class ClassLoader
     }
 
     /**
-     * Carga la clase pasada como parámetro en caso de existir en el Path.
-     * @param  string $className nombre de una clase;
+     * Hace un require hacia el fichero apropiado que define la clase cuyo 
+     * nombre ha sido recibido como parametro. Buscara dentro del namespace 
+     * definido en el constructor de esta instancia.
+     *
+     * @param string $className
+     *     Nombre de la clase a cargar;
      */
     public function loadClass($className)
     {

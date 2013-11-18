@@ -1,9 +1,11 @@
 <?php
 
 /**
- * <p>Se incluye una unica vez la clase ClassLoader, la cual se utiliza para la carga de clases, y se registran en esta todos los paquetes
- * que componen la página web, se lee el archivo de configuración y por último se instancia la clase "Router" 
- * que se ocupa de dirigir la petición HTTP al controlador oportuno.</p>
+ * Se incluye una unica vez la clase ClassLoader, la cual se utiliza para la 
+ * carga de clases, y se registran en esta todos los namespaces
+ * que componen la aplicacion web, se lee el archivo de configuración y por 
+ * último se instancia la clase "Router" que se ocupa de dirigir la petición 
+ * HTTP al controlador oportuno.
  */
 
 require_once(__DIR__ . "/components/ClassLoader.php");
