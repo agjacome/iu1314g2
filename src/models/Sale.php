@@ -34,21 +34,21 @@
 		{
 			$rows=\database\DAOFactory::getDAO("sale")->select(["*"],$where);
 
-			if(count($rows)<1) throw new exceptions\NotFoundException("Venta no encontrada");
-
-			$found=array();
-			foreach($rows as $row)
+			$found = array();
+			if ($rows !== false)
 			{
-				$sale=new Sale();
+				foreach (rows as $row)
+				}
+					$sale=new Sale($row["id"]);
 
-				$sale->id	=$row["id"];
-				$sale->product	=$row["product"];
-				$sale->purchaser=$row["purchaser"];
-				$sale->quantity	=$row["quantity"];
-				$sale->payment	=$row["payment"];
-				$sale->rating	=$row["rating"];
+					$sale->product	=$row["product"];
+					$sale->purchaser=$row["purchaser"];
+					$sale->quantity	=$row["quantity"];
+					$sale->payment	=$row["payment"];
+					$sale->rating	=$row["rating"];
 
-				$found[]=$sale;
+					$found[] = $user;
+				}
 			}
 			return $found;
 		}
@@ -77,7 +77,9 @@
 
 		public function validate()
 		{
-			//FALTA POR IMPLEMENTAR
+			//quantily tiene que estar entre 1 y el stock disponible
+			if(!filter_var($this->quantily, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1, "max_range" => $this->product->stock]]))
+			return false;
 		}
 	}
 
