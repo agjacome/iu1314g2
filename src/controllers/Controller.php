@@ -27,7 +27,9 @@ abstract class Controller
 
         $this->session = new \components\Session();
         $this->view    = new \views\View($this->session);
-        $this->lang    = \components\Language::getStrings($this->session->lang);
+
+        if (!isset($this->session->lang)) $this->session->lang = null;
+        $this->lang = \components\Language::getStrings($this->session->lang);
     }
 
     /**
