@@ -44,7 +44,7 @@ abstract class SQLDAO implements DAO
         foreach ($data as $key => $_)
             $query->bindParam($i++, $data[$key]);
 
-        $query->execute();
+        return $query->execute();
     }
 
     /**
@@ -81,7 +81,7 @@ abstract class SQLDAO implements DAO
                 $query->bindParam($i++, $where[$key]);
         }
 
-        $query->execute();
+        return $query->execute();
     }
 
     /**
@@ -110,7 +110,7 @@ abstract class SQLDAO implements DAO
                 $query->bindParam($i++, $where[$key]);
         }
 
-        $query->execute();
+        return $query->execute();
     }
 
     /**
@@ -148,11 +148,11 @@ abstract class SQLDAO implements DAO
                 $query->bindParam($i++, $where[$key]);
         }
 
-        $query->execute();
-
         $result = array();
-        while ($row = $query->fetch())
-            $result[] = $row;
+        if ($query->execute()) {
+            while ($row = $query->fetch())
+                $result[] = $row;
+        }
 
         return $result;
     }
@@ -171,16 +171,16 @@ abstract class SQLDAO implements DAO
         for ($i = 1; $i < count($args); $i++)
             $query->bindParam($i + 1, $args[$i]);
 
-        $query->execute();
+        $result = $query->execute();
 
         if ($row = $query->fetch()) {
             $result = [$row];
 
             while ($row = $query->fetch())
                 $result[] = $row;
-
-            return $result;
         }
+
+        return $result;
     }
 
 }
