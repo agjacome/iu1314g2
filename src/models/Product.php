@@ -24,21 +24,21 @@
 		{
 			$rows = \database\DAOFactory::getDAO("product")->select(["*"], $where);
 
-			if(count($rows)<1) throw new exceptions\NotFoundException("Producto no encontrado");
-
 			$found=array();
-			foreach($rows as $row)
+			if($rows !== false)
 			{
-				$product=new Product();
+				foreach($rows as $row)
+				{
+					$product=new Product($row["id"]);
 
-				$product->id	=$row["id"];
-				$product->name	=$row["name"];
-				$product->description	=row["description"];
-				$product->owner	=$row["owner"];
-				$product->stock	=$row["stock"];
-				$product->type	=$row["type"];
+					$product->name	=$row["name"];
+					$product->description	=row["description"];
+					$product->owner	=$row["owner"];
+					$product->stock	=$row["stock"];
+					$product->type	=$row["type"];
 
-				$found[]=$product;
+					$found[]=$product;
+				}
 			}
 			return $found;
 		}
@@ -67,7 +67,21 @@
 
 		public function validate()
 		{
-			//FALTA POR IMPLEMENTAR
+			//name puede tener letras, números y guiones
+			if(!filter_var($this->name, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/[a-zA-Z0-9\-]+/"]]))
+				return false;
+
+			//descripcion puede tener letras, numeros, guiones y guiones bajos
+			if(!filter_var($this->description, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/[a-zA-Z0-9\-_]+/"]]))
+				return false;
+
+			//stock debe ser como mínimo=1
+			if(!filter_var($this->stock, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1]])) 
+				return false;
+
+			//type  puede contener sólo letras
+			if(!filter_var($this->type, FILTERVALIDATE_REGEXP, ["options" => "/[a-zA-Z]/"]]))
+				return false;
 		}
 	}
 ?>
