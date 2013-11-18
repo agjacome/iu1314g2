@@ -7,11 +7,8 @@ require "sidebar.php";
 <?php foreach ($list as $user) { ?>
     <li>
         <?php print $lang["user"]["username"]  . ":" . $user["login"]; ?><br>
-        <?php print $lang["user"]["role"]      . ":" . $user["role"]; ?><br>
         <?php print $lang["user"]["email"]     . ":" . $user["email"]; ?><br>
-        <?php print $lang["user"]["name"]      . ":" . $user["name"]; ?><br>
-        <?php print $lang["user"]["address"]   . ":" . $user["address"]; ?><br>
-        <?php print $lang["user"]["telephone"] . ":" . $user["telephone"]; ?><br>
+        <a href="index.php?controller=user&action=get&login=<?php print $user["login"]; ?>"><?php print $lang["user"]["details"]; ?></a>
     </li>
 <?php } ?>
 </ul>

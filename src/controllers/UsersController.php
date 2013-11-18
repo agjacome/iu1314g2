@@ -146,7 +146,40 @@ class UsersController extends Controller
      */
     public function get()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // en ningun caso se permite la consulta de datos de usuario a un 
+        // usuario no identificado en el sistema
+        if (!isset($this->session->logged) || !$this->session->logged)
+            $this->redirect();
+
+        // se debe proporcionar el login del usuario a consultar
+        if (!isset($this->request->login))
+            $this->redirect("user");
+        $login = $this->request->login;
+
+        // solo se permite la consulta de datos al propio usuario a un usuario 
+        // con permisos de administrador
+        if ($this->session->username !== $login && $this->session->userrole !== "admin") {
+            $this->setFlash($this->lang["user"]["get_err"]);
+            $this->redirect("user");
+        }
+
+        $users = \models\User::findBy(["login" => $login]);
+
+        // si no se encuentra un usuario con el login proporcionado, 
+        // redirecciona mostrando el error
+        if (count($users) === 0) {
+            $this->setFlash($this->lang["user"]["get_err"]);
+            $this->redirect("user");
+        }
+
+        // se le pasan los datos del usuario a la vista
+        $this->view->assign("login"     , $users[0]->getLogin());
+        $this->view->assign("role"      , $users[0]->role);
+        $this->view->assign("email"     , $users[0]->email);
+        $this->view->assign("name"      , $users[0]->name);
+        $this->view->assign("address"   , $users[0]->address);
+        $this->view->assign("telephone" , $users[0]->telephone);
+        $this->view->render("getUser.php");
     }
 
     /**
@@ -160,15 +193,12 @@ class UsersController extends Controller
 
         $list = \models\User::findBy(null);
 
+        // el listado solo muestra el login y el email
         $users = array();
         foreach ($list as $user) {
             $users[ ] = [
-                "login"     => $user->getLogin(),
-                "role"      => $user->role,
-                "email"     => $user->email,
-                "name"      => $user->name,
-                "address"   => $user->address,
-                "telephone" => $user->telephone,
+                "login" => $user->getLogin(),
+                "email" => $user->email,
             ];
         }
 
