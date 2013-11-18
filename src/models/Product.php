@@ -45,7 +45,19 @@
 
 		public function save()
 		{
-			//FALTA POR IMPLEMENTAR
+			$data = ["id" => $this->login];
+			if(isset($this->name))	$data["name"]	=$this->name;
+			if(isset($this->description))	$data["description"]	=$this->description;
+			if(isset($this->owner))	$data["owner"]	=$this->owner;
+			if(isset($this->stock))	$data["stock"]	=$this->stock;
+			if(isset($this->type))	$data["type"]	=$this->type;
+
+			$count = $this->dao->select(["COUNT(id)"],["id" => $this->id]) [0] [0];
+
+			if	($count == 0) return $this->dao->insert($data);
+			else	($count == 1) return $this->dao->update($data, ["id"=>$this->id]);
+
+			return false;
 		}
 
 		public function delete()
