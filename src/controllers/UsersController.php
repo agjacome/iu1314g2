@@ -154,7 +154,26 @@ class UsersController extends Controller
      */
     public function listing()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // solo permite mostrar listado de usuarios al administrador
+        if (!isset($this->session->logged) || !$this->session->logged || $this->session->userrole !== "admin")
+            $this->redirect();
+
+        $list = \models\User::findBy(null);
+
+        $users = array();
+        foreach ($list as $user) {
+            $users[ ] = [
+                "login"     => $user->getLogin(),
+                "role"      => $user->role,
+                "email"     => $user->email,
+                "name"      => $user->name,
+                "address"   => $user->address,
+                "telephone" => $user->telephone,
+            ];
+        }
+
+        $this->view->assign("list", $users);
+        $this->view->render("userList.php");
     }
 
     /**
