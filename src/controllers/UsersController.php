@@ -102,7 +102,43 @@ class UsersController extends Controller
      */
     public function delete()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // en ningun caso se permite la eliminacion de usuarios sin estar 
+        // identificado en el sistema
+        if (!isset($this->session->logged) || !$this->session->logged)
+            $this->redirect();
+
+        // se debe proporcionar el login del usuario a eliminar
+        if (!isset($this->request->login))
+            $this->redirect("user");
+        $login = $this->request->login;
+
+        // solo se permite eliminacion del propio usuario o necesidad de 
+        // permisos de administrador
+        if ($this->session->username !== $login && $this->session->userrole !== "admin") {
+            $this->setFlash($this->lang["user"]["delete_err"]);
+            $this->redirect("user");
+        }
+
+        // elimina al usuario, si es posible, y redirecciona acordemente
+        $this->user = new \models\User($login);
+        if ($this->user->delete()) {
+
+            $this->setFlash($this->lang["user"]["delete_ok"]);
+
+            // si el usuario eliminado es el mismo al logeado, debe hacerse 
+            // un logout para evitar problemas, logout() se encarga del 
+            // redireccionamiento a inicio
+            if ($this->session->username === $login)
+                $this->logout();
+
+            // sino, es que era un admin, y lo redirigimos al listado de 
+            // usuarios
+            $this->redirect("user", "list");
+
+        } else {
+            $this->setFlash($this->lang["user"]["delete_err"]);
+            $this->redirect("user");
+        }
     }
 
     /**

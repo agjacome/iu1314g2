@@ -72,7 +72,7 @@ class User extends Model
 
     public function delete()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        return $this->dao->delete(["login" => $this->login]);
     }
 
     public function validate()
