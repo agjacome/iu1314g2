@@ -28,23 +28,25 @@ class User extends Model
 
     public static function findBy($where)
     {
-        // se necesita invocar a DAOFactory porque, al ser static, no sera 
-        // llamado desde una instancia, y por tanto no tendra acceso a 
+        // se necesita invocar a DAOFactory porque, al ser static, no sera
+        // llamado desde una instancia, y por tanto no tendra acceso a
         // $this->dao definido en la superclase abstracta
         $rows = \database\DAOFactory::getDAO("user")->select(["*"], $where);
 
         $found = array();
-        foreach ($rows as $row) {
-            $user = new User($row["login"]);
+        if ($rows !== false) {
+            foreach ($rows as $row) {
+                $user = new User($row["login"]);
 
-            $user->hashedPass = $row["password"];
-            $user->role       = $row["rol"];
-            $user->email      = $row["email"];
-            $user->name       = $row["nombre"];
-            $user->address    = $row["direccion"];
-            $user->telephone  = $row["telefono"];
+                $user->hashedPass = $row["password"];
+                $user->role       = $row["rol"];
+                $user->email      = $row["email"];
+                $user->name       = $row["nombre"];
+                $user->address    = $row["direccion"];
+                $user->telephone  = $row["telefono"];
 
-            $found[] = $user;
+                $found[] = $user;
+            }
         }
 
         return $found;
@@ -60,13 +62,12 @@ class User extends Model
         if (isset($this->address))    $data["direccion"] = $this->address;
         if (isset($this->telephone))  $data["telefono"]  = $this->telephone;
 
-        $count = count($this->dao->select(["login"], ["login" => $this->login]));
+        $count = $this->dao->select(["COUNT(login)"], ["login" => $this->login])[0][0];
 
-        if     ($count === 0) $this->dao->insert($data);
-        elseif ($count === 1) $this->dao->update($data, ["login" => $this->login]);
-        else   return false;
+        if     ($count == 0) return $this->dao->insert($data);
+        elseif ($count == 1) return $this->dao->update($data, ["login" => $this->login]);
 
-        return true;
+        return false;
     }
 
     public function delete()
@@ -76,8 +77,42 @@ class User extends Model
 
     public function validate()
     {
-        // TODO: http://php.net/manual/en/function.filter-var.php
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // login solo permite minusculas, numero, guion y guion bajo
+        if (!filter_var($this->login, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/[a-z0-9\-_]+/"]]))
+            return false;
+
+        // login como minimo 4 caracteres y maximo 20
+        if (strlen($this->login) < 4 || strlen($this->login) > 20)
+            return false;
+
+        // rol debe ser o "usuario" o "admin"
+        if ($this->role !== "usuario" && $this->role !== "admin")
+            return false;
+
+        // email debe ser un email
+        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL))
+            return false;
+
+        // limpia entidades HTML de nombre
+        $this->name = filter_var($this->name, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+
+        // nombre debe tener como minimo 4 caracteres y maximo 255
+        if (strlen($this->name) < 4 || strlen($this->name) > 255)
+            return false;
+
+        // limpia entidades HTML de direccion
+        $this->address = filter_var($this->address, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+
+        // direccion debe tener como minimo 4 caracteres y maximo 255
+        if (strlen($this->address) < 4 || strlen($this->address) > 255)
+            return false;
+
+        // telefono solo permite enteros entre 600000000 y 999999999
+        if (!filter_var($this->telephone, FILTER_VALIDATE_INT,
+                        ["options" => ["min_range" => 600000000, "max_range" => 999999999]]))
+            return false;
+
+        return true;
     }
 
     public function getLogin()
@@ -87,16 +122,26 @@ class User extends Model
 
     public function isNewLogin()
     {
-        return count($this->dao->select(["login"], ["login" => $this->login])) === 0;
+        // cuenta el numero de usuarios con el mismo login y devuelve si existe 
+        // o no alguno (el contador es 0 o no)
+        return $this->dao->select(["COUNT(login)"], ["login" => $this->login])[0][0] == 0;
     }
 
     public function setPassword($cleanPass)
     {
+        // contraseñas deben tener longitud 4 como minimo
+        if (strlen($cleanPass) < 4)
+            return false;
+
+        // se cifra la contraseña recibida con password_hash
         $this->hashedPass = \components\Password::hash($cleanPass, PASSWORD_DEFAULT);
+        return true;
     }
 
     public function checkPassword($cleanPass)
     {
+        // comprueba con password_verify si la contraseña recibida es la misma 
+        // al cifrado almacenado
         return \components\Password::verify($cleanPass, $this->hashedPass);
     }
 

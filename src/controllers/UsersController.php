@@ -5,7 +5,7 @@ namespace controllers;
 /**
  * Controlador de usuarios, se ocupa de gestionar las acciones respecto a los usuarios y su base de datos así como devolver
  * lo que corresponda y redireccionar.
- * 
+ *
  *  @package  controllers;
  */
 
@@ -43,22 +43,50 @@ class UsersController extends Controller
 
         // si POST, realiza el registro y redirige
         if ($this->request->isPost()) {
-            $this->user = new \models\User(strtolower($this->request->login));
-
-            if ($this->user->isNewLogin()) {
-                $this->user->setPassword($this->request->password);
-                $this->user->email = $this->request->email;
-
-                // TODO: validate() antes de save()
-                if ($this->user->save()) {
-                    $this->setFlash($this->lang["user"]["create_ok"]);
-                    $this->redirect("user");
-                }
+            if ($this->createPost()) {
+                $this->setFlash($this->lang["user"]["create_ok"]);
+                $this->redirect("user");
+            } else {
+                $this->setFlash($this->lang["user"]["create_err"]);
+                $this->redirect("user", "create");
             }
-
-            $this->setFlash($this->lang["user"]["create_err"]);
-            $this->redirect("user", "create");
         }
+    }
+
+    private function createPost()
+    {
+        // campos requeridos para registro (todos)
+        $required =
+            isset($this->request->login)          &&
+            isset($this->request->password)       &&
+            isset($this->request->verifyPassword) &&
+            isset($this->request->email)          &&
+            isset($this->request->name)           &&
+            isset($this->request->address)        &&
+            isset($this->request->telephone);
+
+        // comprueba que todos los campos existan y que la contraseña y su
+        // verificacion sean iguales
+        if (!$required || $this->request->password !== $this->request->verifyPassword)
+            return false;
+
+        // comprueba que el login proporcionado sea nuevo
+        $this->user = new \models\User(strtolower($this->request->login));
+        if (!$this->user->isNewLogin())
+            return false;
+
+        // comprueba validez y guarda contraseña cifrada
+        if (!$this->user->setPassword($this->request->password))
+            return false;
+
+        $this->user->role      = "usuario";
+        $this->user->email     = $this->request->email;
+        $this->user->name      = $this->request->name;
+        $this->user->address   = $this->request->address;
+        $this->user->telephone = $this->request->telephone;
+
+        // valida campos y almacena en BD
+        return $this->user->validate() && $this->user->save();
     }
 
     /**
