@@ -55,7 +55,19 @@
 
 		public function save()
 		{
-			//FALTA POR IMPLEMENTAR
+			$data = [ "id" => $this->id ];
+			if(isset($this->product))	$data["product"]	=$this->product;
+			if(isset($this->purchaser))	$data["purchaser"]	=$this->purchaser;
+			if(isset($this->quantily))	$data["quantily"]	=$this->quantily;
+			if(isset($this->payment))	$data["payment"]	=$this->payment;
+			if(isset($this->rating))	$data["rating"]		=$this->rating;
+
+			$count = $this->dao->select(["COUNT(id)"],["id" => $this->id]) [0] [0];
+
+			if	($count == 0) return $this->dao->insert($data);
+			else	($count == 1) return $this->dao->update($data, ["id" => $this->id]);
+
+			return false;
 		}
 
 		public function delete()
