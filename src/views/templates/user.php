@@ -6,13 +6,13 @@ require "sidebar.php";
 ?>
 
         <div>
-            <a href="index.php?action=changeLanguage&lang=es">ES</a> | <a href="index.php?action=changeLanguage&lang=en">EN</a>
-        </div>
-
-        <div>
 <?php if ($logged) { ?>
             <h3><?php print $username; ?></h3>
             <a href="index.php?controller=user&action=logout"><?php print $lang["user"]["logout"]; ?></a>
+            <br>
+            <a href="index.php?controller=user&action=get&login=<?php print $username; ?>"><?php print $lang["user"]["details"]; ?></a>
+            <br>
+            <a href="index.php?controller=user&action=update&login=<?php print $username; ?>"><?php print $lang["user"]["update"]; ?></a>
             <br>
             <a href="index.php?controller=user&action=delete&login=<?php print $username; ?>"><?php print $lang["user"]["delete"]; ?></a>
 <?php if ($userrole === "admin") { ?>
