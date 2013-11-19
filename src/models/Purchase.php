@@ -44,7 +44,7 @@ class Purchase extends Model
         $rows = $this->dao->select(["*"], ["idCompra" => $this->idPurchase]);
         if (!$rows) return false;
 
-        $this->idProduct = $rows[0]["idProducto"];
+        $this->idSale    = $rows[0]["idVenta"];
         $this->login     = $rows[0]["login"];
         $this->quantity  = $rows[0]["cantidad"];
         $this->date      = $rows[0]["fechaCompra"];
@@ -56,8 +56,8 @@ class Purchase extends Model
     public function save()
     {
         $data = [
-            "idProducto" => $this->idProduct,
-            "login"      => $this->login
+            "idVenta" => $this->idSale,
+            "login"   => $this->login
         ];
 
         if (isset($this->quantity))  $data["cantidad" => $this->quantity];
@@ -76,10 +76,10 @@ class Purchase extends Model
 
     public function validate()
     {
-        // TODO: validar que el login existe, validar que el producto existe
-        // (apoyarse en modelos de usuario y producto)
+        // TODO: validar que el login existe, validar que la venta existe
+        // (apoyarse en modelos de usuario y venta)
         // TODO: validar que la cantidad es mayor que 0 y menor o igual al 
-        // stock del producto (apoyarse en modelo de producto)
+        // stock del producto (apoyarse en modelo de venta)
         // TODO: validar que el pago, SI NO NULO (aka pendiente de pago), 
         // existe (apoyarse en modelo de pago)
         trigger_error("Aun no implementado", E_USER_ERROR);
@@ -90,9 +90,9 @@ class Purchase extends Model
         return $this->idPurchase;
     }
 
-    public function getProductId()
+    public function getSaleId()
     {
-        return $this->idProudct;
+        return $this->idSale;
     }
 
     public function getLogin()
