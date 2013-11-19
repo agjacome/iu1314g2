@@ -22,8 +22,7 @@ class HomeController extends Controller
      */
     public function defaultAction()
     {
-        // FIXME: hack temporal para pruebas
-        $this->redirect("user");
+        $this->view->render("home.php");
     }
 
     /**
