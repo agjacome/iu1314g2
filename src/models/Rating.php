@@ -46,6 +46,8 @@ class Rating extends Model
         $this->login      = $rows[0]["login"];
         $this->rating     = $rows[0]["puntuacion"];
         $this->commentary = $rows[0]["comentario"];
+
+        return true;
     }
 
     public function save()
@@ -71,7 +73,7 @@ class Rating extends Model
 
     public function validate()
     {
-        // TODO: validar que el login existe, validar que el producto existe 
+        // TODO: validar que el login existe, validar que el producto existe
         // (apoyarse en modelos de usuario y producto)
         // TODO: validar que la puntuacion esta entre 1 y 5
         // TODO: limpiar comentario para prevencion de XSS
@@ -90,7 +92,7 @@ class Rating extends Model
         return $this->idRating;
     }
 
-    public function getProduct()
+    public function getProductId()
     {
         return $this->idProduct;
     }
