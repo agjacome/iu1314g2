@@ -22,6 +22,8 @@ class FileStoreDAO implements DAO
 
         $xml->formatOutput = true;
         $xml->save($this->filePath);
+
+        $this->insert(["commission" => \components\Configuration::getValue("store_file", "default_commission")]);
     }
 
     public function insert($data)
