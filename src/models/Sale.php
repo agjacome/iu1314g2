@@ -1,86 +1,89 @@
 <?php
-	namespace models;
 
-	class Sale extends Model
-	{
-		private $id;
-		public $product;
-		public $purchaser;
-		public $quantity;
-		public $payment;
-		public $rating;
+namespace models;
 
-		public function __construct()
-		{
-			parent::__construct();
-		}
+class Sale extends Model
+{
 
-		public getId()
-		{
-			return $this->id;
-		}
+    private $idSale;
+    private $idProduct;
+    public  $price;
+    public  $stock;
 
-		public makePayment()
-		{
-			if(!isset($this->payment)) $this->payment=new Payment($price,$payMethod);
-		}
+    public function __construct($idSale = null, $idProduct = null)
+    {
+        parent::__construct();
 
-		public rate()
-		{
-			if(!isset($this->rate)) $this->rate=new Rate($rate,$commentary);
-		}
+        $this->idSale    = $idSale;
+        $this->idProduct = $idProduct;
+        $this->price     = null;
+        $this->stock     = null;
+    }
 
-		public static function findBy($where)
-		{
-			$rows=\database\DAOFactory::getDAO("sale")->select(["*"],$where);
+    public static function findBy($where)
+    {
+        $ids = \database\DAOFactory::getDAO("sale")->select(["idVenta"], $where);
+        if (!$ids) return array();
 
-			$found = array();
-			if ($rows !== false)
-			{
-				foreach (rows as $row)
-				}
-					$sale=new Sale($row["id"]);
+        $found = array();
+        foreach ($ids as $id) {
+            $sale = new Sale($id);
+            if (!$sale->fill()) break;
+            $found[ ] = $sale;
+        }
 
-					$sale->product	=$row["product"];
-					$sale->purchaser=$row["purchaser"];
-					$sale->quantity	=$row["quantity"];
-					$sale->payment	=$row["payment"];
-					$sale->rating	=$row["rating"];
+        return $found;
+    }
 
-					$found[] = $user;
-				}
-			}
-			return $found;
-		}
+    public function fill()
+    {
+        $rows = $this->dao->select(["*"], ["idVenta" => $this->idVenta]);
+        if (!$rows) return false;
 
-		public function save()
-		{
-			$data = [ "id" => $this->id ];
-			if(isset($this->product))	$data["product"]	=$this->product;
-			if(isset($this->purchaser))	$data["purchaser"]	=$this->purchaser;
-			if(isset($this->quantily))	$data["quantily"]	=$this->quantily;
-			if(isset($this->payment))	$data["payment"]	=$this->payment;
-			if(isset($this->rating))	$data["rating"]		=$this->rating;
+        $this->idProduct = $rows[0]["idProducto"];
+        $this->price     = $rows[0]["precio"];
+        $this->stock     = $rows[0]["stock"];
 
-			$count = $this->dao->select(["COUNT(id)"],["id" => $this->id]) [0] [0];
+        return true;
+    }
 
-			if	($count == 0) return $this->dao->insert($data);
-			else	($count == 1) return $this->dao->update($data, ["id" => $this->id]);
+    public function save()
+    {
+        $data = ["idProducto" => $this->idProduct];
 
-			return false;
-		}
+        if (isset($this->price)) $data["precio"] = $this->price;
+        if (isset($this->stock)) $data["stock"]  = $this->stock;
 
-		public function delete()
-		{
-			$this->dao->delete(["id => $this->id]);
-		}
+        if (isset($this->idSale))
+            return $this->dao->update($data, ["idVenta" => $this->idSale]);
+        else
+            return $this->dao->insert($data);
+    }
 
-		public function validate()
-		{
-			//quantily tiene que estar entre 1 y el stock disponible
-			if(!filter_var($this->quantily, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1, "max_range" => $this->product->stock]]))
-			return false;
-		}
-	}
+    public function delete()
+    {
+        return $this->dao->delete(["idVenta" => $this->idSale]);
+    }
+
+    public function validate()
+    {
+        // TODO: validar que el producto existe (apoyarse en modelo de 
+        // productos)
+        // TODO: validar que el precio sea superior a 0.0
+        // TODO: validar que el stock sea superior a 0
+        trigger_error("Aun no implementado", E_USER_ERROR);
+    }
+
+    public function getId()
+    {
+        return $this->idSale;
+    }
+
+    public function getProductId()
+    {
+        return $this->idProduct;
+    }
+
+}
 
 ?>
