@@ -172,13 +172,15 @@ class UsersController extends Controller
             $this->redirect("user");
         }
 
+        $this->user = $users[0];
+
         // se le pasan los datos del usuario a la vista
-        $this->view->assign("login"     , $users[0]->getLogin());
-        $this->view->assign("role"      , $users[0]->role);
-        $this->view->assign("email"     , $users[0]->email);
-        $this->view->assign("name"      , $users[0]->name);
-        $this->view->assign("address"   , $users[0]->address);
-        $this->view->assign("telephone" , $users[0]->telephone);
+        $this->view->assign("login"     , $this->user->getLogin());
+        $this->view->assign("role"      , $this->user->role);
+        $this->view->assign("email"     , $this->user->email);
+        $this->view->assign("name"      , $this->user->name);
+        $this->view->assign("address"   , $this->user->address);
+        $this->view->assign("telephone" , $this->user->telephone);
         $this->view->render("getUser.php");
     }
 
