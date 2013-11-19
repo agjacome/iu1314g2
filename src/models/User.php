@@ -31,25 +31,36 @@ class User extends Model
         // se necesita invocar a DAOFactory porque, al ser static, no sera
         // llamado desde una instancia, y por tanto no tendra acceso a
         // $this->dao definido en la superclase abstracta
-        $rows = \database\DAOFactory::getDAO("user")->select(["*"], $where);
+        // se recogen todos los logins que cumplan la condicion
+        $logins = \database\DAOFactory::getDAO("user")->select(["login"], $where);
+        if (!$logins) return array();
 
+        // para cada login obtenido, se crea y rellenan datos de un objeto 
+        // User, metiendolo dentro del array $found
         $found = array();
-        if ($rows !== false) {
-            foreach ($rows as $row) {
-                $user = new User($row["login"]);
-
-                $user->hashedPass = $row["password"];
-                $user->role       = $row["rol"];
-                $user->email      = $row["email"];
-                $user->name       = $row["nombre"];
-                $user->address    = $row["direccion"];
-                $user->telephone  = $row["telefono"];
-
-                $found[] = $user;
-            }
+        foreach ($logins as $login) {
+            $user = new User($login["login"]);
+            if (!$user->fill()) break;
+            $found[] = $user;
         }
 
+        // y finalmente se retorna el array
         return $found;
+    }
+
+    public function fill()
+    {
+        $rows = $this->dao->select(["*"], ["login" => $this->login]);
+        if (!$rows) return false;
+
+        $this->hashedPass = $rows[0]["password"];
+        $this->role       = $rows[0]["rol"];
+        $this->email      = $rows[0]["email"];
+        $this->name       = $rows[0]["nombre"];
+        $this->address    = $rows[0]["direccion"];
+        $this->telephone  = $rows[0]["telefono"];
+
+        return true;
     }
 
     public function save()

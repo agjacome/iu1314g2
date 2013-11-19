@@ -94,7 +94,84 @@ class UsersController extends Controller
      */
     public function update()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // en ningun caso se permite la modificacion de usuarios sin estar 
+        // identificado en el sistema
+        if (!isset($this->session->logged) || !$this->session->logged)
+            $this->redirect();
+
+        // se debe proporcionar el login del usuario a modificar
+        if (!isset($this->request->login))
+            $this->redirect("user");
+
+        // el usuario a modificar debe existir previamente en la base de datos
+        $this->user = new \models\User(strtolower($this->request->login));
+        if ($this->user->isNewLogin()) {
+            $this->setFlash($this->lang["user"]["update_err"]);
+            $this->redirect("user");
+        }
+        $this->user->fill();
+
+        // solo se permite modificacion del propio usuario o necesidad de 
+        // permisos de administrador
+        if ($this->session->username !== $this->request->login && $this->session->userrole !== "admin") {
+            $this->setFlash($this->lang["user"]["update_err"]);
+            $this->redirect("user");
+        }
+
+        // si GET, redirige al formulario de modificacion
+        if ($this->request->isGet()) {
+            $this->view->assign("login"     , $this->user->getLogin());
+            $this->view->assign("role"      , $this->user->role);
+            $this->view->assign("email"     , $this->user->email);
+            $this->view->assign("name"      , $this->user->name);
+            $this->view->assign("address"   , $this->user->address);
+            $this->view->assign("telephone" , $this->user->telephone);
+
+            $this->view->render("updateUser.php");
+        }
+
+        // si POST, realiza la modificacion y redirige
+        if ($this->request->isPost()) {
+            if ($this->updatePost()) {
+                $this->setFlash($this->lang["user"]["update_ok"]);
+                $this->redirect("user");
+            } else {
+                // $this->setFlash($this->lang["user"]["update_err"]);
+                // $this->redirect("user", "update");
+            }
+        }
+    }
+
+    private function updatePost()
+    {
+        // comprueba  que la contraseña y su verificacion sean iguales
+        if (!empty($this->request->password) && ($this->request->password !== $this->request->verifyPassword))
+            return false;
+
+        // comprueba validez y guarda contraseña cifrada
+        if (!empty($this->request->password) && !$this->user->setPassword($this->request->password))
+            return false;
+
+        // solo se puede cambiar rol si el usuario loggeado es administrador
+        if (!empty($this->request->role) && $this->session->userrole === "admin")
+            $this->user->role = $this->request->role;
+
+        // para cada uno de los campos, si se ha proporcionado, actualiza los 
+        // datos en $this->user
+        if (!empty($this->request->email))
+            $this->user->email = $this->request->email;
+
+        if (!empty($this->request->name))
+            $this->user->name = $this->request->name;
+
+        if (!empty($this->request->address))
+            $this->user->address = $this->request->address;
+
+        if (!empty($this->request->telephone))
+            $this->user->telephone = $this->request->telephone;
+
+        // valida campos y almacena en BD
+        return $this->user->validate() && $this->user->save();
     }
 
     /**
@@ -120,7 +197,7 @@ class UsersController extends Controller
         }
 
         // elimina al usuario, si es posible, y redirecciona acordemente
-        $this->user = new \models\User($login);
+        $this->user = new \models\User(strtolower($login));
         if ($this->user->delete()) {
 
             $this->setFlash($this->lang["user"]["delete_ok"]);
@@ -154,27 +231,24 @@ class UsersController extends Controller
         // se debe proporcionar el login del usuario a consultar
         if (!isset($this->request->login))
             $this->redirect("user");
-        $login = $this->request->login;
-
-        // solo se permite la consulta de datos al propio usuario a un usuario 
-        // con permisos de administrador
-        if ($this->session->username !== $login && $this->session->userrole !== "admin") {
-            $this->setFlash($this->lang["user"]["get_err"]);
-            $this->redirect("user");
-        }
-
-        $users = \models\User::findBy(["login" => $login]);
 
         // si no se encuentra un usuario con el login proporcionado, 
         // redirecciona mostrando el error
-        if (count($users) === 0) {
+        $this->user = new \models\User(strtolower($this->request->login));
+        if ($this->user->isNewLogin()) {
             $this->setFlash($this->lang["user"]["get_err"]);
             $this->redirect("user");
         }
 
-        $this->user = $users[0];
+        // solo se permite la consulta de datos al propio usuario a un usuario 
+        // con permisos de administrador
+        if ($this->session->username !== $this->request->login && $this->session->userrole !== "admin") {
+            $this->setFlash($this->lang["user"]["get_err"]);
+            $this->redirect("user");
+        }
 
         // se le pasan los datos del usuario a la vista
+        $this->user->fill();
         $this->view->assign("login"     , $this->user->getLogin());
         $this->view->assign("role"      , $this->user->role);
         $this->view->assign("email"     , $this->user->email);
@@ -223,11 +297,11 @@ class UsersController extends Controller
 
         // si POST, realiza identificacion y redirige adecuadamente
         if ($this->request->isPost()) {
-            $users = \models\User::findBy(["login" => strtolower($this->request->login)]);
+            $this->user = new \models\User(strtolower($this->request->login));
 
             // solo hay un usuario con el login
-            if (count($users) === 1) {
-                $this->user = $users[0];
+            if (!$this->user->isNewLogin) {
+                $this->user->fill();
 
                 // si contraseña correcta, identifica al usuario
                 if ($this->user->checkPassword($this->request->password)) {
