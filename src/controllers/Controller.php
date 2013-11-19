@@ -56,6 +56,16 @@ abstract class Controller
         exit();
     }
 
+    public function isLoggedIn()
+    {
+        return isset($this->session->logged) && $this->session->logged;
+    }
+
+    public function isAdmin()
+    {
+        return $this->isLoggedIn() && $this->session->userrole === "admin";
+    }
+
     /**
      * Función no definida que se ejecutaría en caso de existir un parámetro "action=..." en la petición
      * cuyo método no existe.

@@ -34,7 +34,7 @@ class UsersController extends Controller
     public function create()
     {
         // si ya esta loggeado y no es admin, no se permite acceso a registro
-        if (isset($this->session->logged) && $this->session->logged && $this->session->userrole !== "admin")
+        if ($this->isLoggedIn() && !$this->isAdmin())
             $this->redirect("user");
 
         // si GET, redirige al formulario de registro
@@ -96,7 +96,7 @@ class UsersController extends Controller
     {
         // en ningun caso se permite la modificacion de usuarios sin estar 
         // identificado en el sistema
-        if (!isset($this->session->logged) || !$this->session->logged)
+        if (!$this->isLoggedIn())
             $this->redirect();
 
         // se debe proporcionar el login del usuario a modificar
@@ -113,7 +113,7 @@ class UsersController extends Controller
 
         // solo se permite modificacion del propio usuario o necesidad de 
         // permisos de administrador
-        if ($this->session->username !== $this->request->login && $this->session->userrole !== "admin") {
+        if ($this->session->username !== $this->request->login && !$this->isAdmin()) {
             $this->setFlash($this->lang["user"]["update_err"]);
             $this->redirect("user");
         }
@@ -153,7 +153,7 @@ class UsersController extends Controller
             return false;
 
         // solo se puede cambiar rol si el usuario loggeado es administrador
-        if (!empty($this->request->role) && $this->session->userrole === "admin")
+        if (!empty($this->request->role) && $this->isAdmin())
             $this->user->role = $this->request->role;
 
         // para cada uno de los campos, si se ha proporcionado, actualiza los 
@@ -181,7 +181,7 @@ class UsersController extends Controller
     {
         // en ningun caso se permite la eliminacion de usuarios sin estar 
         // identificado en el sistema
-        if (!isset($this->session->logged) || !$this->session->logged)
+        if (!$this->isLoggedIn())
             $this->redirect();
 
         // se debe proporcionar el login del usuario a eliminar
@@ -191,7 +191,7 @@ class UsersController extends Controller
 
         // solo se permite eliminacion del propio usuario o necesidad de 
         // permisos de administrador
-        if ($this->session->username !== $login && $this->session->userrole !== "admin") {
+        if ($this->session->username !== $login && !$this->isAdmin()) {
             $this->setFlash($this->lang["user"]["delete_err"]);
             $this->redirect("user");
         }
@@ -225,7 +225,7 @@ class UsersController extends Controller
     {
         // en ningun caso se permite la consulta de datos de usuario a un 
         // usuario no identificado en el sistema
-        if (!isset($this->session->logged) || !$this->session->logged)
+        if (!$this->isLoggedIn())
             $this->redirect();
 
         // se debe proporcionar el login del usuario a consultar
@@ -242,7 +242,7 @@ class UsersController extends Controller
 
         // solo se permite la consulta de datos al propio usuario a un usuario 
         // con permisos de administrador
-        if ($this->session->username !== $this->request->login && $this->session->userrole !== "admin") {
+        if ($this->session->username !== $this->request->login && !$this->isAdmin()) {
             $this->setFlash($this->lang["user"]["get_err"]);
             $this->redirect("user");
         }
@@ -264,7 +264,7 @@ class UsersController extends Controller
     public function listing()
     {
         // solo permite mostrar listado de usuarios al administrador
-        if (!isset($this->session->logged) || !$this->session->logged || $this->session->userrole !== "admin")
+        if (!$this->isAdmin())
             $this->redirect();
 
         $list = \models\User::findBy(null);
@@ -288,7 +288,7 @@ class UsersController extends Controller
     public function login()
     {
         // redirige si usuario ya identificado
-        if (isset($this->session->logged) && $this->session->logged)
+        if ($this->isLoggedIn())
             $this->redirect("user");
 
         // si GET, muestra formulario de login
@@ -327,7 +327,7 @@ class UsersController extends Controller
      */
     public function logout()
     {
-        if (isset($this->session->logged) && $this->session->logged) {
+        if ($this->isLoggedIn()) {
             $this->session->logged   = false;
             $this->session->username = null;
             $this->session->userrole = null;
