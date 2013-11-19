@@ -1,87 +1,105 @@
 <?php
-	namespace models;
 
-	class Product extends Model
-	{
-		private $id;
-		public $name;
-		public $description;
-		public $owner;
-		public $stock;
-		public $type;
+namespace models;
 
-		public function __construct()
-		{
-			parent::__construct();
-		}
+class Product extends Model
+{
+    private $idProduct;
+    private $owner;
+    public  $state;
+    public  $name;
+    public  $description;
 
-		public function getId()
-		{
-			return $this->id;
-		}
+    public function __construct($idProduct = null, $owner = null)
+    {
+        parent::__construct();
 
-		public static function findby($where)
-		{
-			$rows = \database\DAOFactory::getDAO("product")->select(["*"], $where);
+        $this->idProduct =   $idProduct;
+        $this->owner       = $owner;
+        $this->state       = null;
+        $this->name        = null;
+        $this->description = null;
+    }
 
-			$found=array();
-			if($rows !== false)
-			{
-				foreach($rows as $row)
-				{
-					$product=new Product($row["id"]);
+    public static function findby($where)
+    {
+        $ids = \database\DAOFactory::getDAO("product")->select(["idProducto"], $where);
+        if (!$ids) return array();
 
-					$product->name	=$row["name"];
-					$product->description	=row["description"];
-					$product->owner	=$row["owner"];
-					$product->stock	=$row["stock"];
-					$product->type	=$row["type"];
+        $found = array();
+        foreach ($ids as $id) {
+            $product = new Product($id);
+            if (!$product->fill()) break;
+            $found[ ] = $product;
+        }
 
-					$found[]=$product;
-				}
-			}
-			return $found;
-		}
+        return $found;
+    }
 
-		public function save()
-		{
-			$data = ["id" => $this->login];
-			if(isset($this->name))	$data["name"]	=$this->name;
-			if(isset($this->description))	$data["description"]	=$this->description;
-			if(isset($this->owner))	$data["owner"]	=$this->owner;
-			if(isset($this->stock))	$data["stock"]	=$this->stock;
-			if(isset($this->type))	$data["type"]	=$this->type;
+    public function fill()
+    {
+        $rows = $this->dao->select(["*"], ["idProducto" => $this->id->idProduct]);
+        if (!$rows) return false;
 
-			$count = $this->dao->select(["COUNT(id)"],["id" => $this->id]) [0] [0];
+        $this->owner       = $rows[0]["propietario"];
+        $this->state       = $rows[0]["estado"];
+        $this->name        = $rows[0]["nombre"];
+        $this->description = $rows[0]["descripcion"];
 
-			if	($count == 0) return $this->dao->insert($data);
-			else	($count == 1) return $this->dao->update($data, ["id"=>$this->id]);
+        return true;
+    }
 
-			return false;
-		}
+    public function save()
+    {
+        $data = [
+            "propietario" => $this->owner,
+            "estado"      => $this->state,
+            "nombre"      => $this->name
+        ];
 
-		public function delete()
-		{
-			$this->dao->delete(["id"=>$this->id[);
-		}
+        if (isset($this->description)) $data["descripcion"] = $this->description;
 
-		public function validate()
-		{
-			//name puede tener letras, números y guiones
-			if(!filter_var($this->name, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/[a-zA-Z0-9\-]+/"]]))
-				return false;
+        if (isset($this->idProduct))
+            return $this->dao->update($data, ["idProducto" => $this->idProduct]);
+        else
+            return $this->dao->insert($data);
+    }
 
-			//descripcion puede tener letras, numeros, guiones y guiones bajos
-			if(!filter_var($this->description, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/[a-zA-Z0-9\-_]+/"]]))
-				return false;
+    public function delete()
+    {
+        return $this->dao->delete(["idProducto" => $this->idProduct]);
+    }
 
-			//stock debe ser como mínimo=1
-			if(!filter_var($this->stock, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1]])) 
-				return false;
+    public function validate()
+    {
+        // name solo puede tener letras, números y guiones
+        if(!filter_var($this->name, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/[a-zA-Z0-9\-]+/"]]))
+            return false;
 
-			//type  puede contener sólo letras
-			if(!filter_var($this->type, FILTERVALIDATE_REGEXP, ["options" => "/[a-zA-Z]/"]]))
-				return false;
-		}
-	}
+        // FIXME: descripcion puede tener cualquier caracter, pero debe ser 
+        // limpiada contra ataques XSS (ver FILTER_SANITIZE_STRING)
+        //descripcion puede tener letras, numeros, guiones y guiones bajos
+        if(!filter_var($this->description, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/[a-zA-Z0-9\-_]+/"]]))
+            return false;
+
+        // TODO: nombre debe tener como minimo 4 caracteres y como maximo 255
+        // TODO: estado debe ser "pendiente", "subasta" o "venta" 
+        // exclusivamente
+        // TODO: propietario debe existir (apoyarse en modelo usuario para 
+        // comprobacion)
+        trigger_error("Aun no implementado", E_USER_ERROR);
+    }
+
+    public function getId()
+    {
+        return $this->idProduct;
+    }
+
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+}
+
 ?>
