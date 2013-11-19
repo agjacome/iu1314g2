@@ -30,6 +30,10 @@ abstract class Model
     public static abstract function findBy($where);
 
     /**
+     */
+    public abstract function fill();
+
+    /**
      * Interactúa con la base de datos para almacenar objetos.
      */
     public abstract function save();
@@ -39,6 +43,8 @@ abstract class Model
      */
     public abstract function delete();
 
+    /**
+     */
     public abstract function validate();
 
 }
