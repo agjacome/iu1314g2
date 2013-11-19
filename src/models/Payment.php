@@ -57,8 +57,8 @@ class Payment extends Model
             "comision"   => $this->commission
         ];
 
-        if (isset($this->creditCard)) $data["numTarjeta"   => $this->creditCard]);
-        if (isset($this->paypal))     $data["cuentaPaypal" => $this->paypal]);
+        if (isset($this->creditCard)) $data["numTarjeta"]   = $this->creditCard;
+        if (isset($this->paypal))     $data["cuentaPaypal"] = $this->paypal;
 
         if (isset($this->idPayment))
             return $this->dao->update($data, ["idPago" => $this->idPayment]);

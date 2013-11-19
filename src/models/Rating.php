@@ -57,8 +57,8 @@ class Rating extends Model
             "login"      => $this->login
         ];
 
-        if (isset($this->rating))    $data["puntuacion"     => $this->rating];
-        if (isset($this->commentary) $data["comentario"     => $this->commentary];
+        if (isset($this->rating))    $data["puntuacion"] = $this->rating;
+        if (isset($this->commentary) $data["comentario"] = $this->commentary;
 
         if (isset($this->idRating))
             return $this->dao->update($data, ["idCalificacion" => $this->idRating]);

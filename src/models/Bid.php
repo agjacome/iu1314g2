@@ -60,8 +60,8 @@ class Bid extends Model
             "login"     => $this->login,
         ];
 
-        if (isset($this->quantity))  $data["cantidadPuja" => $this->quantity];
-        if (isset($this->idPayment)) $data["idPago" => $this->idPayment];
+        if (isset($this->quantity))  $data["cantidadPuja"] = $this->quantity;
+        if (isset($this->idPayment)) $data["idPago"] = $this->idPayment;
 
         if (isset($this->idBid))
             return $this->dao->update($data, ["idPuja" => $this->idBid]);

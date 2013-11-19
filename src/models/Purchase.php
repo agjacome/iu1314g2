@@ -60,8 +60,8 @@ class Purchase extends Model
             "login"   => $this->login
         ];
 
-        if (isset($this->quantity))  $data["cantidad" => $this->quantity];
-        if (isset($this->idPayment)) $data["idPago" => $this->idPago];
+        if (isset($this->quantity))  $data["cantidad"] = $this->quantity;
+        if (isset($this->idPayment)) $data["idPago"]   = $this->idPago;
 
         if (isset($this->idPurchase))
             return $this->dao->update($data, ["idCompra" => $this->idPurchase]);
