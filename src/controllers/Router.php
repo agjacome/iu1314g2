@@ -31,8 +31,9 @@ class Router
             $controller = new $controller($request);
             $controller->$action();
         } else {
-            // FIXME: hack temporal, deberia invocarse a una vista
-            print "Pagina no encontrada.";
+            header("HTTP/1.1 404 Not Found");
+            include_once(__DIR__ . "/../assets/static/404.html");
+            exit();
         }
     }
 
