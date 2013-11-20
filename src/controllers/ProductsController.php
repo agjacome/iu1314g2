@@ -223,12 +223,34 @@ class ProductsController extends Controller
             $this->redirect("product");
         }
 
+        // se calcula la media de puntuaciones del producto y se almacenan los 
+        // comentarios y puntuaciones en un array para pasarselo a la vista
+        $ratings = \models\Rating::findBy(["idProducto" => $this->product->getId()]);
+
+        $rateAvg  = 0.0; $comments = array();
+        foreach ($ratings as $rating) {
+            $rateAvg += intval($rating->rating);
+            $comments[ ] = [
+                "login"   => $rating->getLogin(),
+                "comment" => $rating->commentary,
+                "rating"  => $rating->rating
+            ];
+        }
+        $rateAvg /= count($ratings);
+
+
         // se le pasan los datos del producto a la vista
-        $this->view->assign("id"    , $this->product->getId());
-        $this->view->assign("owner" , $this->product->getOwner());
-        $this->view->assign("state" , $this->product->state);
-        $this->view->assign("name"  , $this->product->name);
-        $this->view->assign("descr" , $this->product->description);
+        $this->view->assign("id"       , $this->product->getId());
+        $this->view->assign("owner"    , $this->product->getOwner());
+        $this->view->assign("state"    , $this->product->state);
+        $this->view->assign("name"     , $this->product->name);
+        $this->view->assign("descr"    , $this->product->description);
+        $this->view->assign("rate"     , $rateAvg);
+        $this->view->assign("comments" , $comments);
+
+
+
+        // se renderiza la vista
         $this->view->render("product_get");
     }
 
@@ -326,6 +348,65 @@ class ProductsController extends Controller
 
         $this->view->assign("list", $products);
         $this->view->render("product_list");
+    }
+
+    /**
+     * Califica un producto dado. Solo se permitira calificar productos a 
+     * usuarios identificados en el sistema, y por cada usuario se permitira 
+     * una sola calificacion a un producto.
+     */
+    public function rate()
+    {
+        // solo se permite puntuar/comentar a usuarios identificados en el 
+        // sistema
+        if (!$this->isLoggedIn())
+            $this->redirect("product");
+
+        // debe recibirse el identificador del producto
+        if (!isset($this->request->prod)) {
+            $this->setFlash($this->lang["product"]["rate_err"]);
+            $this->redirect("product");
+        }
+
+        // comprueba que el usuario no haya puntuado todavia el producto
+        $rating = new \models\Rating(null, $this->request->prod, $this->session->username);
+        if (!$rating->isNewRating()) {
+            $this->setFlash($this->lang["product"]["rate_err"]);
+            $this->redirect("product");
+        }
+
+        // si es GET, muestra formulario de puntuacion
+        if ($this->request->isGet())
+            $this->view->render("product_rate");
+
+        // si es POST, almacena la puntuacion y redirige
+        if ($this->request->isPost()) {
+            if ($this->ratePost()) {
+                $this->setFlash($this->lang["product"]["rate_ok"]);
+                $this->redirect("product");
+            } else {
+                $this->setFlash($this->lang["product"]["rate_err"]);
+                $this->redirect("product", "rate");
+            }
+        }
+    }
+
+    /**
+     * Metodo privado interno para el manejo de la peticion POST en rate()
+     */
+    private function ratePost()
+    {
+        // comprueba que se hayan recibido los datos necesarios
+        if (!isset($this->request->rating) || !isset($this->request->comment))
+            return false;
+
+        // crea modelo con datos proporcionados
+        $rating = new \models\Rating(null, $this->request->prod, $this->session->username);
+        $rating->rating     = $this->request->rating;
+        $rating->commentary = $this->request->comment;
+
+        // valida y almacena en la BD
+        return $rating->validate() && $rating->save();
     }
 
 }

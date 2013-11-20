@@ -53,6 +53,7 @@ class View
 
         // envia el contenido almacenado en el buffer de output
         print ob_get_clean();
+        exit();
     }
 
     /**
