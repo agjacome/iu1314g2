@@ -180,7 +180,44 @@ class SalesController extends Controller
      */
     public function delete()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // en ningun caso se permite la eliminacion de ventas sin estar 
+        // identificado en el sistema
+        if (!$this->isLoggedIn())
+            $this->redirect("user", "login");
+
+        // se debe proporcionar el identificador de la venta a eliminar
+        if (!isset($this->request->id))
+            $this->redirect("sale");
+
+        // comprueba si existe la venta y producto asociado al id dado
+        $this->sale = new \models\Sale($this->request->id);
+        if (!$this->sale->fill()) {
+            $this->setFlash($this->lang["sale"]["delete_err"]);
+            $this->redirect("sale");
+        }
+        $this->product = new \models\Product($this->sale->getProductId());
+        if (!$this->product->fill()) {
+            $this->setFlash($this->lang["sale"]["delete_err"]);
+            $this->redirect("sale");
+        }
+
+        // solo el propietario del producto en venta y/o un administrador 
+        // podran eliminar la venta
+        if ($this->product->getOwner() !== $this->session->username && !$this->isAdmin()) {
+            $this->setFlash($this->lang["sale"]["delete_err"]);
+            $this->redirect("sale");
+        }
+
+        // elimina la venta, si es posible, actualizando el estado del producto 
+        // de nuevo a "pendiente" y redirecciona acordemente
+        $this->product->state = "pendiente";
+        if ($this->product->validate() && $this->product->save() && $this->sale->delete()) {
+            $this->setFlash($this->lang["sale"]["delete_ok"]);
+            $this->redirect("sale");
+        } else {
+            $this->setFlash($this->lang["sale"]["delete_err"]);
+            $this->redirect("sale");
+        }
     }
 
     /**
@@ -195,15 +232,6 @@ class SalesController extends Controller
      * Proporciona un listado de todos los productos en venta en el sistema.
      */
     public function listing()
-    {
-        trigger_error("Aun no implementado", E_USER_ERROR);
-    }
-
-    /**
-     * Proporciona un listado de todos los productos en venta por parte del 
-     * usuario identificado o un usuario dado si invocado por administrador.
-     */
-    public function owned()
     {
         trigger_error("Aun no implementado", E_USER_ERROR);
     }
