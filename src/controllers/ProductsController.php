@@ -179,7 +179,7 @@ class ProductsController extends Controller
 
         // solo el propietario del producto o un administrador podran
         // eliminarlo
-        if ($this->product->owner !== $this->session->username && !$this->isAdmin()) {
+        if ($this->product->getOwner() !== $this->session->username && !$this->isAdmin()) {
             $this->setFlash($this->lang["product"]["delete_err"]);
             $this->redirect("product");
         }
@@ -187,7 +187,7 @@ class ProductsController extends Controller
         // el propietario solo puede eliminar el producto si esta en estado
         // pendiente (no hay subastas ni ventas activas), al administrador se
         // le permiten estas salvajadas sin problemas
-        if ($this->product->owner === $this->session->username && $this->product->state !== "pendiente") {
+        if ($this->product->getOwner() === $this->session->username && $this->product->state !== "pendiente") {
             $this->setFlash($this->lang["product"]["delete_err"]);
             $this->redirect("product");
         }
