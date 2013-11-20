@@ -292,15 +292,93 @@ class SalesController extends Controller
      */
     public function purchase()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // solo se permite comprar a usuarios identificados
+        if (!$this->isLoggedIn())
+            $this->redirect("user", "login");
+
+        // debe recibirse el identificador de la venta
+        if (!isset($this->request->sale)) {
+            $this->setFlash($this->lang["sale"]["purchase_err"]);
+            $this->redirect("sale");
+        }
+
+        // comprueba que la venta y el producto asociado existan
+        $this->sale = new \models\Sale($this->request->sale);
+        if (!$this->sale->fill()) {
+            $this->setFlash($this->lang["sale"]["purchase_err"]);
+            $this->redirect("sale");
+        }
+        $this->product = new \models\Product($this->sale->getProductId());
+        if (!$this->product->fill()) {
+            $this->setFlash($this->lang["sale"]["purchase_err"]);
+            $this->redirect("sale");
+        }
+
+        // si GET, muestra formulario de compra, que recibe los datos del 
+        // producto y la venta
+        if ($this->request->isGet()) {
+            $this->view->assign("product" , $this->product);
+            $this->view->assign("sale"    , $this->sale);
+            $this->view->render("sale_purchase");
+        }
+
+        // si POST, realiza la compra y pago asociado
+        if ($this->request->isPost()) {
+            if ($this->purchasePost()) {
+                $this->setFlash($this->lang["sale"]["purchase_ok"]);
+                $this->redirect("sale");
+            } else {
+                $this->setFlash($this->lang["sale"]["purchase_err"]);
+                $this->redirect("sale");
+            }
+        }
     }
 
     /**
-     * Metodo privado para manejar el pago de compras.
+     * Metodo privado para el manejo de la peticion POST en purchase()
      */
-    private function pay()
+    private function purchasePost()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // comprueba que todos los datos necesarios hayan sido recibidos
+        $required = isset($this->request->quantity) && isset($this->request->payMethod);
+        if (!$required) return false;
+
+        // crea la compra y el pago
+        $purchase = new \models\Purchase(null, $this->request->sale, $this->session->username);
+        $payment  = new \models\Payment();
+
+        // segun el metodo de pago elegido, o la cuenta de paypal o la tarjeta 
+        // de credito deben haberse proporcionado
+        $payment->payMethod = $this->request->payMethod;
+        if ($payment->payMethod === "paypal") {
+            if (!$this->request->paypal) return false;
+            $payment->paypal = $this->request->paypal;
+        } elseif ($payment->payMethod === "creditCard") {
+            if (!$this->request->creditCard) return false;
+            $payment->creditCard = $this->request->creditCard;
+        } else { // metodo de pago desconocido
+            return false;
+        }
+
+        // obtiene la comision actual que recibe la tienda de toda transaccion 
+        // y la almacena en el pago
+        $payment->commission = (new \models\Store())->commission;
+
+        // valida y almacena el pago
+        if (!$payment->validate() || !$payment->save()) return false;
+
+        // recupera el identificador del pago (creado automaticamente por la 
+        // BD), ultimo en el orden de IDs para dicha venta y login
+        // FUTURE TODO: esto es FEO!, deberia recuperarse automaticamente por 
+        // el modelo despues de hacer un save()
+        $payment = end(\models\Payment::findBy(["idVenta" => $this->request->sale, "login" => $this->session->username]));
+
+        // almacena los datos de la compra en el modelo de compra
+        $purchase->quantity  = $this->request->quantity;
+        $purchase->idPaymend = $payment->getId();
+
+        // valida y guarda los datos de la compra en la BD
+        return $purchase->validate() && $purchase->save();
     }
 
 }
