@@ -36,6 +36,40 @@ class Product extends Model
         return $found;
     }
 
+    public static function findByName($name)
+    {
+        $ids = \database\DAOFactory::getDAO("product")->query(
+            "SELECT idProducto FROM PRODUCTO WHERE nombre LIKE ?",
+            "%" . $name . "%");
+        if (!$ids) return array();
+
+        $found = array();
+        foreach ($ids as $id) {
+            $product = new Product($id);
+            if (!$product->fill()) break;
+            $found[ ] = $product;
+        }
+
+        return $found;
+    }
+
+    public static function findByStateAvailable()
+    {
+        $ids = \database\DAOFactory::getDAO("product")->query(
+            "SELECT idProducto FROM PRODUCTO WHERE estado != ?",
+            "pendiente");
+        if (!$ids) return array();
+
+        $found = array();
+        foreach ($ids as $id) {
+            $product = new Product($id);
+            if (!$product->fill()) break;
+            $found[ ] = $product;
+        }
+
+        return $found;
+    }
+
     public function fill()
     {
         $rows = $this->dao->select(["*"], ["idProducto" => $this->id->idProduct]);

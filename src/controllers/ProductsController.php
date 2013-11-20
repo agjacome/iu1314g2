@@ -119,11 +119,7 @@ class ProductsController extends Controller
         // si GET, redirige al formulario de modificacion, que recibe todos los
         // datos actuales del producto
         if ($this->request->isGet()) {
-            $this->view->assign("owner" , $this->product->owner);
-            $this->view->assign("state" , $this->product->state);
-            $this->view->assign("name"  , $this->product->name);
-            $this->view->assign("descr" , $this->product->description);
-
+            $this->view->assign("product", $this->product);
             $this->view->render("product_update");
         }
 
@@ -239,18 +235,10 @@ class ProductsController extends Controller
         $rateAvg /= count($ratings);
 
 
-        // se le pasan los datos del producto a la vista
-        $this->view->assign("id"       , $this->product->getId());
-        $this->view->assign("owner"    , $this->product->getOwner());
-        $this->view->assign("state"    , $this->product->state);
-        $this->view->assign("name"     , $this->product->name);
-        $this->view->assign("descr"    , $this->product->description);
-        $this->view->assign("rate"     , $rateAvg);
-        $this->view->assign("comments" , $comments);
-
-
-
-        // se renderiza la vista
+        // se le pasan los datos del producto a la vista y se renderiza
+        $this->view->assign("product" , $this->product);
+        $this->view->assign("rateAvg" , $rateAvg);
+        $this->view->assign("ratings" , $ratings);
         $this->view->render("product_get");
     }
 
@@ -265,19 +253,9 @@ class ProductsController extends Controller
         if (!$this->isAdmin())
             $this->redirect("product", "available");
 
-        $list = \models\Product::findBy(null);
+        $products = \models\Product::findBy(null);
 
-        // el listado muestra ID, propietario, estado y nombre del producto
-        $products = array();
-        foreach ($list as $product) {
-            $products[ ] = [
-                "id"    => $product->getId(),
-                "owner" => $product->getOwner(),
-                "state" => $product->state,
-                "name"  => $product->name
-            ];
-        }
-
+        // se le pasa el listado a la vista y se renderiza
         $this->view->assign("list", $products);
         $this->view->render("product_list");
     }
@@ -288,36 +266,7 @@ class ProductsController extends Controller
      */
     public function available()
     {
-        // FIXME: implementacion FEA e ineficiente, crear en modelo de producto 
-        // un metodo para obtener todos a traves de un dao->query("SELECT * 
-        // FROM PRODUCTO WHERE estado = 'subasta' OR estado = 'venta') e 
-        // invocarlo desde aqui, en lugar de hacer dos consultas a findBy
-        // El problema viene derivado de que SQLDAO, en su select() solo hace 
-        // ANDs, y nunca ORs, pero para este tipo de casos es para los que se 
-        // proporcina el query() para consultas arbitrarias.
-        $products = array();
-
-        // introduce en el array de productos los productos en subasta
-        $list = \models\Product::findBy(["estado" => "subasta"]);
-        foreach ($list as $product) {
-            $products[ ] = [
-                "id"    => $product->getId(),
-                "owner" => $product->getOwner(),
-                "state" => $product->state,
-                "name"  => $product->name
-            ];
-        }
-
-        // introduce en el array de productos los productos en venta
-        $list = \models\Product::findBy(["estado" => "venta"]);
-        foreach ($list as $product) {
-            $products[ ] = [
-                "id"    => $product->getId(),
-                "owner" => $product->getOwner(),
-                "state" => $product->state,
-                "name"  => $product->name
-            ];
-        }
+        $products = \models\Product::findByStateAvailable();
 
         $this->view->assign("list", $products);
         $this->view->render("product_list");
@@ -334,17 +283,7 @@ class ProductsController extends Controller
         if (!$this->isLoggedIn())
             $this->redirect("product", "available");
 
-        $list = \models\Product::findBy(["propietario" => $this->session->username]);
-
-        // el listado muestra ID, estado y nombre del producto
-        $products = array();
-        foreach ($list as $product) {
-            $products[ ] = [
-                "id"    => $product->getId(),
-                "state" => $product->state,
-                "name"  => $product->name
-            ];
-        }
+        $products = \models\Product::findBy(["propietario" => $this->session->username]);
 
         $this->view->assign("list", $products);
         $this->view->render("product_list");

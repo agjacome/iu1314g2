@@ -120,13 +120,7 @@ class UsersController extends Controller
 
         // si GET, redirige al formulario de modificacion
         if ($this->request->isGet()) {
-            $this->view->assign("login"     , $this->user->getLogin());
-            $this->view->assign("role"      , $this->user->role);
-            $this->view->assign("email"     , $this->user->email);
-            $this->view->assign("name"      , $this->user->name);
-            $this->view->assign("address"   , $this->user->address);
-            $this->view->assign("telephone" , $this->user->telephone);
-
+            $this->view->assign("user", $this->user);
             $this->view->render("user_update");
         }
 
@@ -249,12 +243,7 @@ class UsersController extends Controller
 
         // se le pasan los datos del usuario a la vista
         $this->user->fill();
-        $this->view->assign("login"     , $this->user->getLogin());
-        $this->view->assign("role"      , $this->user->role);
-        $this->view->assign("email"     , $this->user->email);
-        $this->view->assign("name"      , $this->user->name);
-        $this->view->assign("address"   , $this->user->address);
-        $this->view->assign("telephone" , $this->user->telephone);
+        $this->view->assign("user", $this->user);
         $this->view->render("user_get");
     }
 
@@ -267,16 +256,7 @@ class UsersController extends Controller
         if (!$this->isAdmin())
             $this->redirect();
 
-        $list = \models\User::findBy(null);
-
-        // el listado solo muestra el login y el email
-        $users = array();
-        foreach ($list as $user) {
-            $users[ ] = [
-                "login" => $user->getLogin(),
-                "email" => $user->email,
-            ];
-        }
+        $users = \models\User::findBy(null);
 
         $this->view->assign("list", $users);
         $this->view->render("user_list");
