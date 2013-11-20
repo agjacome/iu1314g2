@@ -136,8 +136,8 @@ class UsersController extends Controller
                 $this->setFlash($this->lang["user"]["update_ok"]);
                 $this->redirect("user");
             } else {
-                // $this->setFlash($this->lang["user"]["update_err"]);
-                // $this->redirect("user", "update");
+                $this->setFlash($this->lang["user"]["update_err"]);
+                $this->redirect("user", "update");
             }
         }
     }
@@ -210,7 +210,7 @@ class UsersController extends Controller
 
             // sino, es que era un admin, y lo redirigimos al listado de 
             // usuarios
-            $this->redirect("user", "list");
+            $this->redirect("user", "listing");
 
         } else {
             $this->setFlash($this->lang["user"]["delete_err"]);
