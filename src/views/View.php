@@ -31,7 +31,7 @@ class View
         extract($this->data);
 
         ob_start();
-        include "templates/" . $template;
+        include "templates/" . $template . ".php";
         $rendered = ob_get_clean();
 
         print $rendered;
