@@ -13,7 +13,7 @@ namespace controllers;
 class SalesController extends Controller
 {
 
-    private $product  // modelo de producto, se instanciara cuando resulte necesario
+    private $product; // modelo de producto, se instanciara cuando resulte necesario
     private $sale;    // modelo de venta, se instanciara cuando resulte necesario
 
     /**
@@ -45,7 +45,61 @@ class SalesController extends Controller
      */
     public function create()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // solo se permite creacion de ventas a usuarios identificados
+        if (!$this->isLoggedIn())
+            $this->redirect("user", "login");
+
+        // se debe proporcionar el identificador del producto a poner en venta
+        if (!$this->request->product)
+            $this->redirect("product");
+
+        // el producto debe existir y estar en estado pendiente
+        $this->product = new \models\Product($this->request->product);
+        if (!$this->product->fill() || $this->product->state !== "pendiente") {
+            $this->setFlash($this->lang["sale"]["create_err"]);
+            $this->redirect("product");
+        }
+
+        // solo se permite la puesta en venta al propietario o a un 
+        // administrador
+        if ($this->session->username !== $this->product->getOwner() && !$this->isAdmin()) {
+            $this->setFlash($this->lang["sale"]["create_err"]);
+            $this->redirect("sale");
+        }
+
+        // si GET, redirige al formulario de creacion de venta, con los datos 
+        // necesarios del producto
+        if ($this->request->isGet()) {
+            $this->view->assign("product", $this->product);
+            $this->view->render("sale_create");
+        }
+
+        // si POST, inserta la venta y redirige
+        if ($this->request->isPost()) {
+            if ($this->createPost()) {
+                $this->setFlash($this->lang["sale"]["create_ok"]);
+                $this->redirect("sale");
+            } else {
+                $this->setFlash($this->lang["sale"]["create_err"]);
+            }
+        }
+    }
+
+    /**
+     * Metodo privato interno para el manejo de la peticion POST en create()
+     */
+    private function createPost()
+    {
+        // campos necesarios para creacion de venta
+        $required = isset($this->request->price) && isset($this->request->stock);
+        if (!$required) return false;
+
+        // crea venta, valida campos e inserta a la BD
+        $this->sale = new \models\Sale(null, $this->product->getId());
+        $this->sale->price = $this->request->price;
+        $this->sale->stock = $this->request->stock;
+
+        return $this->sale->validate() && $this->sale->save();
     }
 
     /**

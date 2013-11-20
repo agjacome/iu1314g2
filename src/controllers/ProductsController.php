@@ -266,8 +266,9 @@ class ProductsController extends Controller
      */
     public function available()
     {
+        // obtiene los productos disponibles (en venta y subasta) y los 
+        // devuelve a una vista renderizada
         $products = \models\Product::findByStateAvailable();
-
         $this->view->assign("list", $products);
         $this->view->render("product_list");
     }
