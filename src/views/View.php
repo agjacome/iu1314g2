@@ -27,14 +27,32 @@ class View
      */
     public function render($template)
     {
+        // FUTURE TODO: los layouts estan hard-codeados ahora mismo, establecer 
+        // una forma de poder cargarlos dinamicamente (eg: un solo layout 
+        // obligatorio application.php, que se encargara de hacer los requires 
+        // a los demas y la inclusion de la plantilla? implementacion de algo 
+        // del estilo a lo que hace rails con el "yield" de ruby?)
+
+        // carga el array de datos como variables para las plantillas y layouts
         $this->loadData();
         extract($this->data);
 
+        // hace que el output en lugar de enviarse, se almacene en un buffer 
+        // temporal
         ob_start();
-        include "templates/" . $template . ".php";
-        $rendered = ob_get_clean();
 
-        print $rendered;
+        // carga cabecera y barra lateral
+        require "layouts/header.php";
+        require "layouts/sidebar.php";
+
+        // carga plantilla
+        include "templates/" . $template . ".php";
+
+        // carga pie de pagina
+        require "layouts/footer.php";
+
+        // envia el contenido almacenado en el buffer de output
+        print ob_get_clean();
     }
 
     /**

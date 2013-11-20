@@ -1,8 +1,3 @@
-<?php
-require "header.php";
-require "sidebar.php";
-?>
-
 <ul>
 <?php foreach ($list as $user) { ?>
     <li>
@@ -13,7 +8,3 @@ require "sidebar.php";
     </li>
 <?php } ?>
 </ul>
-
-<?php
-require "footer.php";
-?>

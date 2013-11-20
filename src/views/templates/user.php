@@ -1,10 +1,3 @@
-<?php
-
-require "header.php";
-require "sidebar.php";
-
-?>
-
         <div>
 <?php if ($logged) { ?>
             <h3><?php print $username; ?></h3>
@@ -24,8 +17,3 @@ require "sidebar.php";
             <a href="index.php?controller=user&action=create"><?php print $lang["user"]["register"]; ?></a>
 <?php } ?>
         </div>
-<?php
-
-require "footer.php";
-
-?>
