@@ -169,7 +169,7 @@ abstract class SQLDAO implements DAO
 
         $args = func_get_args();
         for ($i = 1; $i < count($args); $i++)
-            $query->bindParam($i + 1, $args[$i]);
+            $query->bindParam($i, $args[$i]);
 
         $result = $query->execute();
 
