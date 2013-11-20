@@ -25,7 +25,7 @@ class UsersController extends Controller
     public function defaultAction()
     {
         // FIXME: hack temporal para pruebas
-        $this->view->render("user.php");
+        $this->view->render("user");
     }
 
     /**
@@ -39,7 +39,7 @@ class UsersController extends Controller
 
         // si GET, redirige al formulario de registro
         if ($this->request->isGet())
-            $this->view->render("register.php");
+            $this->view->render("user_register");
 
         // si POST, realiza el registro y redirige
         if ($this->request->isPost()) {
@@ -127,7 +127,7 @@ class UsersController extends Controller
             $this->view->assign("address"   , $this->user->address);
             $this->view->assign("telephone" , $this->user->telephone);
 
-            $this->view->render("updateUser.php");
+            $this->view->render("user_update");
         }
 
         // si POST, realiza la modificacion y redirige
@@ -255,7 +255,7 @@ class UsersController extends Controller
         $this->view->assign("name"      , $this->user->name);
         $this->view->assign("address"   , $this->user->address);
         $this->view->assign("telephone" , $this->user->telephone);
-        $this->view->render("getUser.php");
+        $this->view->render("user_get");
     }
 
     /**
@@ -279,7 +279,7 @@ class UsersController extends Controller
         }
 
         $this->view->assign("list", $users);
-        $this->view->render("userList.php");
+        $this->view->render("user_list");
     }
 
     /**
@@ -293,7 +293,7 @@ class UsersController extends Controller
 
         // si GET, muestra formulario de login
         if ($this->request->isGet())
-            $this->view->render("login.php");
+            $this->view->render("user_login");
 
         // si POST, realiza identificacion y redirige adecuadamente
         if ($this->request->isPost()) {

@@ -33,7 +33,7 @@ class StoresController extends Controller
         // si GET, muestra el formulario de cambio de comision
         if ($this->request->isGet()) {
             $this->view->assign("commission", $this->store->commission);
-            $this->view->render("changeCommission.php");
+            $this->view->render("store_change_commission");
         }
 
         // si POST, realiza el cambio y redirige

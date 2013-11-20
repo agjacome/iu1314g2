@@ -22,7 +22,7 @@ class HomeController extends Controller
      */
     public function defaultAction()
     {
-        $this->view->render("home.php");
+        $this->view->render("home");
     }
 
     /**
