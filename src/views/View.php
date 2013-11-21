@@ -148,7 +148,7 @@ class View
      */
     private function getCurrentUrl()
     {
-        return $_SERVER["REQUEST_URI"];
+        return urlencode($_SERVER["REQUEST_URI"]);
     }
 
 }
