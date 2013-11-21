@@ -108,11 +108,11 @@ margin:0px;
 list-style:none;
 }
 ul.left_menu li.odd a{
-width:166px;height:50px;display:block;background-color: #dad0d0;border-bottom:1px #FFFFFF solid;
+width:166px;display:block;background-color: #dad0d0;border-bottom:1px #FFFFFF solid;
 text-decoration:none;color:#504b4b;padding:0 0 0 30px; line-height:25px;
 }
 ul.left_menu li.even a{
-width:166px;height:50px;display:block;background-color: #eee6e6;border-bottom:1px #FFFFFF solid;
+width:166px;display:block;background-color: #eee6e6;border-bottom:1px #FFFFFF solid;
 text-decoration:none;color:#504b4b;padding:0 0 0 30px; line-height:25px;
 }
 ul.left_menu li.even a:hover, ul.left_menu li.odd a:hover{
