@@ -73,6 +73,10 @@ class View
      */
     private function yield()
     {
+        // es necesario hacer otro extract() de los datos, un poco ineficiente 
+        // tener que hacerlo tanto para el layout como para la plantilla, pero 
+        // no encuentro otro modo
+        extract($this->data);
         include "templates/" . $this->template . ".php";
     }
 
@@ -100,7 +104,7 @@ class View
     {
         // hace accesible el array de cadenas de idioma en los datos de la 
         // plantilla a traves de la variable $lang
-        $this->data["lang"] = \components\Language::getStrings();
+        $this->data["lang"] = \components\Language::getStrings($this->session->lang);
 
         // carga datos de sesion (usuario logueado, nombre de usuario y rol)
         $this->data["logged"] = false;
