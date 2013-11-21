@@ -31,7 +31,7 @@ class Purchase extends Model
 
         $found = array();
         foreach ($ids as $id) {
-            $purchase = new Purchase($id);
+            $purchase = new Purchase($id["idCompra"]);
             if (!$purchase->fill()) break;
             $found[ ] = $purchase;
         }

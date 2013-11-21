@@ -29,7 +29,7 @@ class Rating extends Model
 
         $found = array();
         foreach ($ids as $id) {
-            $rating = new Rating($id);
+            $rating = new Rating($id["idCalificacion"]);
             if (!$rating->fill()) break;
             $found[ ] = $rating;
         }
@@ -57,8 +57,8 @@ class Rating extends Model
             "login"      => $this->login
         ];
 
-        if (isset($this->rating))    $data["puntuacion"] = $this->rating;
-        if (isset($this->commentary) $data["comentario"] = $this->commentary;
+        if (isset($this->rating))     $data["puntuacion"] = $this->rating;
+        if (isset($this->commentary)) $data["comentario"] = $this->commentary;
 
         if (isset($this->idRating))
             return $this->dao->update($data, ["idCalificacion" => $this->idRating]);

@@ -28,7 +28,7 @@ class Product extends Model
 
         $found = array();
         foreach ($ids as $id) {
-            $product = new Product($id);
+            $product = new Product($id["idProducto"]);
             if (!$product->fill()) break;
             $found[ ] = $product;
         }
@@ -45,7 +45,7 @@ class Product extends Model
 
         $found = array();
         foreach ($ids as $id) {
-            $product = new Product($id);
+            $product = new Product($id["idProducto"]);
             if (!$product->fill()) break;
             $found[ ] = $product;
         }
@@ -62,7 +62,7 @@ class Product extends Model
 
         $found = array();
         foreach ($ids as $id) {
-            $product = new Product($id);
+            $product = new Product($id["idProducto"]);
             if (!$product->fill()) break;
             $found[ ] = $product;
         }
@@ -72,7 +72,7 @@ class Product extends Model
 
     public function fill()
     {
-        $rows = $this->dao->select(["*"], ["idProducto" => $this->id->idProduct]);
+        $rows = $this->dao->select(["*"], ["idProducto" => $this->idProduct]);
         if (!$rows) return false;
 
         $this->owner       = $rows[0]["propietario"];

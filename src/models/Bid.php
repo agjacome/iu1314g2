@@ -31,7 +31,7 @@ class Bid extends Model
 
         $found = array();
         foreach ($ids as $id) {
-            $bid = new Bid($id);
+            $bid = new Bid($id["idPuja"]);
             if (!$bid->fill()) break;
             $found[ ] = $bid;
         }

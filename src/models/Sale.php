@@ -27,7 +27,7 @@ class Sale extends Model
 
         $found = array();
         foreach ($ids as $id) {
-            $sale = new Sale($id);
+            $sale = new Sale($id["idVenta"]);
             if (!$sale->fill()) break;
             $found[ ] = $sale;
         }

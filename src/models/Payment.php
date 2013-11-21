@@ -29,7 +29,7 @@ class Payment extends Model
 
         $found = array();
         foreach ($ids as $id) {
-            $payment = new Payment($id);
+            $payment = new Payment($id["idPago"]);
             if (!$payment->fill()) break;
             $found[ ] = $payment;
         }
