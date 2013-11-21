@@ -17,6 +17,7 @@ class View
 
     private $data;      // array asociativo de datos para la plantilla
     private $session;   // datos de sesion, necesarios para recoger idioma y datos de usuario
+    private $template;  // nombre de la plantilla a cargar
 
     /**
      * Construye un nuevo objeto vista, almacenando para ello una referencia a 
@@ -29,8 +30,9 @@ class View
      */
     public function __construct($session)
     {
-        $this->data = array();
-        $this->session = $session;
+        $this->data     = array();
+        $this->session  = $session;
+        $this->template = null;
     }
 
     /**
@@ -43,11 +45,8 @@ class View
      */
     public function render($template)
     {
-        // FUTURE TODO: los layouts estan hard-codeados ahora mismo, establecer 
-        // una forma de poder cargarlos dinamicamente (eg: un solo layout 
-        // obligatorio application.php, que se encargara de hacer los requires 
-        // a los demas y la inclusion de la plantilla? implementacion de algo 
-        // del estilo a lo que hace rails con el "yield" de ruby?)
+        // almacena la plantilla para que pueda ser accesible desde yield()
+        $this->template = $template;
 
         // carga el array de datos como variables para las plantillas y layouts
         $this->load();
@@ -57,18 +56,24 @@ class View
         // temporal
         ob_start();
 
-        // carga cabecera y barra lateral
-        require "layouts/header.php";
-        require "layouts/sidebar.php";
-
-        // carga plantilla
-        include "templates/" . $template . ".php";
-
-        // carga pie de pagina
-        require "layouts/footer.php";
+        // carga el layout application.php, de obligatoria existencia, dicho 
+        // fichero ".php" tiene la responsabilidad de incluir todos los 
+        // ficheros de layout de la aplicacion e invocar al metodo yield() para 
+        // mostrar el contenido de la plantilla alli donde sea invocado
+        require "layouts/application.php";
 
         // envia el contenido almacenado en el buffer de output
         print ob_get_clean();
+    }
+
+    /**
+     * Realiza un include de la plantilla proporcionada en render. Debe ser 
+     * llamado desde layouts/application.php o desde cualquier otro fichero php 
+     * incluido por el mismo.
+     */
+    private function yield()
+    {
+        include "templates/" . $template . ".php";
     }
 
     /**
@@ -128,7 +133,7 @@ class View
      */
     private function isAdmin()
     {
-        return $this->isLoggedIn() && isset($this->session->userrole === "admin");
+        return $this->isLoggedIn() && isset($this->session->userrole) && $this->session->userrole === "admin";
     }
 
     /**
