@@ -31,7 +31,11 @@ class HomeController extends Controller
     public function changeLanguage()
     {
         $this->session->lang = $this->request->lang;
-        $this->redirect();
+
+        if (isset($this->request->redirect))
+            $this->redirect(null, null, $this->request->redirect);
+        else
+            $this->redirect();
     }
 
 }
