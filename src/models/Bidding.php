@@ -74,12 +74,6 @@ class Bidding extends Model
 		return false;
         // TODO: validar que la puja minima sea superior a 0.0
 	if(minBid <=0.0) return false
-        // TODO: validar que la fecha limite sea posterior a la fecha de
-        // creacion (actual)
-	if(isset(limitDate))
-	{
-		if(limitDate < date("Y,m,d")) return false;
-	}
     }
 
     public function getId()
