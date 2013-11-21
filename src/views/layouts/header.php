@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Bid & Sell</title>
 <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/flash.css" />
 <!--[if IE 6]>
 <link rel="stylesheet" type="text/css" href="/assets/css/iecss.css" />
 <![endif]-->

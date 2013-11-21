@@ -1,8 +1,8 @@
 <?php
 
 require "header.php";
-require "sidebar.php";
 require "flash.php";
+require "sidebar.php";
 
 $this->yield();
 

@@ -24,8 +24,14 @@ class UsersController extends Controller
      */
     public function defaultAction()
     {
-        // FIXME: hack temporal para pruebas
-        $this->view->render("user");
+        // no se permite acceso al panel de usuario sin estar logueado
+        if (!$this->isLoggedIn())
+            $this->redirect("user", "login");
+
+        // el metodo por defecto es el accesso a los detalles del usuario 
+        // propio
+        $this->request->login = $this->session->username;
+        $this->get();
     }
 
     /**
@@ -289,8 +295,8 @@ class UsersController extends Controller
                     $this->session->username = $this->user->getLogin();
                     $this->session->userrole = $this->user->role;
 
-                    $this->setFlash($this->lang["user"]["login_ok"] . $this->user->getLogin());
-                    $this->redirect("user");
+                    $this->setFlash($this->lang["user"]["login_ok"]);
+                    $this->redirect();
                 }
             }
 

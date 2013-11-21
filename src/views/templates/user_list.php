@@ -1,10 +1,12 @@
-<ul>
-<?php foreach ($list as $user) { ?>
-    <li>
-        <?php print $lang["user"]["username"]  . ":" . $user["login"]; ?><br>
-        <?php print $lang["user"]["email"]     . ":" . $user["email"]; ?><br>
-        <a href="index.php?controller=user&action=get&login=<?php print $user["login"]; ?>"><?php print $lang["user"]["details"]; ?></a><br>
-        <a href="index.php?controller=user&action=update&login=<?php print $user["login"]; ?>"><?php print $lang["user"]["update"]; ?></a>
-    </li>
+<div class="center_content">
+    <div class="center_title_bar"><?php print $lang ["user"]["list"]; ?></div>
+    <ul class="list">
+<?php for ($i = 0; $i < count($list); $i++) { ?>
+        <li class="<?php if (($i + 1) % 2 == 0) print "even"; else print "odd"; ?>">
+            <a href="/index.php?controller=user&action=get&login=<?php print $list[$i]->getLogin(); ?>">
+                <?php print $list[$i]->getLogin() . " - " . $list[$i]->email; ?>
+            </a>
+        </li>
 <?php } ?>
-</ul>
+    </ul>
+</div> <!-- end of center content -->
