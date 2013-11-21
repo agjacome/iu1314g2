@@ -46,11 +46,13 @@ abstract class Controller
      * @param  Controller $controller atributo opcional.
      * @param  Action $action atributo opcional.
      */
-    public function redirect($controller = null, $action = null)
+    public function redirect($controller = null, $action = null, $url = null)
     {
-        $url = "/";
-        if (isset($controller)) $url .= "index.php?controller=" . $controller;
-        if (isset($action))     $url .= "&action=$action";
+        if (!isset($url)) {
+            $url = "/";
+            if (isset($controller)) $url .= "index.php?controller=" . $controller;
+            if (isset($action))     $url .= "&action=$action";
+        }
 
         header("Location: " . $url);
         exit();
