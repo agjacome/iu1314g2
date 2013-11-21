@@ -60,19 +60,35 @@ class Bidding extends Model
             return $this->dao->insert($data);
     }
 
+    public function isAvaliable()
+    {
+        if (isset($this->dao->select(["estado"],["idProducto => $idProduct", "estado" => "pendiente"]))) {
+            return true;
+        } else return false;
+    }
+
     public function delete()
     {
         return $this->dao->delete(["idSubasta" => $this->idBidding]);
     }
 
-    public function validate()
+    public function validate() 
     {
         // TODO: validar que el producto existe (apoyarse en modelo de
         // productos)
         // TODO: validar que la puja minima sea superior a 0.0
         // TODO: validar que la fecha limite sea posterior a la fecha de
         // creacion (actual)
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        if ($this->dao->select(["$idProduct"], ["idProducto" => "$idProduct"])) {
+            if ($minBid > 0.0) {
+                if ($limitDate > time()) {
+                    print("true");
+                    return true;
+                } 
+            }
+        }
+        print("false");
+        return false;
     }
 
     public function getId()

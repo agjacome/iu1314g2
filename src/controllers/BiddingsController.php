@@ -12,7 +12,6 @@ namespace controllers;
  */
 class BiddingsController extends Controller
 {
-
     private $bidding; // modelo de subasta, se instanciara cuando resulte necesario
     private $product  // modelo de producto, se instanciara cuando resulte necesario
 
@@ -43,18 +42,84 @@ class BiddingsController extends Controller
      * creacion de subasta al usuario en posesion del producto y/o al 
      * administrador.
      */
-    public function create()
+    /*
+    public function createBidding()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        if ($this->request->isGet()) {
+            $this->view->render("createBidding.php")
+        } else if ($this->request->isPost()) {
+            if ($bidding->isAvaliable()) {
+                $this->bidding = new \models\Bidding();
+
+            } else {
+                $this->setFlash("No es posible crear subasta.");
+            }
+            $this->redirect("bidding", "createBidding");
+        }
+    }
+*/
+
+        public function create()
+    {
+        // solo se permite creacion de subastas a usuarios identificados
+        if (!$this->isLoggedIn())
+            $this->redirect("user", "login");
+
+        // se debe proporcionar el identificador del producto a poner en subasta
+        if (!$this->request->product)
+            $this->redirect("product");
+
+        // el producto debe existir y estar en estado pendiente
+        $this->product = new \models\Product($this->request->product);
+        if (!$this->product->fill() || $this->product->state !== "pendiente") {
+            $this->setFlash($this->lang["bidding"]["create_err"]);
+            $this->redirect("product");
+        }
+
+        // solo se permite la puesta en subasta al propietario o a un
+        // administrador
+        if ($this->session->username !== $this->product->getOwner() && !$this->isAdmin()) {
+            $this->setFlash($this->lang["bidding"]["create_err"]);
+            $this->redirect("bidding");
+        }
+
+        // si GET, redirige al formulario de creacion de subasta, con los datos
+        // necesarios del producto
+        if ($this->request->isGet()) {
+            $this->view->assign("product", $this->product);
+            $this->view->render("bidding_create");
+        }
+
+        // si POST, inserta la subasta y redirige
+        if ($this->request->isPost()) {
+            if ($this->createPost()) {
+                $this->setFlash($this->lang["bidding"]["create_ok"]);
+                $this->redirect("bidding");
+            } else {
+                $this->setFlash($this->lang["bidding"]["create_err"]);
+                $this->redirect("bidding", "create");
+            }
+        }
     }
 
     /**
-     * Modifica los datos almacenados de una subasta. Solo se permite la 
-     * modificacion si no existen pujas para la subasta.
+     * Metodo privato interno para el manejo de la peticion POST en create()
      */
-    public function update()
+    private function createPost()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // campos necesarios para creacion de subasta
+        $required = isset($this->request->price) && isset($this->request->stock);
+        if (!$required) return false;
+
+        // crea subasta, actualiza estado de producto, valida campos e inserta en
+        // BD
+        $this->bidding = new \models\Bidding(null, $this->product->getId());
+        $this->bidding->price    = $this->request->price;
+        $this->bidding->stock    = $this->request->stock;
+        $this->product->state = "subasta";
+
+        return $this->bidding->validate() && $this->product->validate() &&
+            $this->bidding->save() && $this->product->save();
     }
 
     /**
@@ -64,23 +129,81 @@ class BiddingsController extends Controller
      */
     public function delete()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // en ningun caso se permite la eliminacion de subasta si no es administrador
+        if (!$this->isAdmin())
+            $this->redirect("user", "login");
+
+        // se debe proporcionar el identificador de la subasta a eliminar
+        if (!isset($this->request->id))
+            $this->redirect("bidding");
+
+        // comprueba si existe la subasta y producto asociado al id dado
+        $this->sale = new \models\Sale($this->request->id);
+        if (!$this->bidding->fill()) {
+            $this->setFlash($this->lang["bidding"]["delete_err"]);
+            $this->redirect("bidding");
+        }
+        $this->product = new \models\Product($this->bidding->getProductId());
+        if (!$this->product->fill()) {
+            $this->setFlash($this->lang["bidding"]["delete_err"]);
+            $this->redirect("bidding");
+        }
+
+        // solo el administrador podra eliminar la venta
+        if (!$this->isAdmin()) {
+            $this->setFlash($this->lang["bidding"]["delete_err"]);
+            $this->redirect("bidding");
+        }
+
+        // elimina la subasta, si es posible, actualizando el estado del producto
+        // de nuevo a "pendiente" y redirecciona acordemente
+        $this->product->state = "pendiente";
+        if ($this->product->validate() && $this->product->save() && $this->bidding->delete()) {
+            $this->setFlash($this->lang["bidding"]["delete_ok"]);
+            $this->redirect("bidding");
+        } else {
+            $this->setFlash($this->lang["bidding"]["delete_err"]);
+            $this->redirect("bidding");
+        }
     }
+
 
     /**
      * Proporciona los datos concretos de una subasta de producto.
      */
-    public function get()
+     public function get()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // se debe proporcionar el identificador de la subasta a consultar
+        if (!isset($this->request->id))
+            $this->redirect("bidding");
+
+        // obtiene datos de la subasta y el producto
+        $this->bidding = new \models\bidding($this->request->id);
+        if (!$this->bidding->fill()) {
+            $this->setFlash($this->lang["Bidding"]["get_err"]);
+            $this->redirect("bidding");
+        }
+        $this->product = new \models\Product($this->bidding->getProductId());
+        if (!$this->product->fill()) {
+            $this->setFlash($this->lang["bidding"]["get_err"]);
+            $this->redirect("bidding");
+
+        // se le pasan los datos de la subasta y producto a la vista, y se
+        // renderiza
+        $this->view->assign("product" , $this->product);
+        $this->view->assign("bidding"    , $this->bidding);
+        $this->view->render("bidding_get");
     }
+
+}
 
     /**
      * Proporciona un listado de todos los productos en subasta en el sistema.
      */
     public function listing()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        $biddings = \models\Bidding::findBy(null);
+        listBiddings($biddings);
     }
 
     /**
@@ -89,17 +212,39 @@ class BiddingsController extends Controller
      */
     public function owned()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        $biddings = \models\Bidding::findBy(["propietario" => $this->session->username, "estado" => "subasta"]);
+        listBiddings($biddings);
     }
 
     /**
      * Proporciona un listado de todos los productos en subasta por los cuales 
-     * el usuario identificado, o bien uno dado si invocado por administrador, 
-     * ha pujado.
+     * el usuario identificado ha pujado
      */
     public function bidded()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        $biddings = \models\Bidding::findBy(["login" => $this->session->username]);
+        listBiddings($biddings);
+    }
+
+    private function listBiddings($biddings)
+    {
+        // se crea un array donde cada campo sera un par subastas, producto),
+        // recuperando para ello los datos del producto en cada una de las
+        // subastas obtenidas en la instruccion anterior
+        $list = array();
+        foreach ($biddings as $bidding) {
+            $product = new \models\Product($bidding->getProductId());
+            if (!$product->fill()) break;
+
+            $list[ ] = [
+                "bidding"    => $bidding,
+                "product"    => $product
+            ];
+        }
+
+        // se devuelve el array de pares creado
+        $this->view->assign("list", $list);
+        $this->view->render("bidding_list");
     }
 
     /**
@@ -133,5 +278,4 @@ class BiddingsController extends Controller
     }
 
 }
-
 ?>

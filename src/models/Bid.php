@@ -39,6 +39,21 @@ class Bid extends Model
         return $found;
     }
 
+    public static function findByIdSubasta($where)
+    {
+        $ids = \database\DAOFactory::getDAO("bid")->select(["idSubasta"], $where);
+        if (!$ids) return array();
+
+        $found = array();
+        foreach ($ids as $id) {
+            $bidding = new Bidding($id["idSubasta"]);
+            if (!$bidding->fill()) break;
+            $found[ ] = $bidding;
+        }
+
+        return $found;
+    }
+
     public function fill()
     {
         $rows = $this->dao->select(["*"], ["idPuja" => $this->idBid]);
