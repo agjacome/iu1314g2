@@ -232,7 +232,7 @@ class ProductsController extends Controller
                 "rating"  => $rating->rating
             ];
         }
-        $rateAvg /= count($ratings);
+        if (count($ratings) > 0) $rateAvg /= count($ratings);
 
 
         // se le pasan los datos del producto a la vista y se renderiza
