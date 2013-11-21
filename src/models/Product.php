@@ -110,18 +110,23 @@ class Product extends Model
         if(!filter_var($this->name, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/[a-zA-Z0-9\-]+/"]]))
             return false;
 
-        // FIXME: descripcion puede tener cualquier caracter, pero debe ser 
-        // limpiada contra ataques XSS (ver FILTER_SANITIZE_STRING)
         //descripcion puede tener letras, numeros, guiones y guiones bajos
-        if(!filter_var($this->description, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/[a-zA-Z0-9\-_]+/"]]))
+        $this->description = filter_var($this->description, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
             return false;
 
         // TODO: nombre debe tener como minimo 4 caracteres y como maximo 255
+	if(strlen($this->name) <4 || strlen($this->name) > 255)
+		return false;
         // TODO: estado debe ser "pendiente", "subasta" o "venta" 
         // exclusivamente
+	if($this ->state !==  "pendiente" && $this->state !== "subasta" && $this->state !== "venta")
+		return false;
         // TODO: propietario debe existir (apoyarse en modelo usuario para 
         // comprobacion)
-        trigger_error("Aun no implementado", E_USER_ERROR);
+	$user = new User($this->owner);
+	if (!$user->fill())
+		return false;
+        
     }
 
     public function getId()

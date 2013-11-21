@@ -75,9 +75,19 @@ class Rating extends Model
     {
         // TODO: validar que el login existe, validar que el producto existe
         // (apoyarse en modelos de usuario y producto)
+	$product= new Product($this->idProduct);
+	if(!$product->fill())
+		return false;
+
+	$user= new User($this->login);
+	if(!$user->fill())
+		return false;
         // TODO: validar que la puntuacion esta entre 1 y 5
+	if(!filter_var ($this->rating, FILTER_VALDATE_INT,
+		["options" => ["min_range" => 0, "max_range" => 5]]))
+	return false;
         // TODO: limpiar comentario para prevencion de XSS
-        trigger_error("Aun no implementado", E_USER_ERROR);
+	$this->commentary = filter_var($this->commentary, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);_
     }
 
     public function isNewRating()

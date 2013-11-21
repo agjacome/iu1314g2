@@ -69,9 +69,15 @@ class Sale extends Model
     {
         // TODO: validar que el producto existe (apoyarse en modelo de 
         // productos)
-        // TODO: validar que el precio sea superior a 0.0
+	$product=new Product($this->product);
+	if(!$product->fill())
+		return false;
+	// TODO: validar que el precio sea superior a 0.0
+	if($this->price) <= 0.0
+		return false;
         // TODO: validar que el stock sea superior a 0
-        trigger_error("Aun no implementado", E_USER_ERROR);
+	if($this->stock) <=0
+		return false;
     }
 
     public function getId()

@@ -93,11 +93,29 @@ class Bid extends Model
     {
         // TODO: validar que el login existe, validar que la subasta existe 
         // (apoyarse en modelos de usuario y subasta)
+	$user= new User($this->login);
+	if(!$user->fill())
+		return false;
+
+	$bidding= new Bidding($this->idBidding);
+	if(!$bidding->fill())
+		return false;
         // TODO: validar que la cantidad pujada es superior a la ultima de la 
         // subasta (apoyarse en modelo de subasta)
+	$bid=bidding->getHighestBid();
+	if($bid!=false)
+	{
+		if($bid->quantity > $this->quantity) return false;
+	}
+	else
+	{
+		if($bidding->minBid >quantity)	return false;
+	}
         // TODO: validar que el pago, SI NO NULO (aka no ultima puja de 
         // subasta) existe (apoyarse en modelo de pago)
-        trigger_error("Aun no implementado", E_USER_ERROR);
+	$payment= new Payment($this->idPayment);
+	if(!$payment->fill())
+		return false;
     }
 
     public function getId()
