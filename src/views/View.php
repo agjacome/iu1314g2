@@ -73,7 +73,7 @@ class View
      */
     private function yield()
     {
-        include "templates/" . $template . ".php";
+        include "templates/" . $this->template . ".php";
     }
 
     /**
