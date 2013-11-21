@@ -74,13 +74,27 @@ class Payment extends Model
     public function validate()
     {
         // TODO: validar que el metodo de pago es o "paypal" o "tarjeta"
+	if($this->payMethod !=="paypal" && $this->payMethod !=="tarjeta")
+		return false;
         // TODO: validar que, segun metodo de pago, o bien el numero de tarjeta 
         // o bien la cuenta de paypal ha sido introducida
-        // TODO: validar que tarjeta de credito es un numero de tarjeta de 
-        // credito valido
+	if($this->payMethod =="paypal")
+	{
+		if(!isset($this->paypal)) return false;
+	}
+	else if($this->payMethod =="tarjeta")
+	{
+		if(!isset($this->tarjeta)) return false;
+	}
         // TODO: validar que cuenta de paypal es un email valido
+	if($this->payMethod =="paypal")
+	{
+		if(!filter_var ($this->paypal, FILTER_VALIDATE_EMAIL))
+			return false;
+	}
         // TODO: validar que la comision es un valor valido
-        trigger_error("Aun no implementado", E_USER_ERROR);
+	if($this->commission <0.0 || $this->commission >1)
+		return false;
     }
 
     public function getId()

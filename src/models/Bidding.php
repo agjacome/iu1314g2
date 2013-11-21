@@ -69,10 +69,17 @@ class Bidding extends Model
     {
         // TODO: validar que el producto existe (apoyarse en modelo de
         // productos)
+	$product= new Product($this->idProduct);
+	if(!$product->fill())
+		return false;
         // TODO: validar que la puja minima sea superior a 0.0
+	if(minBid <=0.0) return false
         // TODO: validar que la fecha limite sea posterior a la fecha de
         // creacion (actual)
-        trigger_error("Aun no implementado", E_USER_ERROR);
+	if(isset(limitDate))
+	{
+		if(limitDate < date("Y,m,d")) return false;
+	}
     }
 
     public function getId()
