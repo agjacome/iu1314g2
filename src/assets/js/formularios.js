@@ -56,6 +56,33 @@ function insertBiddingg(){
 	}
 }
 
+function buyProdd(){
+	if(validate_buyProdd()){
+		document.buyProd.submit();
+	}
+
+}
+
+function bidProdd(){
+	if(validate_bidProdd()){
+		document.bidProdd.submit();
+	}
+}
+
+function Payy(){
+
+	if(validate_payy()){
+		document.pay.submit();
+	}
+}
+
+function ChangeComm(){
+
+	if(validate_comm()){
+		document.com.submit();
+	}
+}
+
 //Validaciones de campos todos los campos de cada formularios 
 
 function validate_registerr(){
@@ -94,7 +121,26 @@ function validate_insprodd(){
 	else return false;
 }
 
-
+function validate_buyProdd(){
+	if(validarUnidades(document.buyProd.elements[0])&&validarFormasPago(document.buyProd.elements[1], document.buyProd.elements[2]))
+		return true;
+	else return false;
+}
+function validate_bidProdd(){
+	if(validarPrecio(document.bidProd.elements[0]))
+		return true;
+	else return false;
+}
+function validate_payy(){
+	if(validarFormasPago(document.pay.elements[0], document.pay.elements[1]))
+		return true;
+	else return false;	
+}
+function validate_comm(){
+	if(validarPorcentaje(document.com.elements[0]))
+		return true;
+	else return false;	
+}
 
 //Validaciones de campos
 
@@ -126,7 +172,7 @@ function validarTexto(text){
 	 	alert ('Campo vacío'); 
 		return false;
 	else
-		return true
+		return true;
 }
 
 function validarPrecio(price){
@@ -175,6 +221,45 @@ function validarUnidades(unidades){
 	var value=unidades.value;
 	if(!(/^[0-9]+/.test(value)){
 		alert('Unidades en formato no correcto');
+		return false;
+	}
+	else
+		return true;
+}
+
+function validarFormasPago(tarj, payPal){
+	var value1=tarj.value;
+	var value2=payPal.value;
+
+	if(value1!=''&&value2!=''){
+		alert('Dos formas de pago elegidas, elimine una');
+		return false;
+	}
+	else{
+		if(value1=''){
+			return validarPayPal(value2);	
+		else
+			return validarTarjeta(value1);
+	}
+}
+
+function validarPayPal(cuenta){
+	var value= email.value;
+	if(/^\w+([\.-_]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3,4})+$/.test(value))
+		return true;
+	else{
+		alert('La cuenta de PayPal'+ value +'no es válida');
+		return false;
+}
+
+function validarTarjeta(tarjeta){
+	//NO IMPLEMENTADA
+}
+
+function validarPorcentaje(percent){
+	var value= percent.value;
+	if(isNaN(value)){
+		alert('Porcentaje no válido');
 		return false;
 	}
 	else
