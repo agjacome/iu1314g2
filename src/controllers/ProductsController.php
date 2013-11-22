@@ -54,7 +54,7 @@ class ProductsController extends Controller
         if ($this->request->isPost()) {
             if ($this->createPost()) {
                 $this->setFlash($this->lang["product"]["create_ok"]);
-                $this->redirect("product");
+                $this->redirect("product", "owned");
             } else {
                 $this->setFlash($this->lang["product"]["create_err"]);
                 $this->redirect("product", "create");
@@ -68,11 +68,7 @@ class ProductsController extends Controller
     private function createPost()
     {
         // campos requeridos para creacion de producto
-        // (todos salvo login, que se obtendra de la sesion)
-        $request =
-            isset($this->request->state) &&
-            isset($this->request->name)  &&
-            isset($this->request->description);
+        $request = isset($this->request->name)  && isset($this->request->description);
 
         // comprueba que todos los campos existan
         if (!$request) return false;
