@@ -44,6 +44,17 @@ function deleteproductt(){
 	}
 }
 
+function insertSalee(){
+	if(validate_insertSalee()){
+		document.insertSale.submit();
+	}
+}
+
+function insertBiddingg(){
+	if(validate_insertBiddingg()){
+		document.insertBidding.submit();
+	}
+}
 
 //Validaciones de campos todos los campos de cada formularios 
 
@@ -60,11 +71,22 @@ function validate_modifyuserr(){
 }
 
 function validate_modifyprodd(){
-	if(validarFecha(document.insprod.elements[5])&&validarFechaEsPosterior(document.insprod.elements[5])&&validarTexto(document.insprod.elements[0])&&validarTexto(document.insprod.elements[1])&&validarPrecio(document.insprod.elements[2]))
+	if(validarTexto(document.insprod.elements[0])&&validarTexto(document.insprod.elements[1]))
 		return true;
 	else return false;
 }
 
+function validate_insertSalee(){
+	if(validarPrecio(document.insertSale.elements[0])&&validarUnidades(document.insertSale.elements[1]))
+		return true;
+	else return false;
+}
+
+function validate_insertBiddingg(){
+	if(validarPrecio(document.insertBiddingg.elements[0])&&validarFecha(document.insertBiddingg.elements[1])&&validarFechaEsPosterior(document.elements[1]))
+		return true;
+	else return false;
+}
 function validate_insprodd(){
 
 	if(validarFecha(document.insprod.elements[5])&&validarFechaEsPosterior(document.insprod.elements[5])&&validarTexto(document.insprod.elements[0])&&validarTexto(document.insprod.elements[1])&&validarPrecio(document.insprod.elements[2]))
@@ -129,7 +151,7 @@ function validarEmail(email){
 
 function validarTelefono(telefono){
 	var value=telefono.value;
-	if( !(/^\d{9}$/.test(valor)) ) {
+	if( !(/^\d{9}$/.test(value)) ) {
   		alert('Telefono no valido');
   		return false;
 	}
@@ -146,5 +168,15 @@ function validarPassRepeat(pass1, pass2){
 		return false;
 	}
 	else 
+		return true;
+}
+
+function validarUnidades(unidades){
+	var value=unidades.value;
+	if(!(/^[0-9]+/.test(value)){
+		alert('Unidades en formato no correcto');
+		return false;
+	}
+	else
 		return true;
 }
