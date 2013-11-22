@@ -2,6 +2,14 @@
 
 namespace models;
 
+/**
+ * Clase que proporciona soporte para manejar Calificaciones.
+ *
+ * @author Alberto Gutierrez Jacome <agjacome@esei.uvigo.es>
+ * @author Daniel Alvarez Outerelo  <daouterelo@esei.uvigo.es>
+ * @author David Lorenzo Dacal      <dldacal@esei.uvigo.es>
+ * @author Marcos Nuñez Celeiro     <mnceleiro@esei.uvigo.es>
+ */
 class Rating extends Model
 {
 
@@ -11,6 +19,10 @@ class Rating extends Model
     public  $rating;
     public  $commentary;
 
+    /**
+     * Construye una nueva instancia de Rating a partir de los datos
+     * recibidos como parámetros
+     */
     public function __construct($idRating = null, $idProduct = null, $login = null)
     {
         parent::__construct();
@@ -22,6 +34,16 @@ class Rating extends Model
         $this->commentary = null;
     }
 
+    /**
+     * Devuelve un array con todas las calificaciones que
+     * coincidan con los parámetros de la búsqueda SQL
+     *
+     * @param array $where
+     *      Contiene las condiciones para la búsqueda SQL
+     *
+     * @return array $found
+     *     Devuelve los resultados de la búsqueda SQL
+     */
     public static function findBy($where)
     {
         $ids = \database\DAOFactory::getDAO("rating")->select(["idCalificacion"], $where);
@@ -37,6 +59,14 @@ class Rating extends Model
         return $found;
     }
 
+    /**
+     * Rellena el objeto con los datos obtenidos
+     * de la base de datos
+     *
+     * @return boolean
+     *     True si se encuentran los datos en la
+     *      base de datos
+     */
     public function fill()
     {
         $rows = $this->dao->select(["*"], ["idCalificacion" => $this->idRating]);
@@ -50,6 +80,14 @@ class Rating extends Model
         return true;
     }
 
+    /**
+     * Guarda la calificación en la base de datos ya sea
+     * una nueva inserción o una actualización
+     *
+     * @return boolean
+     *     True si se consiguen guardar los datos en
+     * la base de datos
+     */
     public function save()
     {
         $data = [
@@ -66,11 +104,25 @@ class Rating extends Model
             return $this->dao->insert($data);
     }
 
+    /**
+     * Elimina la calificacion de la base de datos
+     *
+     * @return boolean
+     *     True si se consiguen eliminar los datos de
+     * la base de datos
+     */
     public function delete()
     {
         return $this->dao->delete(["idCalificacion" => $this->idRating]);
     }
 
+    /**
+     * Valida los datos que introduce el usuario
+     *
+     * @return boolean
+     *     False si alguno de los datos es incorrecto
+     *      o no cumple los requisitos requeridos
+     */
     public function validate()
     {
         // valida que el producto exista
@@ -99,16 +151,34 @@ class Rating extends Model
         return intval($count[0][0]) === 0;
     }
 
+    /**
+     * Devuelve el id de la calificacion
+     *
+     * @return string $idRating
+     *     El id de la calificacion
+     */
     public function getId()
     {
         return $this->idRating;
     }
 
+    /**
+     * Devuelve el id del producto
+     *
+     * @return string $idProduct
+     *     El id del producto
+     */
     public function getProductId()
     {
         return $this->idProduct;
     }
 
+    /**
+     * Devuelve el el id del usuario
+     *
+     * @return string $login
+     *     El id del usuario
+     */
     public function getLogin()
     {
         return $this->login;
