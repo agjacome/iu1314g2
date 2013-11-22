@@ -4,6 +4,7 @@
     <ul class="list">
         <li class="even"><?php print "<strong>" . $lang["product"]["name"]    . ":</strong> " . $product->name; ?></li>
         <li class="even"><?php print "<strong>" . $lang["product"]["owner"]   . ":</strong> " . $product->getOwner(); ?></li>
+        <li class="even"><?php print "<strong>" . $lang["product"]["state"]   . ":</strong> " . $product->state; ?></li>
         <li class="even"><?php print "<strong>" . $lang["product"]["descr"]   . ":</strong> " . $product->description; ?></li>
         <li class="even"><?php print "<strong>" . $lang["product"]["rateAvg"] . ":</strong> " . $rateAvg; ?> / 5</li>
         <li class="odd">
@@ -20,7 +21,16 @@
             <a href="/index.php?controller=product&action=delete&id=<?php print $product->getId(); ?>">
                 <?php print $lang["product"]["delete"]; ?>
             </a>
-<?php } } ?>
+<?php        if ($product->state === "pendiente") { ?>
+            &nbsp;|&nbsp;
+            <a href="/index.php?controller=sale&action=create&product=<?php print $product->getId(); ?>">
+                <?php print $lang["product"]["sale"]; ?>
+            <a>
+            &nbsp;|&nbsp;
+            <a href="/index.php?controller=bidding&action=create&product=<?php print $product->getId(); ?>">
+                <?php print $lang["product"]["auction"]; ?>
+            </a>
+<?php } } } ?>
         </li>
     </ul>
 
