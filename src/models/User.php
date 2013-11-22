@@ -2,6 +2,14 @@
 
 namespace models;
 
+/**
+ * Clase que proporciona soporte para manejar Usuarios.
+ *
+ * @author Alberto Gutierrez Jacome <agjacome@esei.uvigo.es>
+ * @author Daniel Alvarez Outerelo  <daouterelo@esei.uvigo.es>
+ * @author David Lorenzo Dacal      <dldacal@esei.uvigo.es>
+ * @author Marcos Nuñez Celeiro     <mnceleiro@esei.uvigo.es>
+ */
 class User extends Model
 {
 
@@ -13,6 +21,10 @@ class User extends Model
     public  $address;
     public  $telephone;
 
+    /**
+     * Construye una nueva instancia de User a partir de los datos
+     * recibidos como parámetros
+     */
     public function __construct($login)
     {
         parent::__construct();
@@ -26,6 +38,16 @@ class User extends Model
         $this->telephone  = null;
     }
 
+    /**
+     * Devuelve un array con todos los usuarios que
+     * coincidan con los parámetros de la búsqueda SQL
+     *
+     * @param array $where
+     *      Contiene las condiciones para la búsqueda SQL
+     *
+     * @return array $found
+     *     Devuelve los resultados de la búsqueda SQL
+     */
     public static function findBy($where)
     {
         // se necesita invocar a DAOFactory porque, al ser static, no sera
@@ -48,6 +70,14 @@ class User extends Model
         return $found;
     }
 
+    /**
+     * Rellena el objeto con los datos obtenidos
+     * de la base de datos
+     *
+     * @return boolean
+     *     True si se encuentran los datos en la
+     *      base de datos
+     */
     public function fill()
     {
         $rows = $this->dao->select(["*"], ["login" => $this->login]);
@@ -63,6 +93,14 @@ class User extends Model
         return true;
     }
 
+    /**
+     * Guarda el usuario en la base de datos ya sea
+     * una nueva inserción o una actualización
+     *
+     * @return boolean
+     *     True si se consiguen guardar los datos en
+     * la base de datos
+     */
     public function save()
     {
         $data = [ "login" => $this->login ];
@@ -81,11 +119,25 @@ class User extends Model
         return false;
     }
 
+    /**
+     * Elimina el usuario de la base de datos
+     *
+     * @return boolean
+     *     True si se consiguen eliminar los datos de
+     * la base de datos
+     */
     public function delete()
     {
         return $this->dao->delete(["login" => $this->login]);
     }
 
+    /**
+     * Valida los datos que introduce el usuario
+     *
+     * @return boolean
+     *     False si alguno de los datos es incorrecto
+     *      o no cumple los requisitos requeridos
+     */
     public function validate()
     {
         // login solo permite minusculas, numero, guion y guion bajo
@@ -126,11 +178,24 @@ class User extends Model
         return true;
     }
 
+    /**
+     * Devuelve el el id del usuario
+     *
+     * @return string $login
+     *     El id del usuario
+     */
     public function getLogin()
     {
         return $this->login;
     }
 
+    /**
+     * Comprueba si ya existe algún usuario
+     * con el mismo id
+     *
+     * @return boolean
+     *     True si el id ya existe
+     */
     public function isNewLogin()
     {
         // cuenta el numero de usuarios con el mismo login y devuelve si existe 
@@ -138,6 +203,16 @@ class User extends Model
         return $this->dao->select(["COUNT(login)"], ["login" => $this->login])[0][0] == 0;
     }
 
+    /**
+     * Guarda la contraseña (cifrada)
+     * del usuario
+     *
+     * @param string $cleanPass
+     *      Contraseña sin cifrar
+     *
+     * @return boolean
+     *     True si se alamacena la contraseña
+     */
     public function setPassword($cleanPass)
     {
         // contraseñas deben tener longitud 4 como minimo
@@ -149,6 +224,16 @@ class User extends Model
         return true;
     }
 
+    /**
+     * Comprueba que la contraseña cifrada
+     * es la misma que la original
+     *
+     * @param string $cleanPass
+     *      Contraseña sin cifrar
+     *
+     * @return boolean
+     *     True si son la misma contraseña
+     */
     public function checkPassword($cleanPass)
     {
         // comprueba con password_verify si la contraseña recibida es la misma 

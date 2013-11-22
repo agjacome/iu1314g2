@@ -2,6 +2,14 @@
 
 namespace models;
 
+/**
+ * Clase que proporciona soporte para manejar Subastas.
+ *
+ * @author Alberto Gutierrez Jacome <agjacome@esei.uvigo.es>
+ * @author Daniel Alvarez Outerelo  <daouterelo@esei.uvigo.es>
+ * @author David Lorenzo Dacal      <dldacal@esei.uvigo.es>
+ * @author Marcos Nuñez Celeiro     <mnceleiro@esei.uvigo.es>
+ */
 class Bidding extends Model
 {
 
@@ -10,6 +18,10 @@ class Bidding extends Model
     public  $minBid;
     public  $limitDate;
 
+    /**
+     * Construye una nueva instancia de Bidding a partir de los datos
+     * recibidos como parámetros
+     */
     public function __construct($idBidding = null, $idProduct = null)
     {
         parent::__construct();
@@ -20,6 +32,16 @@ class Bidding extends Model
         $this->limitDate = null;
     }
 
+    /**
+     * Devuelve un array con todas las subastas que
+     * coincidan con los parámetros de la búsqueda SQL
+     *
+     * @param array $where
+     *      Contiene las condiciones para la búsqueda SQL
+     *
+     * @return array $found
+     *     Devuelve los resultados de la búsqueda SQL
+     */
     public static function findBy($where)
     {
         $ids = \database\DAOFactory::getDAO("bidding")->select(["idSubasta"], $where);
@@ -35,6 +57,14 @@ class Bidding extends Model
         return $found;
     }
 
+    /**
+     * Rellena el objeto con los datos obtenidos
+     * de la base de datos
+     *
+     * @return boolean
+     *     True si se encuentran los datos en la
+     *      base de datos
+     */
     public function fill()
     {
         $rows = $this->dao->select(["*"], ["idSubasta" => $this->idBidding]);
@@ -47,6 +77,13 @@ class Bidding extends Model
         return true;
     }
 
+    /**
+     * Comprueba que el producto existe
+     *
+     * @return boolean
+     *     True si se encuentra el producto en la
+     *      base de datos
+     */
     public function fromProduct()
     {
         $rows = $this->dao->select(["*"], ["idProducto" => $this->idProduct]);
@@ -59,6 +96,14 @@ class Bidding extends Model
         return true;
     }
 
+    /**
+     * Guarda la subasta en la base de datos ya sea
+     * una nueva inserción o una actualización
+     *
+     * @return boolean
+     *     True si se consiguen guardar los datos en
+     * la base de datos
+     */
     public function save()
     {
         $data = ["idProducto" => $this->idProduct];
@@ -72,11 +117,25 @@ class Bidding extends Model
             return $this->dao->insert($data);
     }
 
+    /**
+     * Elimina la subasta de la base de datos
+     *
+     * @return boolean
+     *     True si se consiguen eliminar los datos de
+     * la base de datos
+     */
     public function delete()
     {
         return $this->dao->delete(["idSubasta" => $this->idBidding]);
     }
 
+    /**
+     * Valida los datos que introduce el usuario
+     *
+     * @return boolean
+     *     False si alguno de los datos es incorrecto
+     *      o no cumple los requisitos requeridos
+     */
     public function validate()
     {
         // valida que el producto existe
@@ -91,16 +150,36 @@ class Bidding extends Model
         return true;
     }
 
+    /**
+     * Devuelve el id de la subasta
+     *
+     * @return string $idBidding
+     *     El id de la subasta
+     */
     public function getId()
     {
         return $this->idBidding;
     }
 
+    /**
+     * Devuelve el id del producto
+     *
+     * @return string $idProduct
+     *     El id del producto
+     */
     public function getProductId()
     {
         return $this->idProduct;
     }
 
+    /**
+     * Devuelve la puja más alta actual
+     * de la subasta
+     *
+     * @return Bid end($bids)
+     *     La puja más alta (la última
+     *      contenida en $bids)
+     */
     public function getHighestBid()
     {
         // findBy proporcionara resultado ordenado por clave primaria

@@ -30,6 +30,7 @@ abstract class Model
     public static abstract function findBy($where);
 
     /**
+     * Rellena el objeto con los datos obtenidos de la base de datos
      */
     public abstract function fill();
 
@@ -44,6 +45,7 @@ abstract class Model
     public abstract function delete();
 
     /**
+     * Valida los datos introducidos por el usuario
      */
     public abstract function validate();
 
