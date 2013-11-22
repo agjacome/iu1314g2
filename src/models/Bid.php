@@ -101,7 +101,7 @@ class Bid extends Model
 
         $this->idBidding = $rows[0]["idSubasta"];
         $this->login     = $rows[0]["login"];
-        $this->quantity  = $rows[0]["cantidadPujada"];
+        $this->quantity  = $rows[0]["cantidadPuja"];
         $this->date      = $rows[0]["fechaPuja"];
         $this->idPayment = $rows[0]["idPago"];
 
@@ -159,6 +159,9 @@ class Bid extends Model
         $bidding = new Bidding($this->idBidding);
         if (!$bidding->fill()) return false;
 
+        // valida que la cantidad pujada sea un numero
+        if (!is_numeric($this->quantity)) return false;
+
         // valida que la cantidad pujada es superior a la ultima de la 
         // subasta (apoyarse en modelo de subasta)
         $bid = $bidding->getHighestBid();
@@ -173,6 +176,8 @@ class Bid extends Model
             $payment= new Payment($this->idPayment);
             if (!$payment->fill()) return false;
         }
+
+        print "LLEGA AQUI";
 
         return true;
     }

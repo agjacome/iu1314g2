@@ -180,6 +180,7 @@ class BiddingsController extends Controller
         // obtiene la puja mas alta hasta el momento (puja minima si ninguna)
         $currentBid = $this->bidding->getHighestBid();
         if (!$currentBid) $currentBid = $this->bidding->minBid;
+        else $currentBid = $currentBid->quantity;
 
         // se le pasan los datos de la subasta y producto a la vista, y se
         // renderiza
@@ -276,6 +277,7 @@ class BiddingsController extends Controller
         if ($this->request->isGet()) {
             $currentBid = $this->bidding->getHighestBid();
             if (!$currentBid) $currentBid = $this->bidding->minBid;
+            else $currentBid = $currentBid->quantity;
 
             $this->view->assign("product"    , $this->product);
             $this->view->assign("bidding"    , $this->bidding);
@@ -293,6 +295,18 @@ class BiddingsController extends Controller
                 $this->redirect("bidding");
             }
         }
+    }
+
+    /**
+     * Metodo privado interno para el manejo de la peticion POST en makeBid()
+     */
+    private function makeBidPost()
+    {
+        if (!isset($this->request->quantity)) return false;
+
+        $bid = new \models\Bid(null, $this->bidding->getId(), $this->session->username);
+        $bid->quantity = $this->request->quantity;
+        return $bid->validate() && $bid->save();
     }
 
     /**
