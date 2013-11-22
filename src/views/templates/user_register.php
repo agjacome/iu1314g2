@@ -45,7 +45,7 @@
 
                 </div>
                 <div class="form_row">
-                    <input type="submit" value="<?php print $lang["botones"]["aceptar"]; ?>" class="contact">
+                    <input type="submit" value="<?php print $lang["general"]["accept"]; ?>" class="contact">
                 </div>
             </form>
         </div>

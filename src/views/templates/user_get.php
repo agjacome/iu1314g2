@@ -14,10 +14,6 @@
             <a href="/index.php?controller=user&action=update&login=<?php print $user->getLogin(); ?>">
                 <?php print $lang["user"]["update"]; ?>
             </a>
-            &nbsp;|&nbsp;
-            <a href="/index.php?controller=user&action=delete&login=<?php print $user->getLogin(); ?>">
-                <?php print $lang["user"]["delete"]; ?>
-            </a>
         </li>
     </ul>
 

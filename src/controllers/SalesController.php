@@ -241,10 +241,19 @@ class SalesController extends Controller
             $this->redirect("sale");
         }
 
+        // obtiene puntuaciones y puntuacion media del producto
+        $ratings = \models\Rating::findBy(["idProducto" => $this->product->getId()]);
+
+        $rateAvg = 0.0;
+        foreach ($ratings as $rating) $rateAvg  += intval($rating->rating);
+        if (count($ratings) > 0) $rateAvg /= count($ratings);
+
         // se le pasan los datos de la venta y producto a la vista, y se
         // renderiza
         $this->view->assign("product" , $this->product);
         $this->view->assign("sale"    , $this->sale);
+        $this->view->assign("rate"    , $rateAvg);
+        $this->view->assign("ratings" , $ratings);
         $this->view->render("sale_get");
     }
 
@@ -256,9 +265,8 @@ class SalesController extends Controller
         // obtiene todas las ventas del sistema
         $sales = \models\Sale::findBy(null);
 
-        // se crea un array donde cada campo sera un par (venta, producto),
-        // recuperando para ello los datos del producto en cada una de las
-        // ventas obtenidas en la instruccion anterior
+        // se crea un array donde cada elemento sera una par (venta, producto) 
+        // para todas las ventas existentes en la BD
         $list = array();
         foreach ($sales as $sale) {
             $product = new \models\Product($sale->getProductId());
@@ -266,11 +274,11 @@ class SalesController extends Controller
 
             $list[ ] = [
                 "sale"    => $sale,
-                "product" => $product
+                "product" => $product,
             ];
         }
 
-        // se devuelve el array de pares creado
+        // se devuelve el array de datos creado y se renderia la vista
         $this->view->assign("list", $list);
         $this->view->render("sale_list");
     }
@@ -375,10 +383,14 @@ class SalesController extends Controller
 
         // almacena los datos de la compra en el modelo de compra
         $purchase->quantity  = $this->request->quantity;
-        $purchase->idPaymend = $payment->getId();
+        $purchase->idPayment = $payment->getId();
+
+        // resta la cantidad comprada a la venta
+        $this->sale->stock -= $purchase->quantity;
 
         // valida y guarda los datos de la compra en la BD
-        return $purchase->validate() && $purchase->save();
+        return $purchase->validate() && $this->sale->validate() &&
+               $purchase->save() && $this->sale->save();
     }
 
 }

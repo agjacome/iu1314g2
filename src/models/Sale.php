@@ -37,7 +37,7 @@ class Sale extends Model
 
     public function fill()
     {
-        $rows = $this->dao->select(["*"], ["idVenta" => $this->idVenta]);
+        $rows = $this->dao->select(["*"], ["idVenta" => $this->idSale]);
         if (!$rows) return false;
 
         $this->idProduct = $rows[0]["idProducto"];
@@ -67,17 +67,12 @@ class Sale extends Model
 
     public function validate()
     {
-        // TODO: validar que el producto existe (apoyarse en modelo de 
-        // productos)
-	$product=new Product($this->product);
-	if(!$product->fill())
-		return false;
-	// TODO: validar que el precio sea superior a 0.0
-	if($this->price) <= 0.0
-		return false;
-        // TODO: validar que el stock sea superior a 0
-	if($this->stock) <=0
-		return false;
+        // valida que el producto exista
+        $product=new Product($this->product);
+        if (!$product->fill()) return false;
+
+        // valida que el precio y el stock sean iguales o superiores a cero
+        return $this->price >= 0.0 && $this->stock >= 0;
     }
 
     public function getId()

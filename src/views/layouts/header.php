@@ -15,12 +15,12 @@
 <div id="main_container">
     <div class="top_bar">
         <div class="top_search">
-            <div class="search_text"><a href="#"><?php print $lang["head"]["advanced_search"]; ?></a></div>
+            <div class="search_text"><a href="#"><?php print $lang["general"]["search"]; ?></a></div>
             <input type="text" class="search_input" name="search" />
             <input alt="search" type="image" src="/assets/img/search.gif" class="search_bt"/>
         </div>
         <div class="languages">
-            <div class="lang_text"><?php print $lang["head"]["languages"]; ?></div>
+            <div class="lang_text"><?php print $lang["general"]["languages"]; ?></div>
             <a href="/index.php?action=changeLanguage&lang=en&redirect=<?php print $this->getCurrentUrl(); ?>" class="lang"><img src="/assets/img/en.gif" alt="" title="" border="0" /></a>
             <a href="/index.php?action=changeLanguage&lang=es&redirect=<?php print $this->getCurrentUrl(); ?>" class="lang"><img src="/assets/img/es.gif" alt="" title="" border="0" /></a>
         </div>

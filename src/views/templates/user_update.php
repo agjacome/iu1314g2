@@ -16,7 +16,7 @@
                     </div>
 
                     <div class="form_row">
-                        <label class="contact"><strong><?php print $lang["user"]["password"]; ?></strong></label>
+                        <label class="contact"><strong><?php print $lang["user"]["new_pass"]; ?></strong></label>
                         <input type="password" name="password" class="contact_input" />
                     </div>
 
@@ -57,7 +57,7 @@
 
                 </div>
                 <div class="form_row">
-                    <input type="submit" value="<?php print $lang["botones"]["aceptar"]; ?>" class="contact">
+                    <input type="submit" value="<?php print $lang["general"]["accept"]; ?>" class="contact">
                 </div>
             </form>
         </div>
