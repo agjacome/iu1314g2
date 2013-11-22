@@ -33,8 +33,7 @@ class ProductsController extends Controller
      */
     public function defaultAction()
     {
-        // FIXME: decidir accion por defecto para /index.php?controller=product
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        $this->available();
     }
 
     /**

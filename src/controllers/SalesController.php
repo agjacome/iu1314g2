@@ -34,8 +34,7 @@ class SalesController extends Controller
      */
     public function defaultAction()
     {
-        // FIXME: decidir accion por defecto para /index.php?controller=sale
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        $this->listing();
     }
 
     /**
@@ -123,8 +122,12 @@ class SalesController extends Controller
 
         // la venta a modificar debe existir previamente en la BD
         $this->sale    = new \models\Sale($this->request->id);
+        if (!$this->sale->fill()) {
+            $this->setFlash($this->lang["sale"]["update_err"]);
+            $this->redirect("sale");
+        }
         $this->product = new \models\Product($this->sale->getProductId());
-        if (!$this->sale->fill() || !$this->product->fill()) {
+        if (!$this->product->fill()) {
             $this->setFlash($this->lang["sale"]["update_err"]);
             $this->redirect("sale");
         }

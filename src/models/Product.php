@@ -107,26 +107,26 @@ class Product extends Model
     public function validate()
     {
         // name solo puede tener letras, números y guiones
-        if(!filter_var($this->name, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/[a-zA-Z0-9\-]+/"]]))
+        if (!filter_var($this->name, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/[a-zA-Z0-9\-]+/"]]))
             return false;
 
-        //descripcion puede tener letras, numeros, guiones y guiones bajos
+        // descrpicion debe limpiarse para prevenir ataques XSS
         $this->description = filter_var($this->description, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+
+        // nombre debe tener como minimo 4 caracteres y como maximo 255
+        if (strlen($this->name) <4 || strlen($this->name) > 255)
             return false;
 
-        // TODO: nombre debe tener como minimo 4 caracteres y como maximo 255
-	if(strlen($this->name) <4 || strlen($this->name) > 255)
-		return false;
-        // TODO: estado debe ser "pendiente", "subasta" o "venta" 
-        // exclusivamente
-	if($this ->state !==  "pendiente" && $this->state !== "subasta" && $this->state !== "venta")
-		return false;
-        // TODO: propietario debe existir (apoyarse en modelo usuario para 
-        // comprobacion)
-	$user = new User($this->owner);
-	if (!$user->fill())
-		return false;
-        
+        // estado debe ser "pendiente", "subasta" o "venta" exclusivamente
+        if ($this ->state !==  "pendiente" && $this->state !== "subasta" && $this->state !== "venta")
+            return false;
+
+        // propietario debe existir (apoyarse en modelo usuario para comprobacion)
+        $user = new User($this->owner);
+        if (!$user->fill())
+            return false;
+
+        return true;
     }
 
     public function getId()

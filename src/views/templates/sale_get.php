@@ -11,12 +11,21 @@
         <li class="odd">
 <?php if ($this->isLoggedIn()) { ?>
             <a href="/index.php?controller=sale&action=purchase&id=<?php print $sale->getId(); ?>">
-                Comprar
+                <?php print $lang["sale"]["buy"]; ?>
             </a>
             &nbsp;|&nbsp;
-            Comentar
+            <a href="/index.php?controller=product&action=rate&prod=<?php print $product->getId(); ?>">
+                <?php print $lang["product"]["rate"]; ?>
+            </a>
 <?php   if ($this->session->username === $product->getOwner() || $this->isAdmin()) { ?>
-            | Modificar | Eliminar
+            &nbsp;|&nbsp;
+            <a href="/index.php?controller=sale&action=update&id=<?php print $sale->getId(); ?>">
+                <?php print $lang["sale"]["update"]; ?>
+            </a>
+            &nbsp;|&nbsp;
+            <a href="/index.php?controller=sale&action=delete&id=<?php print $sale->getId(); ?>">
+                <?php print $lang["sale"]["delete"]; ?>
+            </a>
 <?php
         }
       } else {
@@ -36,7 +45,11 @@
         foreach ($ratings as $rating) {
 ?>
         <li class="even">
-            <?php print "<strong>" . $lang["user"]["username"] . ":</strong> "; ?>
+            <?php print "<strong>" . $lang["product"]["author"]  . ":</strong> " . $rating->getLogin(); ?>
+            <br />
+            <?php print "<strong>" . $lang["product"]["rating"]  . ":</strong> " . $rating->rating; ?>
+            <br />
+            <?php print "<strong>" . $lang["product"]["comment"] . ":</strong> " . $rating->commentary; ?>
         </li>
 <?php
         }

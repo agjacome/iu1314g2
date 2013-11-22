@@ -94,7 +94,7 @@ class Rating extends Model
     {
         $count = $this->dao->select(["COUNT(idCalificacion)"],
                                     ["idProducto" => $this->idProduct, "login" => $this->login]);
-        return $count[0][0] === 0;
+        return intval($count[0][0]) === 0;
     }
 
     public function getId()
