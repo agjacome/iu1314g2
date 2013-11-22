@@ -23,6 +23,7 @@
             <div class="lang_text"><?php print $lang["general"]["languages"]; ?></div>
             <a href="/index.php?action=changeLanguage&lang=en&redirect=<?php print $this->getCurrentUrl(); ?>" class="lang"><img src="/assets/img/en.gif" alt="" title="" border="0" /></a>
             <a href="/index.php?action=changeLanguage&lang=es&redirect=<?php print $this->getCurrentUrl(); ?>" class="lang"><img src="/assets/img/es.gif" alt="" title="" border="0" /></a>
+            <a href="/index.php?action=changeLanguage&lang=gl&redirect=<?php print $this->getCurrentUrl(); ?>" class="lang"><img src="/assets/img/gl.gif" alt="" title="" border="0" /></a>
         </div>
     </div>
     <div id="header">

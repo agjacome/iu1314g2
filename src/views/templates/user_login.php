@@ -15,7 +15,7 @@
                         <label class="contact"><strong><?php print $lang["user"]["password"]; ?></strong></label>
                         <input type="password" name="password" class="contact_input" />
                     </div>
-                    <input type=submit value="Aceptar">
+                    <input type=submit value="<?php print $lang["general"]["accept"]; ?>">
                 </form>
             </div>
         </div>
