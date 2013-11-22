@@ -80,7 +80,7 @@ class Sale extends Model
     public function validate()
     {
         // valida que el producto exista
-        $product=new Product($this->product);
+        $product = new Product($this->idProduct);
         if (!$product->fill()) return false;
 
         // valida que el precio y el stock sean iguales o superiores a cero

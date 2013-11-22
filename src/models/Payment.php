@@ -62,8 +62,14 @@ class Payment extends Model
 
         if (isset($this->idPayment))
             return $this->dao->update($data, ["idPago" => $this->idPayment]);
-        else
-            return $this->dao->insert($data);
+        else {
+            $ret = $this->dao->insert($data);
+            // FIXME: esto es un hack muy feo, deberia crearse un metodo en 
+            // SQLDAO para recuperar el ultimo ID, y no invocar a la conexion a 
+            // BD desde aqui, pero no queda tiempo para corregirlo ahora
+            $this->idPayment = \database\DatabaseConnection::getConnection()->lastInsertId();
+            return $ret;
+        }
     }
 
     public function delete()
@@ -73,28 +79,26 @@ class Payment extends Model
 
     public function validate()
     {
-        // TODO: validar que el metodo de pago es o "paypal" o "tarjeta"
-	if($this->payMethod !=="paypal" && $this->payMethod !=="tarjeta")
-		return false;
-        // TODO: validar que, segun metodo de pago, o bien el numero de tarjeta 
+        // valida que el metodo de pago es o "paypal" o "tarjeta"
+        if ($this->payMethod !=="paypal" && $this->payMethod !== "tarjeta")
+            return false;
+
+        // valida que, segun metodo de pago, o bien el numero de tarjeta 
         // o bien la cuenta de paypal ha sido introducida
-	if($this->payMethod =="paypal")
-	{
-		if(!isset($this->paypal)) return false;
-	}
-	else if($this->payMethod =="tarjeta")
-	{
-		if(!isset($this->tarjeta)) return false;
-	}
-        // TODO: validar que cuenta de paypal es un email valido
-	if($this->payMethod =="paypal")
-	{
-		if(!filter_var ($this->paypal, FILTER_VALIDATE_EMAIL))
-			return false;
-	}
-        // TODO: validar que la comision es un valor valido
-	if($this->commission <0.0 || $this->commission >1)
-		return false;
+        if ($this->payMethod === "paypal" && !isset($this->paypal))
+            return false;
+        elseif ($this->payMethod === "tarjeta" && !isset($this->tarjeta))
+            return false;
+
+        // valida que cuenta de paypal es un email valido
+        if ($this->payMethod === "paypal" && !filter_var($this->paypal, FILTER_VALIDATE_EMAIL))
+                return false;
+
+        // valida que la comision es un valor valido
+        if ($this->commission <= 0.0)
+            return false;
+
+        return true;
     }
 
     public function getId()

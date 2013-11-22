@@ -61,7 +61,7 @@ class Purchase extends Model
         ];
 
         if (isset($this->quantity))  $data["cantidad"] = $this->quantity;
-        if (isset($this->idPayment)) $data["idPago"]   = $this->idPago;
+        if (isset($this->idPayment)) $data["idPago"]   = $this->idPayment;
 
         if (isset($this->idPurchase))
             return $this->dao->update($data, ["idCompra" => $this->idPurchase]);
@@ -82,7 +82,7 @@ class Purchase extends Model
         // stock del producto (apoyarse en modelo de venta)
         // TODO: validar que el pago, SI NO NULO (aka pendiente de pago), 
         // existe (apoyarse en modelo de pago)
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        return true;
     }
 
     public function getId()

@@ -364,7 +364,7 @@ class SalesController extends Controller
         if ($payment->payMethod === "paypal") {
             if (!$this->request->paypal) return false;
             $payment->paypal = $this->request->paypal;
-        } elseif ($payment->payMethod === "creditCard") {
+        } elseif ($payment->payMethod === "tarjeta") {
             if (!$this->request->creditCard) return false;
             $payment->creditCard = $this->request->creditCard;
         } else { // metodo de pago desconocido
@@ -373,16 +373,12 @@ class SalesController extends Controller
 
         // obtiene la comision actual que recibe la tienda de toda transaccion 
         // y la almacena en el pago
-        $payment->commission = (new \models\Store())->commission;
+        $store = new \models\Store();
+        $store->fill();
+        $payment->commission = $store->commission;
 
         // valida y almacena el pago
         if (!$payment->validate() || !$payment->save()) return false;
-
-        // recupera el identificador del pago (creado automaticamente por la 
-        // BD), ultimo en el orden de IDs para dicha venta y login
-        // FUTURE TODO: esto es FEO!, deberia recuperarse automaticamente por 
-        // el modelo despues de hacer un save()
-        $payment = end(\models\Payment::findBy(["idVenta" => $this->request->sale, "login" => $this->session->username]));
 
         // almacena los datos de la compra en el modelo de compra
         $purchase->quantity  = $this->request->quantity;
