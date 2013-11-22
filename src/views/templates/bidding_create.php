@@ -16,7 +16,7 @@
 
                     <div class="form_row">
                         <label class="contact"><strong><?php print $lang["bidding"]["limitDate"]; ?></strong></label>
-                        <input type="date" name="limitDate" class="contact_input" />
+                        <input type="date" name="limitDate" class="contact_input" value="yyyy-mm-dd" />
                     </div>
 
                     <div class="form_row">

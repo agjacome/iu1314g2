@@ -150,7 +150,6 @@ class BiddingsController extends Controller
         }
     }
 
-
     /**
      * Proporciona los datos concretos de una subasta de producto.
      */
@@ -161,23 +160,31 @@ class BiddingsController extends Controller
             $this->redirect("bidding");
 
         // obtiene datos de la subasta y el producto
-        $this->bidding = new \models\bidding($this->request->id);
+        $this->bidding = new \models\Bidding($this->request->id);
         if (!$this->bidding->fill()) {
-            $this->setFlash($this->lang["Bidding"]["get_err"]);
+            $this->setFlash($this->lang["bidding"]["get_err"]);
             $this->redirect("bidding");
         }
         $this->product = new \models\Product($this->bidding->getProductId());
         if (!$this->product->fill()) {
             $this->setFlash($this->lang["bidding"]["get_err"]);
             $this->redirect("bidding");
-
-            // se le pasan los datos de la subasta y producto a la vista, y se
-            // renderiza
-            $this->view->assign("product" , $this->product);
-            $this->view->assign("bidding"    , $this->bidding);
-            $this->view->render("bidding_get");
         }
 
+        // obtiene puntuaciones y puntuacion media del producto
+        $ratings = \models\Rating::findBy(["idProducto" => $this->product->getId()]);
+
+        $rateAvg = 0.0;
+        foreach ($ratings as $rating) $rateAvg  += intval($rating->rating);
+        if (count($ratings) > 0) $rateAvg /= count($ratings);
+
+        // se le pasan los datos de la subasta y producto a la vista, y se
+        // renderiza
+        $this->view->assign("product" , $this->product);
+        $this->view->assign("bidding" , $this->bidding);
+        $this->view->assign("rate"    , $rateAvg);
+        $this->view->assign("ratings" , $ratings);
+        $this->view->render("bidding_get");
     }
 
     /**
@@ -186,7 +193,7 @@ class BiddingsController extends Controller
     public function listing()
     {
         $biddings = \models\Bidding::findBy(null);
-        listBiddings($biddings);
+        $this->listBiddings($biddings);
     }
 
     /**
@@ -196,7 +203,7 @@ class BiddingsController extends Controller
     public function owned()
     {
         $biddings = \models\Bidding::findBy(["propietario" => $this->session->username, "estado" => "subasta"]);
-        listBiddings($biddings);
+        $this->listBiddings($biddings);
     }
 
     /**
@@ -206,7 +213,7 @@ class BiddingsController extends Controller
     public function bidded()
     {
         $biddings = \models\Bidding::findBy(["login" => $this->session->username]);
-        listBiddings($biddings);
+        $this->listBiddings($biddings);
     }
 
     private function listBiddings($biddings)
