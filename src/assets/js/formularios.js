@@ -253,7 +253,14 @@ function validarPayPal(cuenta){
 }
 
 function validarTarjeta(tarjeta){
-	//NO IMPLEMENTADA
+	var value=tarjeta.value;
+	if(/^[0,9]{16}/.test(value)){
+		return true;
+	}
+		else{
+			alert('Tarjeta de pago no valida');
+			return;
+		}
 }
 
 function validarPorcentaje(percent){
