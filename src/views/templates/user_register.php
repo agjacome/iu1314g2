@@ -50,4 +50,5 @@
             </form>
         </div>
         <div class="bottom_prod_box_big"></div>
+    </div>
 </div><!-- end of center content -->

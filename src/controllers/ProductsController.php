@@ -307,6 +307,13 @@ class ProductsController extends Controller
             $this->redirect("product");
         }
 
+        // comprueba que el producto exista
+        $this->product = new \models\Product($this->request->prod);
+        if (!$this->product->fill()) {
+            $this->setFlash($this->lang["product"]["rate_err"]);
+            $this->redirect("product");
+        }
+
         // comprueba que el usuario no haya puntuado todavia el producto
         $rating = new \models\Rating(null, $this->request->prod, $this->session->username);
         if (!$rating->isNewRating()) {
@@ -315,8 +322,10 @@ class ProductsController extends Controller
         }
 
         // si es GET, muestra formulario de puntuacion
-        if ($this->request->isGet())
+        if ($this->request->isGet()) {
+            $this->view->assign("product", $this->product);
             $this->view->render("product_rate");
+        }
 
         // si es POST, almacena la puntuacion y redirige
         if ($this->request->isPost()) {
