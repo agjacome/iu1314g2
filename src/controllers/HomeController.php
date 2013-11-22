@@ -34,13 +34,33 @@ class HomeController extends Controller
      */
     public function defaultAction()
     {
-        // obtiene los arrays de productos
+        // obtiene productos en venta y subasta
         $onSale    = \models\Product::findBy(["estado" => "venta"]);
         $onAuction = \models\Product::findBy(["estado" => "subasta"]);
 
+        // crea arrays de ventas y subastas
+        $sales = array();
+        foreach ($onSale as $prod) {
+            $sale = new \models\Sale(null, $prod->getId());
+            if (!$sale->fromProduct()) break;
+            $sales[] = [
+                "product" => $prod,
+                "sale"    => $sale
+            ];
+        }
+        $biddings = array();
+        foreach ($onAuction as $prod) {
+            $bidding = new \models\Bidding(null, $prod->getId());
+            if (!$bidding->fromProduct()) break;
+            $biddings[] = [
+                "product" => $prod,
+                "bidding" => $bidding
+            ];
+        }
+
         // envia los arrays de productos a la vista
-        $this->view->assign("sales"    , $onSale);
-        $this->view->assign("biddings" , $onAuction);
+        $this->view->assign("sales"    , $sales);
+        $this->view->assign("biddings" , $biddings);
 
         // y renderiza la vista concreta
         $this->view->render("home");

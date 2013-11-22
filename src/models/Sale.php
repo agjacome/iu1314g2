@@ -47,6 +47,18 @@ class Sale extends Model
         return true;
     }
 
+    public function fromProduct()
+    {
+        $rows = $this->dao->select(["*"], ["idProducto" => $this->idProduct]);
+        if (!$rows) return false;
+
+        $this->idSale = $rows[0]["idVenta"];
+        $this->price  = $rows[0]["precio"];
+        $this->stock  = $rows[0]["stock"];
+
+        return true;
+    }
+
     public function save()
     {
         $data = ["idProducto" => $this->idProduct];

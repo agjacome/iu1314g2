@@ -47,6 +47,18 @@ class Bidding extends Model
         return true;
     }
 
+    public function fromProduct()
+    {
+        $rows = $this->dao->select(["*"], ["idProducto" => $this->idProduct]);
+        if (!$rows) return false;
+
+        $this->idBidding = $rows[0]["idSubasta"];
+        $this->minBid    = $rows[0]["pujaMinima"];
+        $this->limitDate = $rows[0]["fechaLimite"];
+
+        return true;
+    }
+
     public function save()
     {
         $data = ["idProducto" => $this->idProduct];
@@ -60,38 +72,23 @@ class Bidding extends Model
             return $this->dao->insert($data);
     }
 
-    public function isAvaliable()
-    {
-        if (isset($this->dao->select(["estado"],["idProducto => $idProduct", "estado" => "pendiente"]))) {
-            return true;
-        } else return false;
-    }
-
     public function delete()
     {
         return $this->dao->delete(["idSubasta" => $this->idBidding]);
     }
 
-    public function validate() 
+    public function validate()
     {
-        // TODO: validar que el producto existe (apoyarse en modelo de
-        // productos)
-	$product= new Product($this->idProduct);
-	if(!$product->fill())
-		return false;
+        // valida que el producto existe
+        $product = new Product($this->idProduct);
+        if(!$product->fill()) return false;
+
         // TODO: validar que la puja minima sea superior a 0.0
+        if ($this->minBid <= 0.0) return false;
         // TODO: validar que la fecha limite sea posterior a la fecha de
         // creacion (actual)
-        if ($this->dao->select(["$idProduct"], ["idProducto" => "$idProduct"])) {
-            if ($minBid > 0.0) {
-                if ($limitDate > time()) {
-                    print("true");
-                    return true;
-                } 
-            }
-        }
-        print("false");
-        return false;
+
+        return true;
     }
 
     public function getId()

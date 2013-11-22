@@ -1,5 +1,5 @@
 <div class="center_content">
-    <div class="center_title_bar">Latest Sales</div>
+<div class="center_title_bar"><?php print $lang["product"]["last_sale"]; ?></div>
     <ul class="list">
 <?php
     $sales = array_reverse($sales);
@@ -7,11 +7,11 @@
     for ($i = 0; $i < $count; $i++) {
 ?>
         <li class="<?php if ($i % 2 == 0) print "even"; else print "odd"; ?>">
-            <a href="/index.php?controller=product&action=get&id=<?php print $sales[$i]->getId(); ?>"><?php print $sales[$i]->name; ?></a>
+            <a href="/index.php?controller=sale&action=get&id=<?php print $sales[$i]["sale"]->getId(); ?>"><?php print $sales[$i]["product"]->name; ?></a>
         </li>
 <?php } ?>
     </ul>
-    <div class="center_title_bar">Latest Biddings</div>
+    <div class="center_title_bar"><?php print $lang["product"]["last_bidding"]; ?></div>
     <ul class="list">
 <?php
     $biddings = array_reverse($biddings);
@@ -19,7 +19,7 @@
     for ($i = 0; $i < $count; $i++) {
 ?>
         <li class="<?php if ($i % 2 == 0) print "even"; else print "odd"; ?>">
-            <a href="/index.php?controller=product&action=get&id=<?php print $biddings[$i]->getId(); ?>"><?php print $biddings[$i]->name; ?></a>
+            <a href="/index.php?controller=bidding&action=get&id=<?php print $biddings[$i]["bidding"]->getId(); ?>"><?php print $biddings[$i]["product"]->name; ?></a>
         </li>
 <?php } ?>
     </ul>

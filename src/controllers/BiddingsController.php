@@ -13,7 +13,7 @@ namespace controllers;
 class BiddingsController extends Controller
 {
     private $bidding; // modelo de subasta, se instanciara cuando resulte necesario
-    private $product  // modelo de producto, se instanciara cuando resulte necesario
+    private $product; // modelo de producto, se instanciara cuando resulte necesario
 
     /**
      * Constructor, construye la instancia de Controller a partir de la 
