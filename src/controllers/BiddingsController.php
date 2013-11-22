@@ -42,24 +42,7 @@ class BiddingsController extends Controller
      * creacion de subasta al usuario en posesion del producto y/o al 
      * administrador.
      */
-    /*
-    public function createBidding()
-    {
-        if ($this->request->isGet()) {
-            $this->view->render("createBidding.php")
-        } else if ($this->request->isPost()) {
-            if ($bidding->isAvaliable()) {
-                $this->bidding = new \models\Bidding();
-
-            } else {
-                $this->setFlash("No es posible crear subasta.");
-            }
-            $this->redirect("bidding", "createBidding");
-        }
-    }
-*/
-
-        public function create()
+    public function create()
     {
         // solo se permite creacion de subastas a usuarios identificados
         if (!$this->isLoggedIn())
@@ -108,15 +91,15 @@ class BiddingsController extends Controller
     private function createPost()
     {
         // campos necesarios para creacion de subasta
-        $required = isset($this->request->price) && isset($this->request->stock);
+        $required = isset($this->request->minBid) && isset($this->request->limitDate);
         if (!$required) return false;
 
         // crea subasta, actualiza estado de producto, valida campos e inserta en
-        // BD
+        // la base de datos
         $this->bidding = new \models\Bidding(null, $this->product->getId());
-        $this->bidding->price    = $this->request->price;
-        $this->bidding->stock    = $this->request->stock;
-        $this->product->state = "subasta";
+        $this->bidding->minBid    = $this->request->minBid;
+        $this->bidding->limitDate = $this->request->limitDate;
+        $this->product->state     = "subasta";
 
         return $this->bidding->validate() && $this->product->validate() &&
             $this->bidding->save() && $this->product->save();
@@ -171,7 +154,7 @@ class BiddingsController extends Controller
     /**
      * Proporciona los datos concretos de una subasta de producto.
      */
-     public function get()
+    public function get()
     {
         // se debe proporcionar el identificador de la subasta a consultar
         if (!isset($this->request->id))
@@ -188,14 +171,14 @@ class BiddingsController extends Controller
             $this->setFlash($this->lang["bidding"]["get_err"]);
             $this->redirect("bidding");
 
-        // se le pasan los datos de la subasta y producto a la vista, y se
-        // renderiza
-        $this->view->assign("product" , $this->product);
-        $this->view->assign("bidding"    , $this->bidding);
-        $this->view->render("bidding_get");
-    }
+            // se le pasan los datos de la subasta y producto a la vista, y se
+            // renderiza
+            $this->view->assign("product" , $this->product);
+            $this->view->assign("bidding"    , $this->bidding);
+            $this->view->render("bidding_get");
+        }
 
-}
+    }
 
     /**
      * Proporciona un listado de todos los productos en subasta en el sistema.
