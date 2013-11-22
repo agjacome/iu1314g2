@@ -33,8 +33,7 @@ class BiddingsController extends Controller
      */
     public function defaultAction()
     {
-        // FIXME: decidir accion por defecto para /index.php?controller=bidding
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        $this->listing();
     }
 
     /**
@@ -121,7 +120,7 @@ class BiddingsController extends Controller
             $this->redirect("bidding");
 
         // comprueba si existe la subasta y producto asociado al id dado
-        $this->sale = new \models\Sale($this->request->id);
+        $this->bidding = new \models\Bidding($this->request->id);
         if (!$this->bidding->fill()) {
             $this->setFlash($this->lang["bidding"]["delete_err"]);
             $this->redirect("bidding");
@@ -178,12 +177,17 @@ class BiddingsController extends Controller
         foreach ($ratings as $rating) $rateAvg  += intval($rating->rating);
         if (count($ratings) > 0) $rateAvg /= count($ratings);
 
+        // obtiene la puja mas alta hasta el momento (puja minima si ninguna)
+        $currentBid = $this->bidding->getHighestBid();
+        if (!$currentBid) $currentBid = $this->bidding->minBid;
+
         // se le pasan los datos de la subasta y producto a la vista, y se
         // renderiza
-        $this->view->assign("product" , $this->product);
-        $this->view->assign("bidding" , $this->bidding);
-        $this->view->assign("rate"    , $rateAvg);
-        $this->view->assign("ratings" , $ratings);
+        $this->view->assign("product"       , $this->product);
+        $this->view->assign("bidding"       , $this->bidding);
+        $this->view->assign("currentBid"    , $currentBid);
+        $this->view->assign("rate"          , $rateAvg);
+        $this->view->assign("ratings"       , $ratings);
         $this->view->render("bidding_get");
     }
 

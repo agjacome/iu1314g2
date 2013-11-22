@@ -7,31 +7,28 @@
         <li class="even"><?php print "<strong>" . $lang["product"]["descr"]     . ":</strong> " . $product->description; ?></li>
         <li class="even"><?php print "<strong>" . $lang["product"]["rateAvg"]   . ":</strong> " . $rate; ?> / 5</li>
         <li class="even"><?php print "<strong>" . $lang["bidding"]["minBid"]    . ":</strong> " . $bidding->minBid; ?></li>
+        <li class="even"><?php print "<strong>" . $lang["bidding"]["currBid"]   . ":</strong> " . $currentBid; ?></li>
         <li class="even"><?php print "<strong>" . $lang["bidding"]["limitDate"] . ":</strong> " . date("d-m-Y", strtotime($bidding->limitDate)); ?></li>
         <li class="odd">
 <?php if ($this->isLoggedIn()) { ?>
-            <a href="/index.php?controller=sale&action=purchase&sale=<?php print $sale->getId(); ?>">
-                <?php print $lang["sale"]["buy"]; ?>
+            <a href="/index.php?controller=bidding&action=makeBid&bidding=<?php print $bidding->getId(); ?>">
+                <?php print $lang["bidding"]["bid"]; ?>
             </a>
             &nbsp;|&nbsp;
             <a href="/index.php?controller=product&action=rate&prod=<?php print $product->getId(); ?>">
                 <?php print $lang["product"]["rate"]; ?>
             </a>
-<?php   if ($this->session->username === $product->getOwner() || $this->isAdmin()) { ?>
+<?php   if ($this->isAdmin()) { ?>
             &nbsp;|&nbsp;
-            <a href="/index.php?controller=sale&action=update&id=<?php print $sale->getId(); ?>">
-                <?php print $lang["sale"]["update"]; ?>
-            </a>
-            &nbsp;|&nbsp;
-            <a href="/index.php?controller=sale&action=delete&id=<?php print $sale->getId(); ?>">
-                <?php print $lang["sale"]["delete"]; ?>
+            <a href="/index.php?controller=bidding&action=delete&id=<?php print $bidding->getId(); ?>">
+                <?php print $lang["bidding"]["delete"]; ?>
             </a>
 <?php
         }
       } else {
 ?>
             <a href="/index.php?controller=user&action=login">
-                <?php print $lang["sale"]["login_to_buy"]; ?>
+                <?php print $lang["bidding"]["login_to_bid"]; ?>
             </a>
 <?php } ?>
         </li>

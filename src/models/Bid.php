@@ -153,31 +153,28 @@ class Bid extends Model
      */
     public function validate()
     {
-        // TODO: validar que el login existe, validar que la subasta existe 
-        // (apoyarse en modelos de usuario y subasta)
-	$user= new User($this->login);
-	if(!$user->fill())
-		return false;
+        // valida que el login existe, validar que la subasta existe 
+        $user = new User($this->login);
+        if (!$user->fill()) return false;
+        $bidding = new Bidding($this->idBidding);
+        if (!$bidding->fill()) return false;
 
-	$bidding= new Bidding($this->idBidding);
-	if(!$bidding->fill())
-		return false;
-        // TODO: validar que la cantidad pujada es superior a la ultima de la 
+        // valida que la cantidad pujada es superior a la ultima de la 
         // subasta (apoyarse en modelo de subasta)
-	$bid=bidding->getHighestBid();
-	if($bid!=false)
-	{
-		if($bid->quantity > $this->quantity) return false;
-	}
-	else
-	{
-		if($bidding->minBid >quantity)	return false;
-	}
-        // TODO: validar que el pago, SI NO NULO (aka no ultima puja de 
-        // subasta) existe (apoyarse en modelo de pago)
-	$payment= new Payment($this->idPayment);
-	if(!$payment->fill())
-		return false;
+        $bid = $bidding->getHighestBid();
+        if ($bid !== false) {
+            if ($bid->quantity >= $this->quantity) return false;
+        } else {
+            if ($bidding->minBid >= $this->quantity) return false;
+        }
+
+        // validar que el pago, SI NO NULO, existe
+        if (isset($this->idPayment)) {
+            $payment= new Payment($this->idPayment);
+            if (!$payment->fill()) return false;
+        }
+
+        return true;
     }
 
     /**
