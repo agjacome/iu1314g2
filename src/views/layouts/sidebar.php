@@ -12,8 +12,9 @@
         <li class="odd"><a href="/index.php?controller=user&action=login"><?php print $lang["user"]["login"]; ?></a></li>
         <li class="even"><a href="/index.php?controller=user&action=create"><?php print $lang ["user"]["register"]; ?></a></li>
 <?php } ?>
-        <li class="odd"><a href="/index.php?controller=sale&action=listing"><?php print $lang ["sale"]["panel"]; ?></a></li>
-        <li class="even"><a href="/index.php?controller=bidding&action=listing"><?php print $lang["bidding"]["panel"]; ?></a></li>
+        <li class="odd"><a href="/index.php?controller=product&action=available"><?php print $lang["product"]["list"]; ?></a></li>
+        <li class="even"><a href="/index.php?controller=sale&action=listing"><?php print $lang ["sale"]["panel"]; ?></a></li>
+        <li class="odd"><a href="/index.php?controller=bidding&action=listing"><?php print $lang["bidding"]["panel"]; ?></a></li>
 <?php if ($this->isAdmin()) { ?>
         <li class="odd"><a href="/index.php?controller=store"><?php print $lang["store"]["panel"]; ?></a></li>
 <?php } ?>

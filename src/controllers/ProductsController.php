@@ -190,7 +190,7 @@ class ProductsController extends Controller
         // elimina el producto, si es posible, y redirecciona acordemente
         if ($this->product->delete()) {
             $this->setFlash($this->lang["product"]["delete_ok"]);
-            $this->redirect("product", "available");
+            $this->redirect();
         } else {
             $this->setFlash($this->lang["product"]["delete_err"]);
             $this->redirect("product");
@@ -327,7 +327,7 @@ class ProductsController extends Controller
         if ($this->request->isPost()) {
             if ($this->ratePost()) {
                 $this->setFlash($this->lang["product"]["rate_ok"]);
-                $this->redirect("product");
+                $this->redirect();
             } else {
                 $this->setFlash($this->lang["product"]["rate_err"]);
                 $this->redirect("product", "rate");

@@ -249,7 +249,50 @@ class BiddingsController extends Controller
      */
     public function makeBid()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // solo se permite pujar a usuarios identificados
+        if (!$this->isLoggedIn())
+            $this->redirect("user", "login");
+
+        // debe recibirse el identificador de la subasta
+        if (!isset($this->request->bidding)) {
+            $this->setFlash($this->lang["bidding"]["bid_err"]);
+            $this->redirect("bidding");
+        }
+
+        // comprueba que la subasta y el producto asociado existan
+        $this->bidding = new \models\Bidding($this->request->bidding);
+        if (!$this->bidding->fill()) {
+            $this->setFlash($this->lang["bidding"]["bid_err"]);
+            $this->redirect("bidding");
+        }
+        $this->product = new \models\Product($this->bidding->getProductId());
+        if (!$this->product->fill()) {
+            $this->setFlash($this->lang["bidding"]["bid_err"]);
+            $this->redirect("bidding");
+        }
+
+        // si GET, muestra formulario de puja, que recibe los datos del 
+        // producto y la subasta, y la puja mas alta hasta el momento
+        if ($this->request->isGet()) {
+            $currentBid = $this->bidding->getHighestBid();
+            if (!$currentBid) $currentBid = $this->bidding->minBid;
+
+            $this->view->assign("product"    , $this->product);
+            $this->view->assign("bidding"    , $this->bidding);
+            $this->view->assign("currentBid" , $currentBid);
+            $this->view->render("bidding_bid");
+        }
+
+        // si POST, realiza la compra y pago asociado
+        if ($this->request->isPost()) {
+            if ($this->makeBidPost()) {
+                $this->setFlash($this->lang["bidding"]["purchase_ok"]);
+                $this->redirect("bidding");
+            } else {
+                $this->setFlash($this->lang["bidding"]["purchase_err"]);
+                $this->redirect("bidding");
+            }
+        }
     }
 
     /**
