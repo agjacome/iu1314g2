@@ -3,7 +3,7 @@
     <div class="prod_box_big">
         <div class="top_prod_box_big"></div>
         <div class="center_prod_box_big">
-            <form action="index.php" method="post" accept-charset="utf-8">
+            <form action="index.php" name="insprod" method="post" accept-charset="utf-8">
                 <div class="contact_form">
                     <input type="hidden" name="controller" value="product" />
                     <input type="hidden" name="action" value="create" />
@@ -20,7 +20,7 @@
 
                 </div>
                 <div class="form_row">
-                    <input type="submit" value="<?php print $lang["general"]["accept"]; ?>" class="contact">
+                    <input type="button" onclick="insprodd" value="<?php print $lang["general"]["accept"]; ?>" class="contact">
                 </div>
             </form>
         </div>

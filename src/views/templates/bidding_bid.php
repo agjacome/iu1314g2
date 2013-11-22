@@ -4,7 +4,7 @@
         <div class="top_prod_box_big"></div>
         <div class="center_prod_box_big">
             <div class="contact_form">
-                <form method="post" action="index.php" accept-charset="utf-8">
+                <form method="post" action="index.php" name="bidProd" accept-charset="utf-8">
                     <input type="hidden" name="controller" value="bidding" />
                     <input type="hidden" name="action" value="makeBid" />
                     <input type="hidden" name="bidding" value="<?php print $bidding->getId(); ?>" />
@@ -14,7 +14,7 @@
                         <input type="text" name="quantity" class="contact_input" value="<?php print $currentBid + 1; ?>" />
                     </div>
 
-                    <input type=submit value="<?php print $lang["general"]["accept"]; ?>">
+                    <input type="button" onclick="bidProdd()" value="<?php print $lang["general"]["accept"]; ?>">
                 </form>
             </div>
         </div>
