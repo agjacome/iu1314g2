@@ -19,7 +19,7 @@
                 <input type="hidden" name="controller" value="product" />
                 <input type="hidden" name="action" value="search" />
 
-                <div class="search_text"><a href="#"><?php print $lang["general"]["search"]; ?></a></div>
+                <div class="search_text"><?php print $lang["general"]["search"]; ?></div>
                 <input type="text" class="search_input" name="search" />
                 <input alt="search" type="image" src="/assets/img/search.gif" class="search_bt" />
             </form>
