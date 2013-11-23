@@ -253,8 +253,8 @@ function validarPayPal(cuenta){
 }
 
 function validarTarjeta(tarjeta){
-	var value=tarjeta.value;
-	if(/^[0,9]{16}/.test(value)){
+	var value=tarjeta;
+	if(/^[0-9]{16}/.test(value)){
 		return true;
 	}
 		else{
