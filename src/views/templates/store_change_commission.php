@@ -1,5 +1,5 @@
 <div class="contact_form">
-<div class="center_title_bar"><?php print $lang["sale"]["buy"]; ?></div>
+<div class="center_title_bar"><?php print $lang["store"]["changecomm"]; ?></div>
     <div class="prod_box_big">
         <div class="top_prod_box_big"></div>
         <div class="center_prod_box_big">
