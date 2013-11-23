@@ -387,10 +387,10 @@ class BiddingsController extends Controller
         // de credito deben haberse proporcionado
         $payment->payMethod = $this->request->payMethod;
         if ($payment->payMethod === "paypal") {
-            if (!$this->request->paypal) return false;
+            if (empty($this->request->paypal)) return false;
             $payment->paypal = $this->request->paypal;
         } elseif ($payment->payMethod === "tarjeta") {
-            if (!$this->request->creditCard) return false;
+            if (empty($this->request->creditCard)) return false;
             $payment->creditCard = $this->request->creditCard;
         } else { // metodo de pago desconocido
             return false;

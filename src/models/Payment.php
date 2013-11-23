@@ -139,12 +139,15 @@ class Payment extends Model
         // o bien la cuenta de paypal ha sido introducida
         if ($this->payMethod === "paypal" && !isset($this->paypal))
             return false;
-        elseif ($this->payMethod === "tarjeta" && !isset($this->tarjeta))
+        elseif ($this->payMethod === "tarjeta" && !isset($this->creditCard))
             return false;
 
         // valida que cuenta de paypal es un email valido
         if ($this->payMethod === "paypal" && !filter_var($this->paypal, FILTER_VALIDATE_EMAIL))
-                return false;
+            return false;
+        if ($this->payMethod === "tarjeta" && strlen($this->creditCard) != 16)
+            return false;
+
 
         // valida que la comision es un valor valido
         if ($this->commission <= 0.0)
