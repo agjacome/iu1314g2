@@ -5,9 +5,8 @@
         <div class="top_prod_box_big"></div>
         <div class="center_prod_box_big">
 
-            <form action="index.php" name"modifyuser" method="post" accept-charset="utf-8">
+            <form action="index.php" name="modifyuser" method="post" accept-charset="utf-8">
                 <div class="contact_form">
-                    
 
                     <div class="form_row">
                         <label class="contact"><strong><?php print $lang["user"]["username"]; ?></strong></label>
@@ -29,16 +28,6 @@
                         <input type="text" name="email" class="contact_input" value="<?php print $user->email; ?>" />
                     </div>
 
-                    <?php if ($this->isAdmin()) { ?>
-                    <div class="form_row">
-                        <label class="contact"><strong><?php print $lang ["user"]["role"]; ?></strong></label>
-                        <select name="role" class="contact_input" />
-                            <option <?php if ($user->role === "usuario") print "selected=\"selected\""; ?> value="usuario"><?php print $lang["user"]["role_user"]; ?></option>
-                            <option <?php if ($user->role === "admin")   print "selected=\"selected\""; ?> value="admin"><?php print $lang["user"]["role_admin"]; ?></option>
-                        </select>
-                    </div>
-                    <?php } ?>
-
                     <div class="form_row">
                         <label class="contact"><strong><?php print $lang["user"]["name"]; ?></strong></label>
                         <input type="text" name="name" class="contact_input" value="<?php print $user->name; ?>" />
@@ -53,6 +42,16 @@
                         <label class="contact"><strong><?php print $lang["user"]["telephone"]; ?></strong></label>
                         <input type="text" name="telephone" class="contact_input" value="<?php print $user->telephone; ?>" />
                     </div>
+
+                    <?php if ($this->isAdmin()) { ?>
+                    <div class="form_row">
+                        <label class="contact"><strong><?php print $lang ["user"]["role"]; ?></strong></label>
+                        <select name="role" class="contact_input" />
+                            <option <?php if ($user->role === "usuario") print "selected=\"selected\""; ?> value="usuario"><?php print $lang["user"]["role_user"]; ?></option>
+                            <option <?php if ($user->role === "admin")   print "selected=\"selected\""; ?> value="admin"><?php print $lang["user"]["role_admin"]; ?></option>
+                        </select>
+                    </div>
+                    <?php } ?>
 
                 </div>
                 <div class="form_row">

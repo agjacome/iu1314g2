@@ -92,7 +92,7 @@ function validate_registerr(){
 }
 
 function validate_modifyuserr(){
-	if(validarTexto(document.register.elements[0])&&validarTexto(document.register.elements[4])&&validarTexto(document.register.elements[5])&&validarEmail(document.register.elements[3])&&validarTexto(document.register.elements[6])&&validarTelefono(document.register.elements[6]))
+	if(validarTexto(document.modifyuser.elements[0])&&validarTexto(document.modifyuser.elements[4])&&validarTexto(document.modifyuser.elements[5])&&validarEmail(document.modifyuser.elements[3])&&validarTexto(document.modifyuser.elements[6])&&validarTelefono(document.modifyuser.elements[6]))
 		return true;
 	else return false;
 }
