@@ -12,6 +12,7 @@ namespace controllers;
  */
 class BiddingsController extends Controller
 {
+    private $bid;     // modelo de puja, se instanciara cuando resulte necesario
     private $bidding; // modelo de subasta, se instanciara cuando resulte necesario
     private $product; // modelo de producto, se instanciara cuando resulte necesario
 
@@ -312,9 +313,9 @@ class BiddingsController extends Controller
     {
         if (!isset($this->request->quantity)) return false;
 
-        $bid = new \models\Bid(null, $this->bidding->getId(), $this->session->username);
-        $bid->quantity = $this->request->quantity;
-        return $bid->validate() && $bid->save();
+        $this->bid = new \models\Bid(null, $this->bidding->getId(), $this->session->username);
+        $this->bid->quantity = $this->request->quantity;
+        return $this->bid->validate() && $this->bid->save();
     }
 
     /**
@@ -324,7 +325,83 @@ class BiddingsController extends Controller
      */
     public function payBid()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        // solo se permite pagar a usuarios identificados
+        if (!$this->isLoggedIn())
+            $this->redirect("user", "login");
+
+        // debe recibirse el identificador de la puja a pagar
+        if (!isset($this->request->bid)) {
+            $this->setFlash($this->lang["bidding"]["pay_err"]);
+            $this->redirect("bidding", "pendingPayments");
+        }
+
+        // comprueba que la puja exista y no tenga un pago asociado
+        $this->bid = new \models\Bid($this->request->bid);
+        if (!$this->bid->fill() || isset($this->bid->idPayment)) {
+            $this->setFlash($this->lang["bidding"]["pay_err"]);
+            $this->redirect("bidding", "pendingPayments");
+        }
+
+        // comprueba que la subasta existe y ya haya superado la fecha limite
+        $this->bidding = new \models\Bidding($this->bid->getBiddingId());
+        if (!$this->bidding->fill() || date("Y-m-d H:i:s") < $this->bidding->limitDate) {
+            $this->setFlash($this->lang["bidding"]["pay_err"]);
+            $this->redirect("bidding", "pendingPayments");
+        }
+
+        // si GET, muestra formulario de pago
+        if ($this->request->isGet()) {
+            $this->view->assign("bid", $this->bid);
+            $this->view->render("bid_pay");
+        }
+
+        // si POST, realiza el pago
+        if ($this->request->isPost()) {
+            if ($this->payBidPost()) {
+                $this->setFlash($this->lang["bidding"]["pay_ok"]);
+                // $this->redirect("bidding", "pendingPayments");
+            } else {
+                $this->setFlash($this->lang["bidding"]["pay_err"]);
+                // $this->redirect("bidding", "pendingPayments");
+            }
+        }
+    }
+
+    private function payBidPost()
+    {
+        // comprueba que se haya recibido el metodo de pago
+        if (!isset($this->request->payMethod))
+            return false;
+
+        // crea el pago
+        $payment = new \models\Payment();
+
+        // segun el metodo de pago elegido, o la cuenta de paypal o la tarjeta 
+        // de credito deben haberse proporcionado
+        $payment->payMethod = $this->request->payMethod;
+        if ($payment->payMethod === "paypal") {
+            if (!$this->request->paypal) return false;
+            $payment->paypal = $this->request->paypal;
+        } elseif ($payment->payMethod === "tarjeta") {
+            if (!$this->request->creditCard) return false;
+            $payment->creditCard = $this->request->creditCard;
+        } else { // metodo de pago desconocido
+            return false;
+        }
+
+        // obtiene la comision actual que recibe la tienda de toda transaccion 
+        // y la almacena en el pago
+        $store = new \models\Store();
+        $store->fill();
+        $payment->commission = $store->commission;
+
+        // valida y almacena el pago
+        if (!$payment->validate() || !$payment->save()) return false;
+
+        // actualiza la puja para indicar el identificador de pago
+        $this->bid->idPayment = $payment->getId();
+        print_r($this->bid);
+        return $this->bid->validate() && $this->bid->save();
     }
 
     /**

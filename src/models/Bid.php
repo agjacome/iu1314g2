@@ -159,21 +159,22 @@ class Bid extends Model
         if (!is_numeric($this->quantity)) return false;
 
         // valida que la cantidad pujada es superior a la ultima de la 
-        // subasta (apoyarse en modelo de subasta)
-        $bid = $bidding->getHighestBid();
-        if ($bid !== false) {
-            if ($bid->quantity >= $this->quantity) return false;
-        } else {
-            if ($bidding->minBid >= $this->quantity) return false;
+        // subasta (apoyarse en modelo de subasta), siempre que la puja no se 
+        // este modificando, sino insertando por primera vez (no tiene ID)
+        if (!isset($this->idBid)) {
+            $bid = $bidding->getHighestBid();
+            if ($bid !== false) {
+                if ($bid->quantity >= $this->quantity) return false;
+            } else {
+                if ($bidding->minBid >= $this->quantity) return false;
+            }
         }
 
         // validar que el pago, SI NO NULO, existe
         if (isset($this->idPayment)) {
-            $payment= new Payment($this->idPayment);
+            $payment = new Payment($this->idPayment);
             if (!$payment->fill()) return false;
         }
-
-        print "LLEGA AQUI";
 
         return true;
     }
