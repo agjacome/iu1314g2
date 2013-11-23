@@ -32,9 +32,10 @@ abstract class SQLDAO implements DAO
         $db = DatabaseConnection::getConnection();
 
         $insert = "INSERT INTO " . $this->tableName . " (";
-        foreach ($data as $key => $_) {
+        $iter = new \CachingIterator(new \ArrayIterator($data));
+        foreach ($iter as $key => $_) {
             $insert .= $key;
-            if (next($data)) $insert .= ", ";
+            if ($iter->hasNext()) $insert .= ", ";
         }
         $insert .= ") VALUES(" . str_repeat("?, ", count($data) - 1) . " ?)";
 
@@ -65,9 +66,10 @@ abstract class SQLDAO implements DAO
 
         if (isset($where)) {
             $update .= " WHERE ";
-            foreach ($where as $key => $valor) {
+            $iter = new \CachingIterator(new \ArrayIterator($where));
+            foreach ($iter as $key => $valor) {
                 $update .= $key . " = ?";
-                if (next($where)) $update .= " AND ";
+                if ($iter->hasNext()) $update .= " AND ";
             }
         }
 
@@ -97,9 +99,10 @@ abstract class SQLDAO implements DAO
 
         if (isset($where)) {
             $delete .= " WHERE ";
-            foreach($where as $key => $_) {
+            $iter = new \CachingIterator(new \ArrayIterator($where));
+            foreach($iter as $key => $_) {
                 $delete .= $key." = ?";
-                if (next($where)) $delete .= " AND ";
+                if ($iter->hasNext()) $delete .= " AND ";
             }
         }
 
@@ -125,9 +128,10 @@ abstract class SQLDAO implements DAO
         $db = DatabaseConnection::getConnection();
 
         $select = "SELECT ";
-        foreach ($data as $column) {
+        $iter = new \CachingIterator(new \ArrayIterator($data));
+        foreach ($iter as $column) {
             $select .= $column;
-            if (next($data)) $select .= ", ";
+            if ($iter->hasNext()) $select .= ", ";
         }
 
         $select .= " FROM " . $this->tableName;
@@ -135,9 +139,10 @@ abstract class SQLDAO implements DAO
         if (isset($where)) {
             $select .= " WHERE ";
 
-            foreach ($where as $key => $_) {
+            $iter = new \CachingIterator(new \ArrayIterator($where));
+            foreach ($iter as $key => $_) {
                 $select .= $key . " = ?";
-                if (next($where)) $select .= " AND ";
+                if ($iter->hasNext()) $select .= " AND ";
             }
         }
 
