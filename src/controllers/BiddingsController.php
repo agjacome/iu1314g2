@@ -275,6 +275,13 @@ class BiddingsController extends Controller
             $this->redirect("bidding");
         }
 
+        // comprueba que el propietario del producto no sea el mismo usuario 
+        // logueado
+        if ($this->product->getOwner() === $this->session->username) {
+            $this->setFlash($this->lang["bidding"]["bid_err"]);
+            $this->redirect("bidding");
+        }
+
         // comprueba que no se haya superado la fecha limite
         if (date("Y-m-d H:i:s") >= $this->bidding->limitDate) {
             $this->setFlash($this->lang["bidding"]["bid_err"]);

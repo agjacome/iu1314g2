@@ -381,6 +381,13 @@ class SalesController extends Controller
             $this->redirect("sale");
         }
 
+        // comprueba que el propietario del producto no sea el mismo usuario 
+        // logueado
+        if ($this->product->getOwner() === $this->session->username) {
+            $this->setFlash($this->lang["sale"]["purchase_err"]);
+            $this->redirect("sale");
+        }
+
         // comprueba si la venta tiene stock
         if ($this->sale->stock <= 0) {
             $this->setFlash($this->lang["sale"]["purchase_err"]);

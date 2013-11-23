@@ -10,7 +10,7 @@
         <li class="even"><?php print "<strong>" . $lang["sale"]["price"]      . ":</strong> " . $sale->price; ?>€</li>
         <li class="odd">
 <?php if ($this->isLoggedIn()) {
-        if ($sale->stock > 0) {
+        if ($sale->stock > 0 && $username !== $product->getOwner()) {
 ?>
             <a href="/index.php?controller=sale&action=purchase&sale=<?php print $sale->getId(); ?>">
                 <?php print $lang["sale"]["buy"]; ?>
