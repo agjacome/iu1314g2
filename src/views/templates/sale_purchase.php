@@ -4,10 +4,8 @@
         <div class="top_prod_box_big"></div>
         <div class="center_prod_box_big">
             <div class="contact_form">
-                <form method="post" action="index.php" accept-charset="utf-8">
-                    <input type="hidden" name="controller" value="sale" />
-                    <input type="hidden" name="action" value="purchase" />
-                    <input type="hidden" name="sale" value="<?php print $sale->getId(); ?>" />
+                <form method="post" name="buyProd" action="index.php" accept-charset="utf-8">
+                    
 
                     <div class="form_row">
                         <label class="contact"><strong><?php print $lang["sale"]["stock"]; ?></strong></label>
@@ -32,7 +30,10 @@
                         <label class="contact"><strong><?php print $lang["sale"]["creditCard"]; ?></strong></label>
                         <input type="text" name="creditCard" class="contact_input" />
                     </div>
-                    <input type=submit value="Aceptar">
+                    <input type="button" onClick="buyProdd();" value="<?php print $lang["general"]["accept"]; ?>">
+                    <input type="hidden" name="controller" value="sale" />
+                    <input type="hidden" name="action" value="purchase" />
+                    <input type="hidden" name="sale" value="<?php print $sale->getId(); ?>" />
                 </form>
             </div>
         </div>

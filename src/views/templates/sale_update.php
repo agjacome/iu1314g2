@@ -4,10 +4,8 @@
         <div class="top_prod_box_big"></div>
         <div class="center_prod_box_big">
             <div class="contact_form">
-                <form action="index.php" method="post" accept-charset="utf-8">
-                    <input type="hidden" name="controller" value="sale" />
-                    <input type="hidden" name="action" value="update" />
-                    <input type="hidden" name="id" value="<?php print $sale->getId(); ?>" />
+                <form action="index.php" name="insertSale" method="post" accept-charset="utf-8">
+                    
 
                     <div class="form_row">
                         <label class="contact"><strong><?php print $lang["sale"]["price"]; ?></strong></label>
@@ -20,8 +18,11 @@
                     </div>
 
                     <div class="form_row">
-                        <input type="submit" value="<?php print $lang["general"]["accept"]; ?>" class="contact">
+                        <input type="button" onClick="insertSalee();"value="<?php print $lang["general"]["accept"]; ?>" class="contact">
                     </div>
+                    <input type="hidden" name="controller" value="sale" />
+                    <input type="hidden" name="action" value="update" />
+                    <input type="hidden" name="id" value="<?php print $sale->getId(); ?>" />
                 </form>
             </div>
         <div class="bottom_prod_box_big"></div>

@@ -3,10 +3,9 @@
     <div class="prod_box_big">
         <div class="top_prod_box_big"></div>
         <div class="center_prod_box_big">
-            <form action="index.php" method="post" accept-charset="utf-8">
+            <form action="index.php" name="register" method="post" accept-charset="utf-8">
                 <div class="contact_form">
-                    <input type="hidden" name="controller" value="user" />
-                    <input type="hidden" name="action" value="create" />
+                    
 
                     <div class="form_row">
                         <label class="contact"><strong><?php print $lang["user"]["username"]; ?></strong></label>
@@ -45,8 +44,10 @@
 
                 </div>
                 <div class="form_row">
-                    <input type="submit" value="<?php print $lang["general"]["accept"]; ?>" class="contact">
+                    <input type="button" onClick="registerr();" value="<?php print $lang["general"]["accept"]; ?>" class="contact">
                 </div>
+                <input type="hidden" name="controller" value="user" />
+                <input type="hidden" name="action" value="create" />
             </form>
         </div>
         <div class="bottom_prod_box_big"></div>
