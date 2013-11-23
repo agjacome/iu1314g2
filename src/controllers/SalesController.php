@@ -286,8 +286,13 @@ class SalesController extends Controller
         $this->view->render("sale_list");
     }
 
+    /**
+     * Proporciona un listado de todos los productos en posesion del usuario 
+     * identificado.
+     */
     public function owned()
     {
+        // solo se puede acceder estando identificado en el sistema
         if (!$this->isLoggedIn())
             $this->redirect("user", "login");
 
@@ -406,7 +411,7 @@ class SalesController extends Controller
         if ($this->request->isPost()) {
             if ($this->purchasePost()) {
                 $this->setFlash($this->lang["sale"]["purchase_ok"]);
-                $this->redirect("sale");
+                $this->redirect("sale", "purchased");
             } else {
                 $this->setFlash($this->lang["sale"]["purchase_err"]);
                 $this->redirect("sale");
