@@ -8,7 +8,6 @@
 <!--[if IE 6]>
 <link rel="stylesheet" type="text/css" href="/assets/css/iecss.css" />
 <![endif]-->
-<script type="text/javascript" src="/assets/js/boxOver.js"></script>
 <script type="text/javascript" src="/assets/js/formularios.js"></script>
 </head>
 <body>
