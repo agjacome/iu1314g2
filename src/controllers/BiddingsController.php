@@ -304,10 +304,10 @@ class BiddingsController extends Controller
         // si POST, realiza la compra y pago asociado
         if ($this->request->isPost()) {
             if ($this->makeBidPost()) {
-                $this->setFlash($this->lang["bidding"]["purchase_ok"]);
+                $this->setFlash($this->lang["bidding"]["bid_ok"]);
                 $this->redirect("bidding");
             } else {
-                $this->setFlash($this->lang["bidding"]["purchase_err"]);
+                $this->setFlash($this->lang["bidding"]["bid_er"]);
                 $this->redirect("bidding");
             }
         }
