@@ -319,7 +319,37 @@ class SalesController extends Controller
      */
     public function purchased()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        if (!$this->isLoggedIn())
+            $this->redirect("user", "login");
+
+        // obtiene todas las compras del usuario
+        $purchases = \models\Purchase::findBy(["login" => $this->session->username]);
+
+        // se crea un array donde cada elemento sera una tupla (compra, pago, 
+        // venta, producto) para todas las compras del usuario existentes en la 
+        // BD
+        $list = array();
+        foreach ($purchases as $purchase) {
+            $sale = new \models\Sale($purchase->getSaleId());
+            if (!$sale->fill()) break;
+
+            $payment = new \models\Payment($purchase->idPayment);
+            if (!$payment->fill()) break;
+
+            $product = new \models\Product($sale->getProductId());
+            if (!$product->fill()) break;
+
+            $list[ ] = [
+                "purchase" => $purchase,
+                "payment"  => $payment,
+                "sale"     => $sale,
+                "product"  => $product
+            ];
+        }
+
+        // se devuelve el array de datos creado y se renderiza la vista
+        $this->view->assign("list", $list);
+        $this->view->render("purchase_list");
     }
 
     /**
