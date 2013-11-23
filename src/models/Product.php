@@ -73,7 +73,7 @@ class Product extends Model
         $ids = \database\DAOFactory::getDAO("product")->query(
             "SELECT idProducto FROM PRODUCTO WHERE nombre LIKE ?",
             "%" . $name . "%");
-        if (!$ids) return array();
+        if (!$ids || !is_array($ids)) return array();
 
         $found = array();
         foreach ($ids as $id) {
