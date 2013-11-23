@@ -144,6 +144,7 @@ class Sale extends Model
 
         // valida que el precio y el stock sean iguales o superiores a cero
         if (!is_numeric($this->price) || !is_numeric($this->stock)) return false;
+
         return $this->price >= 0.0 && $this->stock >= 0;
     }
 

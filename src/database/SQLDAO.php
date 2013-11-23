@@ -57,9 +57,10 @@ abstract class SQLDAO implements DAO
         $db = DatabaseConnection::getConnection();
 
         $update = "UPDATE " . $this->tableName . " SET ";
-        foreach ($data as $key => $value) {
+        $iter = new \CachingIterator(new \ArrayIterator($data));
+        foreach ($iter as $key => $value) {
             $update .= $key . " = ?";
-            if (next($data)) $update .= ", ";
+            if ($iter->hasNext()) $update .= ", ";
         }
 
         if (isset($where)) {

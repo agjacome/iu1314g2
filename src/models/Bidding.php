@@ -142,10 +142,12 @@ class Bidding extends Model
         $product = new Product($this->idProduct);
         if(!$product->fill()) return false;
 
-        // TODO: validar que la puja minima sea superior a 0.0
+        // validar que la puja minima sea superior a 0.0
         if ($this->minBid <= 0.0) return false;
-        // TODO: validar que la fecha limite sea posterior a la fecha de
+        // validar que la fecha limite sea posterior a la fecha de
         // creacion (actual)
+        if (date("Y-m-d H:i:s") >= $this->limitDate)
+            return false;
 
         return true;
     }
