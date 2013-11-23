@@ -86,7 +86,7 @@ function changeComm(){
 //Validaciones de campos todos los campos de cada formularios 
 
 function validate_registerr(){
-	if(validarTexto(document.register.elements[0])&&validarTexto(document.register.elements[1])&&validarTexto(document.register.elements[2])&&validarEmail(document.register.elements[3])&&validarTexto(document.register.elements[4])&&validarTelefono(document.register.elements[5])&&validarTelefono(document.register.elements[6])&&validarTexto(document.register.elements[7])&&validarPassRepeat(document.register.elements[7],document.register.elements[8])&&validarTexto(document.register.elements[9])&&validarTexto(document.register.elements[10])&&validarTexto(document.register.elements[11]))
+	if(validarTexto(document.register.elements[0])&&validarTexto(document.register.elements[1])&&validarPassRepeat(document.register.elements[1], document.register.elements[2])&&validarEmail(document.register.elements[3])&&validarTexto(document.register.elements[4])&&validarTexto(document.register.elements[5])&&validarTelefono(document.register.elements[6]))
 		return true;
 	else return false;
 }
