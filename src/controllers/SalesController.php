@@ -295,7 +295,7 @@ class SalesController extends Controller
         $products = \models\Product::findBy(["propietario" => $this->session->username, "estado" => "venta"]);
 
         // se crea un array donde cada elemento sera una par (venta, producto) 
-        // para todas las ventas existentes en la BD
+        // para todas las ventas del usuario existentes en la BD
         $list = array();
         foreach ($products as $product) {
             $sale = new \models\Sale(null, $product->getId());
