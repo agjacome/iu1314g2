@@ -157,13 +157,13 @@ function validarFecha(fecha){
 
 function validarFechaEsPosterior(fecha){
 	var hoy=new Date();
-	year=fecha.value.slice(0,4);
-	mes=fecha.value.slice(5,7);
+	var year=fecha.value.slice(0,4);
+	var mes=fecha.value.slice(5,7);
 	mes--;
-	dia=fecha.value.slice(8,10);
+	var dia=fecha.value.slice(8,10);
 	var fechapost= new Date();
 	fechapost.setFullYear(year, mes, dia);
-	if(fecha<hoy) return false;
+	if(fechapost<hoy) return false;
 	else return true;
 }
 
