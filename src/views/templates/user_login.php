@@ -5,8 +5,6 @@
         <div class="center_prod_box_big">
             <div class="contact_form">
                 <form method="post" action="index.php" accept-charset="utf-8">
-                    <input type="hidden" name="controller" value="user" />
-                    <input type="hidden" name="action" value="login" />
                     <div class="form_row">
                         <label class="contact"><strong><?php print $lang["user"]["username"]; ?></strong></label>
                         <input type="text" name="login" class="contact_input" />
@@ -15,6 +13,8 @@
                         <label class="contact"><strong><?php print $lang["user"]["password"]; ?></strong></label>
                         <input type="password" name="password" class="contact_input" />
                     </div>
+                    <input type="hidden" name="controller" value="user" />
+                    <input type="hidden" name="action" value="login" />
                     <input type=submit value="<?php print $lang["general"]["accept"]; ?>">
                 </form>
             </div>

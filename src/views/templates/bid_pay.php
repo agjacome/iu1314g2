@@ -5,10 +5,6 @@
         <div class="center_prod_box_big">
             <div class="contact_form">
                 <form method="post" action="index.php" name="pay" accept-charset="utf-8">
-                    <input type="hidden" name="controller" value="bidding" />
-                    <input type="hidden" name="action" value="payBid" />
-                    <input type="hidden" name="bid" value="<?php print $bid->getId(); ?>" />
-
                     <div class="form_row">
                         <label class="contact"><strong><?php print $lang["sale"]["payMethod"]; ?></strong></label>
                         <select name="payMethod">
@@ -24,6 +20,9 @@
                         <label class="contact"><strong><?php print $lang["sale"]["creditCard"]; ?></strong></label>
                         <input type="text" name="creditCard" class="contact_input" />
                     </div>
+                    <input type="hidden" name="controller" value="bidding" />
+                    <input type="hidden" name="action" value="payBid" />
+                    <input type="hidden" name="bid" value="<?php print $bid->getId(); ?>" />
                     <input type="button" onclick="payy()" value="Aceptar" />
                 </form>
             </div>

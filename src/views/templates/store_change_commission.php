@@ -13,8 +13,7 @@
                         <input type="text" name="commission" class="contact_input" value="<?php print $commission; ?>" />
                     </div>
 
-                    <!-- <input type="button" onClick="changeComm()" value="Aceptar"> -->
-                    <input type="submit" value="<?php print $lang["general"]["accept"]; ?>">
+                    <input type="button" onClick="changeComm()" value="Aceptar">
                 </form>
             </div>
         </div>

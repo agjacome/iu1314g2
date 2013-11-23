@@ -116,7 +116,7 @@ function validate_insertBiddingg(){
 }
 function validate_insprodd(){
 
-	if(validarFecha(document.insprod.elements[5])&&validarFechaEsPosterior(document.insprod.elements[5])&&validarTexto(document.insprod.elements[0])&&validarTexto(document.insprod.elements[1])&&validarPrecio(document.insprod.elements[2]))
+    if (validarTexto(document.insprod.elements[0]) && validarTexto(document.insprod.elements[1]))
 		return true;
 	else return false;
 }
@@ -168,10 +168,10 @@ function validarFechaEsPosterior(fecha){
 }
 
 function validarTexto(text){
-	if (text.value   == '') {
+	if (text.value  == '') {
 	 	alert ('Campo vacío'); 
 		return false;
-	else
+    } else
 		return true;
 }
 
@@ -219,7 +219,7 @@ function validarPassRepeat(pass1, pass2){
 
 function validarUnidades(unidades){
 	var value=unidades.value;
-	if(!(/^[0-9]+/.test(value)){
+	if(!(/^[0-9]+/.test(value))){
 		alert('Unidades en formato no correcto');
 		return false;
 	}
@@ -238,7 +238,7 @@ function validarFormasPago(tarj, payPal){
 	else{
 		if(value1=''){
 			return validarPayPal(value2);	
-		else
+        } else
 			return validarTarjeta(value1);
 	}
 }
@@ -250,6 +250,7 @@ function validarPayPal(cuenta){
 	else{
 		alert('La cuenta de PayPal'+ value +'no es válida');
 		return false;
+    }
 }
 
 function validarTarjeta(tarjeta){
