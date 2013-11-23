@@ -122,7 +122,7 @@ function validate_insprodd(){
 }
 
 function validate_buyProdd(){
-	if(validarUnidades(document.buyProd.elements[0])&&validarFormasPago(document.buyProd.elements[2], document.buyProd.elements[3]))
+	if(validarUnidades(document.buyProd.elements[0])&&validarFormasPago(document.buyProd.elements[3], document.buyProd.elements[2]))
 		return true;
 	else return false;
 }
