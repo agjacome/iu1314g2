@@ -25,8 +25,8 @@ function modifyuserr(){
 
 function deleteuserr(){
 
-	if(confirm('¿Estás seguro de eliminar este usuario?')){
-		//acción a realizar
+	if(!(confirm('¿Estás seguro de eliminar este usuario?'))){
+		return false;
 	}
 }
 
@@ -39,8 +39,8 @@ function modifyprodd(){
 
 function deleteproductt(){
 
-	if(confirm('¿Estás seguro de eliminar este usuario?')){
-		//acción a realizar
+	if(!(confirm('¿Estás seguro de eliminar este usuario?'))){
+		return false;
 	}
 }
 

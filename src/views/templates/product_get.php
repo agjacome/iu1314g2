@@ -18,7 +18,7 @@
                 <?php print $lang["product"]["update"]; ?>
             </a>
             &nbsp;|&nbsp;
-            <a href="/index.php?controller=product&action=delete&id=<?php print $product->getId(); ?>">
+            <a href="/index.php?controller=product&action=delete&id=<?php print $product->getId(); ?>" onclick="deleteproductt();">
                 <?php print $lang["product"]["delete"]; ?>
             </a>
 <?php        if ($product->state === "pendiente") { ?>
