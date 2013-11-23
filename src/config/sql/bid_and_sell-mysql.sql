@@ -135,3 +135,41 @@ ALTER TABLE `SUBASTA`
 -- claves foraneas para venta
 ALTER TABLE `VENTA`
   ADD CONSTRAINT `VENTA_ibfk_1` FOREIGN KEY (`idProducto`) REFERENCES `PRODUCTO` (`idProducto`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- insercion de datos de ejemplo
+INSERT INTO `USUARIO` (`login`, `password`, `rol`, `email`, `nombre`, `direccion`, `telefono`) VALUES
+('admin', '$2y$10$1loCTeg/upWPAfmDaiYq5.FprgzuBi63/K4QHBZvdtRSJqY/MxWQK', 'admin', 'admin@admin.es', 'admin', 'direccion de admin', 982111111),
+('usuario1', '$2y$10$3U7X8sbpb369DvY9K7FUO.sD6k3/b7aaI4nu4MnjEAFsBlHqrAtaq', 'usuario', 'usuario1@correo.es', 'usuario1', 'direccion de usuario1', 988222222),
+('usuario2', '$2y$10$dET8D/AsXiwCCYsv2hXvX.NRiBV1KWZlbyXlxVi65M76xe38svVci', 'usuario', 'usuario2@correo.es', 'usuario2', 'direccion de usuario2', 988333333),
+('usuario3', '$2y$10$UFVbRtK3xvMhF48thfkCAuQgYbLAUPtBlTSU.vX821WSMyb5cfFAi', 'usuario', 'usuario3@correo.es', 'usuario3', 'direccion de usuario3', 988444444);
+INSERT INTO `PRODUCTO` (`idProducto`, `propietario`, `estado`, `nombre`, `descripcion`) VALUES
+(1, 'usuario1', 'venta', 'Ordenador portatil', 'Ordenador portatil Samsung.'),
+(2, 'usuario1', 'subasta', 'Teclado', 'Teclado retroiluminado inalÃ¡mbrico de marca logitech.'),
+(3, 'usuario1', 'subasta', 'RatÃ³n Razer Diamondback', 'Razer Diamondback verde 1800dpi y 7 botones.'),
+(4, 'usuario1', 'pendiente', 'RatÃ³n Logitech Laser G9', 'RatÃ³n logitech G9'),
+(5, 'usuario2', 'pendiente', 'RatÃ³n Razer Spectre Starcraft Gaming Mouse', 'Razer Spectre multicolor retroiluminado'),
+(6, 'usuario2', 'venta', 'Codigo fuente web de venta y subasta Bid & Sell', 'Compra el cÃ³digo fuente de la mejor web de ventas y subastas!! Realizada por el grupo 2 de la asignatura Interfaces de Usuario 2013-2014!!!'),
+(7, 'usuario3', 'pendiente', 'Teclado Logitech G15 ', 'Luz naranja, 18 macros, pantalla retroiluminada con informaciÃ³n, 4 entradas usb.'),
+(8, 'usuario3', 'pendiente', 'ATI Radeon HD 7990', 'Targeta grÃ¡fica doble gpu 6gb'),
+(9, 'usuario3', 'subasta', 'Pizza', 'Una pizza'),
+(10, 'usuario3', 'pendiente', 'Alfombrilla SteelSeries S&S', 'Alfombrilla steelpad S&S '),
+(11, 'usuario3', 'venta', 'Alfombrilla SteelPad QcK+', 'Alfombrilla enorme negra'),
+(12, 'usuario3', 'venta', 'Disquete de vilares', 'Disquette de 3/2 para entregar las prÃ¡cticas a Vilares');
+INSERT INTO `SUBASTA` (`idSubasta`, `idProducto`, `pujaMinima`, `fechaLimite`) VALUES
+(1, 2, 50.00, '2013-11-25 23:00:00'),
+(2, 3, 10.00, '2014-10-09 22:00:00'),
+(3, 9, 5.00, '2014-10-19 22:00:00');
+INSERT INTO `VENTA` (`idVenta`, `idProducto`, `precio`, `stock`) VALUES
+(1, 1, 500.00, 2),
+(2, 6, 3000.00, 1),
+(3, 11, 10.00, 5),
+(4, 12, 0.30, 197);
+INSERT INTO `PAGO` (`idPago`, `metodoPago`, `numTarjeta`, `cuentaPaypal`, `comision`) VALUES
+(1, 'paypal', NULL, 'usuario1@usuario1.es', 3.00);
+INSERT INTO `COMPRA` (`idCompra`, `idVenta`, `login`, `cantidad`, `fechaCompra`, `idPago`) VALUES
+(1, 4, 'usuario1', 3, '2013-11-23 20:37:51', 1);
+INSERT INTO `CALIFICACION` (`idCalificacion`, `idProducto`, `login`, `puntuacion`, `comentario`) VALUES
+(1, 3, 'usuario3', 4, 'Muy bueno!!!'),
+(2, 9, 'usuario3', 5, 'mmm tiene buena pinta!'),
+(3, 6, 'usuario3', 5, 'Es verdad!!! la mejor pÃ¡gina web de ventas y subastas!!'),
+(4, 12, 'usuario1', 1, 'No pude entregar la practica porque no hay disquetera en los pcs de la facultad');
