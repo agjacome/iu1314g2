@@ -33,7 +33,10 @@ class ProductsController extends Controller
      */
     public function defaultAction()
     {
-        $this->available();
+        if (!$this->isLoggedIn())
+            $this->available();
+        else
+            $this->view->render("product_panel");
     }
 
     /**
@@ -280,6 +283,17 @@ class ProductsController extends Controller
             $this->redirect("product", "available");
 
         $products = \models\Product::findBy(["propietario" => $this->session->username]);
+
+        $this->view->assign("list", $products);
+        $this->view->render("product_list");
+    }
+
+    public function search()
+    {
+        if (!isset($this->request->search))
+            $this->redirect();
+
+        $products = \models\Product::findByName($this->request->search);
 
         $this->view->assign("list", $products);
         $this->view->render("product_list");

@@ -19,9 +19,7 @@ class StoresController extends Controller
 
     public function defaultAction()
     {
-        // la unica accion del controlador es cambiar la comision, por tanto se 
-        // lanza esta accion si no se especifica ninguna
-        $this->changeCommission();
+        $this->view->render("store");
     }
 
     public function changeCommission()
@@ -58,6 +56,11 @@ class StoresController extends Controller
         // cambia, valida y guarda nueva comision
         $this->store->commission = $this->request->commission;
         return $this->store->validate() && $this->store->save();
+    }
+
+    public function stats()
+    {
+        trigger_error("Aun no implementado", E_USER_ERROR);
     }
 
 }

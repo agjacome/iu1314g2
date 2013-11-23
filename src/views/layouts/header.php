@@ -15,9 +15,14 @@
 <div id="main_container">
     <div class="top_bar">
         <div class="top_search">
-            <div class="search_text"><a href="#"><?php print $lang["general"]["search"]; ?></a></div>
-            <input type="text" class="search_input" name="search" />
-            <input alt="search" type="image" src="/assets/img/search.gif" class="search_bt"/>
+            <form action="index.php" method="get" accept-charset="utf-8">
+                <input type="hidden" name="controller" value="product" />
+                <input type="hidden" name="action" value="search" />
+
+                <div class="search_text"><a href="#"><?php print $lang["general"]["search"]; ?></a></div>
+                <input type="text" class="search_input" name="search" />
+                <input alt="search" type="image" src="/assets/img/search.gif" class="search_bt" />
+            </form>
         </div>
         <div class="languages">
             <div class="lang_text"><?php print $lang["general"]["languages"]; ?></div>

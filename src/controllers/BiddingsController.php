@@ -198,31 +198,7 @@ class BiddingsController extends Controller
     public function listing()
     {
         $biddings = \models\Bidding::findBy(null);
-        $this->listBiddings($biddings);
-    }
 
-    /**
-     * Proporciona un listado de todos los productos en subasta por parte del 
-     * usuario identificado o un usuario dado si invocado por administrador.
-     */
-    public function owned()
-    {
-        $biddings = \models\Bidding::findBy(["propietario" => $this->session->username, "estado" => "subasta"]);
-        $this->listBiddings($biddings);
-    }
-
-    /**
-     * Proporciona un listado de todos los productos en subasta por los cuales 
-     * el usuario identificado ha pujado
-     */
-    public function bidded()
-    {
-        $biddings = \models\Bidding::findBy(["login" => $this->session->username]);
-        $this->listBiddings($biddings);
-    }
-
-    private function listBiddings($biddings)
-    {
         // se crea un array donde cada campo sera un par subastas, producto),
         // recuperando para ello los datos del producto en cada una de las
         // subastas obtenidas en la instruccion anterior
@@ -240,6 +216,11 @@ class BiddingsController extends Controller
         // se devuelve el array de pares creado
         $this->view->assign("list", $list);
         $this->view->render("bidding_list");
+    }
+
+    public function owned()
+    {
+        trigger_error("Aun no implementado", E_USER_ERROR);
     }
 
     /**
