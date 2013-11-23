@@ -38,10 +38,10 @@ class StoresController extends Controller
         if ($this->request->isPost()) {
             if ($this->changeCommissionPost()) {
                 $this->setFlash($this->lang["store"]["change_comm_ok"]);
-                $this->redirect("store");
+                // $this->redirect("store");
             } else {
                 $this->setFlash($this->lang["store"]["change_comm_err"]);
-                $this->redirect("store", "changeCommission");
+                // $this->redirect("store", "changeCommission");
             }
         }
     }

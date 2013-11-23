@@ -43,6 +43,7 @@ class Store extends Model
     public function fill()
     {
         $this->commission = $this->dao->select(["commission"])["commission"];
+        return true;
     }
 
     /**
@@ -55,7 +56,7 @@ class Store extends Model
      */
     public function save()
     {
-        $this->dao->update(["commission" => $this->commission]);
+        return $this->dao->update(["commission" => $this->commission]);
     }
 
     /**

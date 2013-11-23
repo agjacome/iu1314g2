@@ -53,6 +53,8 @@ class FileStoreDAO implements DAO
 
         $xml->formatOutput = true;
         $xml->save($this->filePath);
+
+        return true;
     }
 
     public function select($data, $where = null)
