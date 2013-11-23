@@ -128,12 +128,24 @@ class Purchase extends Model
      */
     public function validate()
     {
-        // TODO: validar que el login existe, validar que la venta existe
-        // (apoyarse en modelos de usuario y venta)
-        // TODO: validar que la cantidad es mayor que 0 y menor o igual al 
-        // stock del producto (apoyarse en modelo de venta)
-        // TODO: validar que el pago, SI NO NULO (aka pendiente de pago), 
-        // existe (apoyarse en modelo de pago)
+        // valida que el login existe, validar que la venta existe
+        $user = new User($this->login);
+        if (!$user->fill()) return false;
+        $sale = new Sale($this->idSale);
+        if (!$sale->fill()) return false;
+
+        // valida que la cantidad es mayor que 0 y menor o igual al 
+        // stock del producto
+        if (!is_numeric($this->quantity)) return false;
+        if ($this-quantity > $sale->stock || $this->quantity <= 0)
+            return false;
+
+        // valida que el pago existe
+        if (isset($this->idPayment)) {
+            $payment = new Payment($this->idPayment);
+            if (!$payment->fill()) return false;
+        }
+
         return true;
     }
 
