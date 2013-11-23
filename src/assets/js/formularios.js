@@ -24,10 +24,9 @@ function modifyuserr(){
 }
 
 function deleteuserr(){
-
-	if(!(confirm('¿Estás seguro de eliminar este usuario?'))){
-		return false;
-	}
+	if (!confirm('¿Estás seguro de eliminar este usuario?'))
+        return false;
+    return true;
 }
 
 function modifyprodd(){

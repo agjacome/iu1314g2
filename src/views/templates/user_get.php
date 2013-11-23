@@ -15,7 +15,7 @@
                 <?php print $lang["user"]["update"]; ?>
             </a>
             &nbsp;|&nbsp;
-            <a href="/index.php?controller=user&action=delete&login=<?php print $user->getLogin(); ?>" onclick="deleteuserr();">
+            <a href="/index.php?controller=user&action=delete&login=<?php print $user->getLogin(); ?>" onclick="return deleteuserr();">
                 <?php print $lang["user"]["delete"]; ?>
             </a>
         </li>
