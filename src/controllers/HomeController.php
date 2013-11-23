@@ -82,6 +82,9 @@ class HomeController extends Controller
             $this->redirect();
     }
 
+    /**
+     * Muestra la plantilla de ayuda.
+     */
     public function help()
     {
         $this->view->render("help");

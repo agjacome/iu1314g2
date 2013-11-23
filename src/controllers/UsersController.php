@@ -3,24 +3,33 @@
 namespace controllers;
 
 /**
- * Controlador de usuarios, se ocupa de gestionar las acciones respecto a los usuarios y su base de datos así como devolver
- * lo que corresponda y redireccionar.
+ * Controlador para Usuarios del sistema.
  *
- *  @package  controllers;
+ * @author Alberto Gutierrez Jacome <agjacome@esei.uvigo.es>
+ * @author Daniel Alvarez Outerelo  <daouterelo@esei.uvigo.es>
+ * @author David Lorenzo Dacal      <dldacal@esei.uvigo.es>
+ * @author Marcos Nuñez Celeiro     <mnceleiro@esei.uvigo.es>
  */
-
 class UsersController extends Controller
 {
-    private $user;
 
+    private $user; // modelo de usuario, se instanciara cuando resulte necesario
+
+    /**
+     * Constructor, construye la instancia de Controller a partir de la
+     * peticion recibida.
+     *
+     * @param \components\Request $request
+     *     Peticion HTTP recibida, encapsulada dentro de un objeto Request (ver
+     *     en namespace components).
+     */
     public function __construct($request)
     {
         parent::__construct($request);
     }
 
     /**
-     * Método que será llamado en caso de no existir la acción (método) que el usuario pida, en caso de que ninguno de los métodos
-     * restantes sea el que pida el usuario, este será llamado, y llevará a la vista de usuario.
+     * Accion por defecto del controlador de usuarios.
      */
     public function defaultAction()
     {
@@ -35,7 +44,9 @@ class UsersController extends Controller
     }
 
     /**
-     * Crea un nuevo usuario, a no ser que este ya exista en la base de datos o ya esté logeado.
+     * Crea un nuevo usuario mediante el proceso habitual de registro. Los 
+     * usuarios pueden crearse bien siendo administrador (nuevo usuario) o 
+     * mediante el registro de usuarios no identificados.
      */
     public function create()
     {
@@ -59,6 +70,9 @@ class UsersController extends Controller
         }
     }
 
+    /**
+     * Metodo privado interno para el manejo de la peticion POST en create()
+     */
     private function createPost()
     {
         // campos requeridos para registro (todos)
@@ -96,7 +110,10 @@ class UsersController extends Controller
     }
 
     /**
-     * Almacena cambios de un usuario en la base de datos.
+     * Modifica los datos de un usuario dado. Si es administrador, podra 
+     * modificar a cualquier usuario, en otro caso solo el propio usuario puede 
+     * modificar sus datos. El nombre de usuario no se modificara bajo ninguna 
+     * circunstancia.
      */
     public function update()
     {
@@ -142,6 +159,9 @@ class UsersController extends Controller
         }
     }
 
+    /**
+     * Metodo privado interno para el manejo de la peticion POST en update()
+     */
     private function updatePost()
     {
         // comprueba  que la contraseña y su verificacion sean iguales
@@ -219,7 +239,8 @@ class UsersController extends Controller
     }
 
     /**
-     * Recupera un usuario de la base de datos.
+     * Muestra los detalles de un usuario concreto. Si es admin, puede ver a 
+     * cualquier usuario, sino solo a si mismo.
      */
     public function get()
     {
@@ -254,7 +275,8 @@ class UsersController extends Controller
     }
 
     /**
-     * Lista los usuarios de la base de datos.
+     * Proporciona un listado de todos los usuarios de la base de datos. Solo 
+     * disponible para administrador.
      */
     public function listing()
     {
@@ -269,7 +291,8 @@ class UsersController extends Controller
     }
 
     /**
-     * Login de un usuario en el sistema
+     * Realiza el proceso de identificacion e inicio de sesion de un usuario en 
+     * el sistema.
      */
     public function login()
     {
@@ -309,7 +332,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Cambia los parámetros de sesión de manera que el usuario deje de estar logeado y redirige al índice.
+     * Realiza el proceso de cierre de sesion del usuario.
      */
     public function logout()
     {

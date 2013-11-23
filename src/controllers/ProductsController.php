@@ -288,6 +288,10 @@ class ProductsController extends Controller
         $this->view->render("product_list");
     }
 
+    /**
+     * Realiza una busqueda de productos en base a un patron de nombre dado. 
+     * Devuelve una vista renderizada con la lista de productos coincidentes.
+     */
     public function search()
     {
         if (!isset($this->request->search))

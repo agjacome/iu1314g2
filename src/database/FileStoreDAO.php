@@ -86,7 +86,7 @@ class FileStoreDAO implements DAO
 
     public function query($statement)
     {
-        trigger_error("No implementado", E_USER_ERROR);
+        trigger_error("No aplicable", E_USER_ERROR);
     }
 
 }

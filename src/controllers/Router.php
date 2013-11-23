@@ -3,12 +3,14 @@
 namespace controllers;
 
 /**
- * <p>Esta clase se ocupa de, comprobando el contenido de la petición HTTP, parsearla y crear así los controladores
- * asociados y llamar a las acciones correspondientes, contenidas en otras clases.</p>
- * 
- * @package controllers
+ * Front Controller del sistema, se encarga de mapear peticiones HTTP con 
+ * controladores y acciones concretas.
+ *
+ * @author Alberto Gutierrez Jacome <agjacome@esei.uvigo.es>
+ * @author Daniel Alvarez Outerelo  <daouterelo@esei.uvigo.es>
+ * @author David Lorenzo Dacal      <dldacal@esei.uvigo.es>
+ * @author Marcos Nuñez Celeiro     <mnceleiro@esei.uvigo.es>
  */
-
 class Router
 {
     /**

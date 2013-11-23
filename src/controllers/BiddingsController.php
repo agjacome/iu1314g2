@@ -107,8 +107,7 @@ class BiddingsController extends Controller
 
     /**
      * Elimina una subasta, estableciendo el producto de nuevo a pendiente. 
-     * Solo se permite la eliminacion de la subasta si no existen pujas o si 
-     * asi lo decide el administrador (eliminando todas las pujas asociadas).
+     * Solo se permite la eliminación de subastas al administrador.
      */
     public function delete()
     {
@@ -128,12 +127,6 @@ class BiddingsController extends Controller
         }
         $this->product = new \models\Product($this->bidding->getProductId());
         if (!$this->product->fill()) {
-            $this->setFlash($this->lang["bidding"]["delete_err"]);
-            $this->redirect("bidding");
-        }
-
-        // solo el administrador podra eliminar la venta
-        if (!$this->isAdmin()) {
             $this->setFlash($this->lang["bidding"]["delete_err"]);
             $this->redirect("bidding");
         }
@@ -219,8 +212,13 @@ class BiddingsController extends Controller
         $this->view->render("bidding_list");
     }
 
+    /**
+     * Proporciona un listado de todos las subastas de productos en posesion 
+     * por el usuario identificado
+     */
     public function owned()
     {
+        // en ningun caso se podra acceder si el usuario no esta logueado
         if (!$this->isLoggedIn())
             $this->redirect("user", "login");
 
@@ -374,6 +372,9 @@ class BiddingsController extends Controller
         }
     }
 
+    /**
+     * Metodo privado interno para el manejo de la peticion POST en payBid()
+     */
     private function payBidPost()
     {
         // comprueba que se haya recibido el metodo de pago

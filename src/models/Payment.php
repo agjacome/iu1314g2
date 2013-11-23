@@ -102,9 +102,10 @@ class Payment extends Model
             return $this->dao->update($data, ["idPago" => $this->idPayment]);
         else {
             $ret = $this->dao->insert($data);
-            // FIXME: esto es un hack muy feo, deberia crearse un metodo en 
-            // SQLDAO para recuperar el ultimo ID, y no invocar a la conexion a 
-            // BD desde aqui, pero no queda tiempo para corregirlo ahora
+            // FUTURE FIXME: esto es un hack muy feo, deberia crearse un metodo 
+            // en SQLDAO para recuperar el ultimo ID, y no invocar a la 
+            // conexion a BD desde aqui, pero no queda tiempo para corregirlo 
+            // ahora
             $this->idPayment = \database\DatabaseConnection::getConnection()->lastInsertId();
             return $ret;
         }
