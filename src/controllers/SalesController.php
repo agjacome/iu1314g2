@@ -381,6 +381,12 @@ class SalesController extends Controller
             $this->redirect("sale");
         }
 
+        // comprueba si la venta tiene stock
+        if ($this->sale->stock <= 0) {
+            $this->setFlash($this->lang["sale"]["purchase_err"]);
+            $this->redirect("sale");
+        }
+
         // si GET, muestra formulario de compra, que recibe los datos del 
         // producto y la venta
         if ($this->request->isGet()) {

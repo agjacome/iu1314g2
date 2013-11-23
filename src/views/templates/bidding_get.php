@@ -10,11 +10,13 @@
         <li class="even"><?php print "<strong>" . $lang["bidding"]["currBid"]   . ":</strong> " . $currentBid; ?></li>
         <li class="even"><?php print "<strong>" . $lang["bidding"]["limitDate"] . ":</strong> " . date("d-m-Y", strtotime($bidding->limitDate)); ?></li>
         <li class="odd">
-<?php if ($this->isLoggedIn()) { ?>
+<?php if ($this->isLoggedIn()) {
+        if (date("Y-m-d H:i:s") < $bidding->limitDate) { ?>
             <a href="/index.php?controller=bidding&action=makeBid&bidding=<?php print $bidding->getId(); ?>">
                 <?php print $lang["bidding"]["bid"]; ?>
             </a>
             &nbsp;|&nbsp;
+<?php   } ?>
             <a href="/index.php?controller=product&action=rate&prod=<?php print $product->getId(); ?>">
                 <?php print $lang["product"]["rate"]; ?>
             </a>

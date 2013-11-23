@@ -61,26 +61,22 @@ class Bid extends Model
         return $found;
     }
 
-    /**
-     * Devuelve un array con todas las subastas que
-     * coincidan con los parámetros de la búsqueda SQL
-     *
-     * @param array $where
-     *      Contiene las condiciones para la búsqueda SQL
-     *
-     * @return array $found
-     *     Devuelve los resultados de la búsqueda SQL
-     */
-    public static function findByIdSubasta($where)
+    public static function findByLoginWhereWin($login)
     {
-        $ids = \database\DAOFactory::getDAO("bid")->select(["idSubasta"], $where);
+        // FUTURE FIXME: esto deberia estar en el DAO y no en el modelo
+        $query = "SELECT idPuja
+                  FROM PUJA NATURAL JOIN SUBASTA
+                  WHERE login = ? AND
+                        fechaLimite <= ? AND
+                        idPago IS NULL";
+        $ids = \database\DAOFactory::getDAO("bid")->query($query, $login, date("Y-m-d H:i:s"));
         if (!$ids) return array();
 
         $found = array();
         foreach ($ids as $id) {
-            $bidding = new Bidding($id["idSubasta"]);
-            if (!$bidding->fill()) break;
-            $found[ ] = $bidding;
+            $bid = new Bid($id["idPuja"]);
+            if (!$bid->fill()) break;
+            $found[ ] = $bid;
         }
 
         return $found;

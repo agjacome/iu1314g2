@@ -274,6 +274,12 @@ class BiddingsController extends Controller
             $this->redirect("bidding");
         }
 
+        // comprueba que no se haya superado la fecha limite
+        if (date("Y-m-d H:i:s") >= $this->bidding->limitDate) {
+            $this->setFlash($this->lang["bidding"]["bid_err"]);
+            $this->redirect("bidding");
+        }
+
         // si GET, muestra formulario de puja, que recibe los datos del 
         // producto y la subasta, y la puja mas alta hasta el momento
         if ($this->request->isGet()) {
@@ -327,8 +333,34 @@ class BiddingsController extends Controller
      */
     public function pendingPayments()
     {
-        trigger_error("Aun no implementado", E_USER_ERROR);
+        if (!$this->isLoggedIn())
+            $this->redirect("user", "login");
+
+        // obtiene todas las pujas ganadoras pendientes de pago
+        $bids = \models\Bid::findByLoginWhereWin($this->session->username);
+
+        // se crea un array donde cada elemento sera una tupla (puja, subasta, 
+        // producto) recuperando para ello los datos necesarios
+        $list = array();
+        foreach ($bids as $bid) {
+            $bidding = new \models\Bidding($bid->getBiddingId());
+            if (!$bidding->fill()) break;
+
+            $product = new \models\Product($bidding->getProductId());
+            if (!$product->fill()) break;
+
+            $list[ ] = [
+                "bid"     => $bid,
+                "bidding" => $bidding,
+                "product" => $product
+            ];
+        }
+
+        // se devuelve el array de datos creado y se renderia la vista
+        $this->view->assign("list", $list);
+        $this->view->render("bid_pending");
     }
 
 }
+
 ?>
