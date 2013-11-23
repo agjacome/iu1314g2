@@ -65,18 +65,18 @@ function buyProdd(){
 
 function bidProdd(){
 	if(validate_bidProdd()){
-		document.bidProdd.submit();
+		document.bidProd.submit();
 	}
 }
 
-function Payy(){
+function payy(){
 
 	if(validate_payy()){
 		document.pay.submit();
 	}
 }
 
-function ChangeComm(){
+function changeComm(){
 
 	if(validate_comm()){
 		document.com.submit();
@@ -92,13 +92,13 @@ function validate_registerr(){
 }
 
 function validate_modifyuserr(){
-	if(validarTexto(document.register.elements[0])&&validarTexto(document.register.elements[1])&&validarTexto(document.register.elements[2])&&validarEmail(document.register.elements[3])&&validarTexto(document.register.elements[4])&&validarTelefono(document.register.elements[5])&&validarTelefono(document.register.elements[6])&&validarTexto(document.register.elements[7])&&validarPassRepeat(document.register.elements[7],document.register.elements[8])&&validarTexto(document.register.elements[9])&&validarTexto(document.register.elements[10])&&validarTexto(document.register.elements[11]))
+	if(validarTexto(document.register.elements[0])&&validarTexto(document.register.elements[4])&&validarTexto(document.register.elements[5])&&validarEmail(document.register.elements[3])&&validarTexto(document.register.elements[6])&&validarTelefono(document.register.elements[6]))
 		return true;
 	else return false;
 }
 
 function validate_modifyprodd(){
-	if(validarTexto(document.insprod.elements[0])&&validarTexto(document.insprod.elements[1]))
+	if(validarTexto(document.modifyprod.elements[0])&&validarTexto(document.modifyprod.elements[1]))
 		return true;
 	else return false;
 }
@@ -110,7 +110,7 @@ function validate_insertSalee(){
 }
 
 function validate_insertBiddingg(){
-	if(validarPrecio(document.insertBiddingg.elements[0])&&validarFecha(document.insertBiddingg.elements[1])&&validarFechaEsPosterior(document.elements[1]))
+	if(validarPrecio(document.insertBidding.elements[0])&&validarFecha(document.insertBidding.elements[1])&&validarFechaEsPosterior(document.insertBidding.elements[1]))
 		return true;
 	else return false;
 }
@@ -132,7 +132,7 @@ function validate_bidProdd(){
 	else return false;
 }
 function validate_payy(){
-	if(validarFormasPago(document.pay.elements[0], document.pay.elements[1]))
+	if(validarFormasPago(document.pay.elements[2], document.pay.elements[1]))
 		return true;
 	else return false;	
 }
@@ -176,7 +176,7 @@ function validarTexto(text){
 }
 
 function validarPrecio(price){
-	var value= precio.value;
+	var value= price.value;
 	if(isNaN(value)){
 		alert('Precio no válido');
 		return false;
@@ -187,7 +187,7 @@ function validarPrecio(price){
 
 function validarEmail(email){
 	var value= email.value;
-	if(/^\w+([\.-_]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3,4})+$/.test(value))
+    if (/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(value))
 		return true;
 	else{
 		alert('El email'+ value +'no es válido');
@@ -228,28 +228,27 @@ function validarUnidades(unidades){
 }
 
 function validarFormasPago(tarj, payPal){
-	var value1=tarj.value;
-	var value2=payPal.value;
+	var value1=payPal.value;
+	var value2=tarj.value;
 
-	if(value1!=''&&value2!=''){
+	if(value1 != '' && value2 != ''){
 		alert('Dos formas de pago elegidas, elimine una');
 		return false;
 	}
 	else{
-		if(value1=''){
-			return validarPayPal(value2);	
+		if(value1 == ''){
+			return validarTarjeta(value2);
         } else
-			return validarTarjeta(value1);
+			return validarPayPal(value1);	
 	}
 }
 
 function validarPayPal(cuenta){
-	var value= email.value;
-	if(/^\w+([\.-_]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3,4})+$/.test(value))
-		return true;
-	else{
-		alert('La cuenta de PayPal'+ value +'no es válida');
-		return false;
+    if (/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(cuenta))
+        return true
+    else  {
+        alert("La cuenta de PayPal " + cuenta + " no es válida");
+        return false;
     }
 }
 

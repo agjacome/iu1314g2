@@ -70,7 +70,7 @@ class Bid extends Model
                         fechaLimite <= ? AND
                         idPago IS NULL";
         $ids = \database\DAOFactory::getDAO("bid")->query($query, $login, date("Y-m-d H:i:s"));
-        if (!$ids) return array();
+        if (!$ids || !is_array($ids)) return array();
 
         $found = array();
         foreach ($ids as $id) {

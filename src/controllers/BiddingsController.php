@@ -366,10 +366,10 @@ class BiddingsController extends Controller
         if ($this->request->isPost()) {
             if ($this->payBidPost()) {
                 $this->setFlash($this->lang["bidding"]["pay_ok"]);
-                // $this->redirect("bidding", "pendingPayments");
+                $this->redirect("bidding", "pendingPayments");
             } else {
                 $this->setFlash($this->lang["bidding"]["pay_err"]);
-                // $this->redirect("bidding", "pendingPayments");
+                $this->redirect("bidding", "pendingPayments");
             }
         }
     }
@@ -407,7 +407,6 @@ class BiddingsController extends Controller
 
         // actualiza la puja para indicar el identificador de pago
         $this->bid->idPayment = $payment->getId();
-        print_r($this->bid);
         return $this->bid->validate() && $this->bid->save();
     }
 
