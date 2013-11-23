@@ -1,0 +1,15 @@
+
+
+USUARIO ADMINISTRADOR
+login: 		admin
+password: 	admin
+
+RESTO DE USUARIOS
+login: 		usuario1
+password:	usuario1
+
+login:		usuario2
+password:	usuario2
+
+login:		usuario3
+password:	usuario3
