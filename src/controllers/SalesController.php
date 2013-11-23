@@ -286,6 +286,11 @@ class SalesController extends Controller
         $this->view->render("sale_list");
     }
 
+    public function owned()
+    {
+        trigger_error("Aun no implementado", E_USER_ERROR);
+    }
+
     /**
      * Proporciona un listado de todos los productos en venta por los cuales el
      * usuario identificado, o bien uno dado si invocado por administrador, ha

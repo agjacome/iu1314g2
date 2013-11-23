@@ -9,8 +9,8 @@
             <img src="/assets/img/payment.gif" alt="" title="" />
         </div>
         <div class="right_footer">
-            <a href="index.php">home</a>
-            <a href="details.html">about</a>
+            <a href="/">Home</a>
+            <a href="/index.php?action=help"><?php print $lang["general"]["help"]; ?></a>
         </div>
    </div>
 </div>
