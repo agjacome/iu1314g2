@@ -3,34 +3,43 @@
 namespace database;
 
 /**
- * Clase que implementa los métodos comunes para interactuar con la base de datos. Se usa el patrón DAOs (Data Abstract Object) para aislar
- * para aislar la interactuación con la base de datos de forma que, si se tiene una base de datos MySQL esta pueda ser facilmente sustituida
- * por una de Postgre o cualquier otro tipo.
+ * Clase abstracta que implementa la interfaz DAO proporcionando acceso 
+ * generico a datos mediante consultas SQL.
  *
- * @package  database
+ * @author Alberto Gutierrez Jacome <agjacome@esei.uvigo.es>
+ * @author Daniel Alvarez Outerelo  <daouterelo@esei.uvigo.es>
+ * @author David Lorenzo Dacal      <dldacal@esei.uvigo.es>
+ * @author Marcos Nuñez Celeiro     <mnceleiro@esei.uvigo.es>
  */
-
 abstract class SQLDAO implements DAO
 {
-    /**
-     * Nombre de la tabla sobre la que se trabaja.
-     * @var [type]
-     */
-    protected $tableName;
 
+    protected $tableName;  // nombre de la tabla de la BD SQL con que trabajar
+
+    /**
+     * Constructor abstracto, almacena el nombre de la tabla proporcionado para 
+     * trabajar con ella.
+     *
+     * @param String $tableName
+     *     Nombre de la tabla de la BD SQL con la que esta instancia de SQLDAO 
+     *     trabajara.
+     */
     public function __construct($tableName)
     {
         $this->tableName = $tableName;
     }
 
     /**
-     * Inserta datos en la base de datos @tablename.
-     * @param  array $data Datos a insertar en la base de datos.
+     * Implementa la insercion de datos de la interfaz DAO.
+     *
+     * @see DAO
      */
     public function insert($data)
     {
+        // obtiene la conexion a la base da datos
         $db = DatabaseConnection::getConnection();
 
+        // crea la string de consulta a la BD mediante los datos proporcionados
         $insert = "INSERT INTO " . $this->tableName . " (";
         $iter = new \CachingIterator(new \ArrayIterator($data));
         foreach ($iter as $key => $_) {
@@ -39,31 +48,37 @@ abstract class SQLDAO implements DAO
         }
         $insert .= ") VALUES(" . str_repeat("?, ", count($data) - 1) . " ?)";
 
+        // indica que se utilizara la string anteriormente creada para la 
+        // parametrizacion de datos siguiente y la ejecucion de la consulta
         $query = $db->prepare($insert);
 
+        // parametriza la consulta con los datos proporcionados, evitando asi 
+        // inyecciones SQL en los datos
         $i = 1;
         foreach ($data as $key => $_)
             $query->bindParam($i++, $data[$key]);
 
+        // ejecuta la consulta y retorna el resultado de la ejecucion
         return $query->execute();
     }
 
     /**
-     * Actualiza los datos de una @tablename.
-     * @param  array $data datos a asignar en los atributos del @tablename.
-     * @param  array $where condición a cumplir. 
+     * Implementa la modificacion de datos de la interfaz DAO.
+     *
+     * @see DAO
      */
     public function update($data, $where = null)
     {
+        // obtiene la conexion a la base da datos
         $db = DatabaseConnection::getConnection();
 
+        // crea la string de consulta a la BD mediante los datos proporcionados
         $update = "UPDATE " . $this->tableName . " SET ";
         $iter = new \CachingIterator(new \ArrayIterator($data));
         foreach ($iter as $key => $value) {
             $update .= $key . " = ?";
             if ($iter->hasNext()) $update .= ", ";
         }
-
         if (isset($where)) {
             $update .= " WHERE ";
             $iter = new \CachingIterator(new \ArrayIterator($where));
@@ -73,30 +88,36 @@ abstract class SQLDAO implements DAO
             }
         }
 
+        // indica que se utilizara la string anteriormente creada para la 
+        // parametrizacion de datos siguiente y la ejecucion de la consulta
         $query = $db->prepare($update);
 
+        // parametriza la consulta con los datos proporcionados, evitando asi 
+        // inyecciones SQL en los datos
         $i = 1;
         foreach ($data as $key => $value)
             $query->bindParam($i++, $data[$key]);
-
         if (isset($where)) {
             foreach ($where as $key => $value)
                 $query->bindParam($i++, $where[$key]);
         }
 
+        // ejecuta la consulta y retorna el resultado de la ejecucion
         return $query->execute();
     }
 
     /**
-     * Elimina tablas de la base de datos en base a una o varias condiciones pasadas como parámetro.
-     * @param array $where array con las condiciones necesarias para realizar el borrado.
+     * Implementa la eliminacion de datos de la interfaz DAO.
+     *
+     * @see DAO
      */
     public function delete($where)
     {
+        // obtiene la conexion a la base da datos
         $db = DatabaseConnection::getConnection();
 
+        // crea la string de consulta a la BD mediante los datos proporcionados
         $delete = "DELETE FROM " . $this->tableName;
-
         if (isset($where)) {
             $delete .= " WHERE ";
             $iter = new \CachingIterator(new \ArrayIterator($where));
@@ -106,34 +127,39 @@ abstract class SQLDAO implements DAO
             }
         }
 
+        // indica que se utilizara la string anteriormente creada para la 
+        // parametrizacion de datos siguiente y la ejecucion de la consulta
         $query = $db->prepare($delete);
 
+        // parametriza la consulta con los datos proporcionados, evitando asi 
+        // inyecciones SQL en los datos
         $i = 1;
         if(isset($where)) {
             foreach($where as $key => $_)
                 $query->bindParam($i++, $where[$key]);
         }
 
+        // ejecuta la consulta y retorna el resultado de la ejecucion
         return $query->execute();
     }
 
     /**
-     * Consulta de datos en la base de datos.
-     * @param  array $data  columnas a mostrar.
-     * @param  array $where condiciones impuestas.
-     * @return array con las tuplas resultantes de la consulta.
+     * Implementa la consulta de datos de la interfaz DAO.
+     *
+     * @see DAO
      */
     public function select($data, $where = null)
     {
+        // obtiene la conexion a la base da datos
         $db = DatabaseConnection::getConnection();
 
+        // crea la string de consulta a la BD mediante los datos proporcionados
         $select = "SELECT ";
         $iter = new \CachingIterator(new \ArrayIterator($data));
         foreach ($iter as $column) {
             $select .= $column;
             if ($iter->hasNext()) $select .= ", ";
         }
-
         $select .= " FROM " . $this->tableName;
 
         if (isset($where)) {
@@ -146,39 +172,55 @@ abstract class SQLDAO implements DAO
             }
         }
 
+        // indica que se utilizara la string anteriormente creada para la 
+        // parametrizacion de datos siguiente y la ejecucion de la consulta
         $query = $db->prepare($select);
 
+        // parametriza la consulta con los datos proporcionados, evitando asi 
+        // inyecciones SQL en los datos
         if (isset($where)) {
             $i = 1;
             foreach ($where as $key => $_)
                 $query->bindParam($i++, $where[$key]);
         }
 
+        // crea un array con todas las tuplas obtenidas en la consulta
         $result = array();
         if ($query->execute()) {
             while ($row = $query->fetch())
                 $result[] = $row;
         }
 
+        // retorna el array de tuplas
         return $result;
     }
 
     /**
-     * Realiza una consulta sobre la sentencia pasada como parámetro.
-     * @param  array $statement Sentencia pasada como parámetro.
-     * @return array tuplas resultantes de la consulta.
+     * Implementa la ejecucion de consultas arbitrarias de la interfaz DAO.
+     *
+     * @see DAO
      */
     public function query($statement)
     {
+        // obtiene la conexion a la BD
         $db = DatabaseConnection::getConnection();
+
+        // indica que se utilizara el string proporcionado comp parametro para 
+        // la parametrizacion de datos siguiente y la ejecucion de la consulta
         $query = $db->prepare($statement);
 
+        // obtiene, si existen, el resto de argumentos proporcionados al 
+        // metodo, y parametriza la consulta con todos ellos
+        // ver: http://us3.php.net/func_get_args
         $args = func_get_args();
         for ($i = 1; $i < count($args); $i++)
             $query->bindParam($i, $args[$i]);
 
+        // ejecuta la consulta, almacenando el resultado de la ejecucion
         $result = $query->execute();
 
+        // si la consulta ejecutada proporciona tuplas de resultado (es un 
+        // SELECT), guarda todas las mismas en un array
         if ($row = $query->fetch()) {
             $result = [$row];
 
@@ -186,10 +228,11 @@ abstract class SQLDAO implements DAO
                 $result[] = $row;
         }
 
+        // retorna bien el resultado o, si es un SELECT, el array de tuplas 
+        // obtenido
         return $result;
     }
 
 }
-
 
 ?>

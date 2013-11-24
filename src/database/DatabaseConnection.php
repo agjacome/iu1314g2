@@ -3,28 +3,40 @@
 namespace database;
 
 /**
- * Implementa la conexión a la base de datos.
- * 
- * @package  database
+ * Proporciona un acceso global a la base de datos a traves de un objeto de 
+ * conexion PDO.
+ *
+ * Ver: http://php.net/manual/en/book.pdo.php
+ *
+ * @author Alberto Gutierrez Jacome <agjacome@esei.uvigo.es>
+ * @author Daniel Alvarez Outerelo  <daouterelo@esei.uvigo.es>
+ * @author David Lorenzo Dacal      <dldacal@esei.uvigo.es>
+ * @author Marcos Nuñez Celeiro     <mnceleiro@esei.uvigo.es>
  */
-
 class DatabaseConnection
 {
 
-    private static $connection;
+    private static $connection;  // objeto PDO de conexion a la BD
 
     /**
-     * Obtiene los parámetros necesarios del archivo de configuración de la base de datos y se conecta a ella 
-     * devolviendo el PHP Data Object (PDO) que corresponda.
-     * @return PDO PHP Data Object, objeto que permite la interacción con la base de datos.
+     * Inicializa de forma estatica la conexion a la BD si no ha sido 
+     * previamente creada, y la reorna.
+     *
+     * @return PDO
+     *     Objeto de conexion a la BD.
      */
     public static function getConnection()
     {
+        // si no ha sido previamente creado, crea la conexion
         if (!isset(self::$connection)) {
+            // obtiene los parametros de conexion desde el fichero de 
+            // configuracion
             $url  = \components\Configuration::getValue("database", "connection");
             $user = \components\Configuration::getValue("database", "username");
             $pass = \components\Configuration::getValue("database", "password");
 
+            // prueba la conexion, si no es posible conectarse lanza un error 
+            // al cliente y termina
             try {
                 self::$connection = new \PDO($url, $user, $pass);
             } catch (\PDOException $pde) {
@@ -34,6 +46,7 @@ class DatabaseConnection
             }
         }
 
+        // retorna el objeto de conexion a la BD
         return self::$connection;
     }
 
