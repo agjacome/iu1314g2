@@ -73,9 +73,9 @@ class View
      */
     private function yield()
     {
-        // es necesario hacer otro extract() de los datos, un poco ineficiente 
-        // tener que hacerlo tanto para el layout como para la plantilla, pero 
-        // no encuentro otro modo
+        // TODO: buscar un modo mas efectivo para pasarle los datos a la 
+        // plantilla que tener que hacer dos extract(), uno en render() y otro 
+        // en yield().
         extract($this->data);
         include "templates/" . $this->template . ".php";
     }
@@ -148,6 +148,11 @@ class View
      */
     private function getCurrentUrl()
     {
+        // FIXME: esto no deberia estar aqui, ni ser necesario hacerlo en nigun 
+        // momento. Se utiliza para el redireccionamiento abierto (totalmente 
+        // abierto a phishing) para el cambio de idioma. Buscar una forma mas 
+        // limpia y segura de hacerlo (ver Controller#redirect(), 
+        // HomeController#changeLanguage y "views/layouts/header.php")
         return urlencode($_SERVER["REQUEST_URI"]);
     }
 

@@ -3,7 +3,8 @@
 namespace models;
 
 /**
- * Clase que proporciona soporte para manejar Pagos.
+ * Modelo para Pagos. Soporta todas las operaciones basicas que se realizaran
+ * con un pago.
  *
  * @author Alberto Gutierrez Jacome <agjacome@esei.uvigo.es>
  * @author Daniel Alvarez Outerelo  <daouterelo@esei.uvigo.es>
@@ -13,15 +14,23 @@ namespace models;
 class Payment extends Model
 {
 
-    private $idPayment;
-    public  $payMethod;
-    public  $creditCard;
-    public  $paypal;
-    public  $commission;
+    // TODO: en lugar de almacenar un atributo para el metodo de pago y dos
+    // atributos segun los datos, aprovechar el polimorfismo creando dos
+    // "sub-modelos" de Pago, uno para PayPal y otro para Tarjeta de Credito,
+    // evitando asi ademas la necesidad de las condiciones estilo "if
+    // ($this->payMethod === "paypal") ..."
+
+    private $idPayment;   // identificador del pago (auto-incremental)
+    public  $payMethod;   // metodo de pago
+    public  $creditCard;  // tarjeta de credito (si metodo de pago es tarjeta)
+    public  $paypal;      // cuenta de paypal (si metodo de pago es paypal)
+    public  $commission;  // comision obtenida por la tienda en este pago
 
     /**
-     * Construye una nueva instancia de Payment a partir de los datos
-     * recibidos como parámetros
+     * Construye un pago a partir de los parametros recibidos.
+     *
+     * @param int $idPayment
+     *     Identificador del pago, null si no creado previamente.
      */
     public function __construct($idPayment = null)
     {
@@ -35,20 +44,25 @@ class Payment extends Model
     }
 
     /**
-     * Devuelve un array con todos los pagos que
-     * coincidan con los parámetros de la búsqueda SQL
+     * Devuelve un array de objetos Payment donde todos ellos cumplen una
+     * condicion de busqueda dada.
      *
      * @param array $where
-     *      Contiene las condiciones para la búsqueda SQL
+     *     Array asociativo clave => valor para condiciones de busqueda.
      *
-     * @return array $found
-     *     Devuelve los resultados de la búsqueda SQL
+     * @return array
+     *     Array de Payment con todos los pagos encontrados que cumplan la
+     *     condicion establecida.
      */
     public static function findBy($where)
     {
+        // obtiene todos los identificadores de pagso que cumplan la condicion
         $ids = \database\DAOFactory::getDAO("payment")->select(["idPago"], $where);
         if (!$ids) return array();
 
+        // genera un array de objetos Payment creandolos con los
+        // identificadores anteriores y llamando a fill() para recuperar todos
+        // sus datos
         $found = array();
         foreach ($ids as $id) {
             $payment = new Payment($id["idPago"]);
@@ -60,18 +74,20 @@ class Payment extends Model
     }
 
     /**
-     * Rellena el objeto con los datos obtenidos
-     * de la base de datos
+     * Rellena el objeto Payment actual con todos los datos, obteniendolos
+     * desde la base de datos. Es necesario que tenga su atributo "idPayment"
+     * establecido (no nulo).
      *
      * @return boolean
-     *     True si se encuentran los datos en la
-     *      base de datos
+     *     True si se han podido obtener los datos, False en caso contrario.
      */
     public function fill()
     {
+        // obtiene todos los datos del pago con el identificador asignado
         $rows = $this->dao->select(["*"], ["idPago" => $this->idPayment]);
         if (!$rows) return false;
 
+        // rellena todos los atributos con los datos obtenidos
         $this->payMethod  = $rows[0]["metodoPago"];
         $this->creditCard = $rows[0]["numTarjeta"];
         $this->paypal     = $rows[0]["cuentaPaypal"];
@@ -81,42 +97,50 @@ class Payment extends Model
     }
 
     /**
-     * Guarda el pago en la base de datos ya sea
-     * una nueva inserción o una actualización
+     * Almacena el pago en la base de datos. Se encarga de comprobar si se
+     * trata de una nueva insercion o una actualizacion en base a si el
+     * atributo "idPayment" esta a null (insercion) o no (actualizacion).
      *
      * @return boolean
-     *     True si se consiguen guardar los datos en
-     * la base de datos
+     *     True si la insercion/modificacion se ha realizado correctamente,
+     *     False en caso contrario.
      */
     public function save()
     {
+        // datos obligatorios para la insercion/modificacion
         $data = [
             "metodoPago" => $this->payMethod,
             "comision"   => $this->commission
         ];
 
+        // datos opcionales, que pueden no estar establecidos para la
+        // insercion/modificacion
         if (isset($this->creditCard)) $data["numTarjeta"]   = $this->creditCard;
         if (isset($this->paypal))     $data["cuentaPaypal"] = $this->paypal;
 
+        // si idPayment no es null, entonces es un update
         if (isset($this->idPayment))
             return $this->dao->update($data, ["idPago" => $this->idPayment]);
-        else {
-            $ret = $this->dao->insert($data);
-            // FUTURE FIXME: esto es un hack muy feo, deberia crearse un metodo 
-            // en SQLDAO para recuperar el ultimo ID, y no invocar a la 
-            // conexion a BD desde aqui, pero no queda tiempo para corregirlo 
-            // ahora
-            $this->idPayment = \database\DatabaseConnection::getConnection()->lastInsertId();
-            return $ret;
-        }
+
+        // sino, es un insert
+        $ret = $this->dao->insert($data);
+
+        // FUTURE FIXME: esto es un hack muy feo, deberia crearse un metodo
+        // en SQLDAO para recuperar el ultimo ID, y no invocar a la
+        // conexion a BD desde aqui, pero no queda tiempo para corregirlo
+        // ahora
+        $this->idPayment = \database\DatabaseConnection::getConnection()->lastInsertId()
+
+        return $ret;
     }
 
     /**
-     * Elimina el pago de la base de datos
+     * Elimina el pago de la base de datos. El objeto debe haber sido 
+     * previamente incializado con el atributo "idPayment" a no nulo.
      *
      * @return boolean
-     *     True si se consiguen eliminar los datos de
-     * la base de datos
+     *     True si la eliminacion se ha realizado correctamente, False en caso 
+     *     contrario.
      */
     public function delete()
     {
@@ -124,19 +148,27 @@ class Payment extends Model
     }
 
     /**
-     * Valida los datos que introduce el usuario
+     * Valida los datos existentes en el objeto, para comprobar que cumplan una 
+     * serie de condiciones concretas.
      *
      * @return boolean
-     *     False si alguno de los datos es incorrecto
-     *      o no cumple los requisitos requeridos
+     *     True si todas las condiciones necesarias han sido cumplidas, False 
+     *     en caso contrario.
      */
     public function validate()
     {
-        // valida que el metodo de pago es o "paypal" o "tarjeta"
+        // FUTURE FIXME: no se deberia retornar un simple true/false, sino que 
+        // si una condicion no se cumple deberia devolverse un mensaje 
+        // indicando qué no se ha cumplido, posiblemente usando una excepcion 
+        // para cada caso, para que el controlador la capture y muestre el 
+        // mensaje adecuado a la vista y no un simple mensaje de error 
+        // generico.
+
+        // valida que el metodo de pago sea o "paypal" o "tarjeta"
         if ($this->payMethod !=="paypal" && $this->payMethod !== "tarjeta")
             return false;
 
-        // valida que, segun metodo de pago, o bien el numero de tarjeta 
+        // valida que, segun metodo de pago, o bien el numero de tarjeta
         // o bien la cuenta de paypal ha sido introducida
         if ($this->payMethod === "paypal" && !isset($this->paypal))
             return false;
@@ -146,22 +178,24 @@ class Payment extends Model
         // valida que cuenta de paypal es un email valido
         if ($this->payMethod === "paypal" && !filter_var($this->paypal, FILTER_VALIDATE_EMAIL))
             return false;
+
+        // valida que la tarjeta de credito tenga longitud 16
         if ($this->payMethod === "tarjeta" && strlen($this->creditCard) != 16)
             return false;
 
-
-        // valida que la comision es un valor valido
-        if ($this->commission <= 0.0)
+        // valida que la comision es un numero y es superior a 0.0
+        if (!is_numeric($this->commission) || $this->commission <= 0.0)
             return false;
 
+        // todas las condiciones se han cumplido, retorna true
         return true;
     }
 
     /**
-     * Devuelve el id del pago
+     * Devuelve el identificador del pago de esta instancia.
      *
-     * @return string $idPayment
-     *     El id del pago
+     * @return int
+     *     Identificador del pago al que hace referencia este objeto de modelo.
      */
     public function getId()
     {

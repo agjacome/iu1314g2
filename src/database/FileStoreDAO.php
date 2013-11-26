@@ -16,6 +16,10 @@ namespace database;
 class FileStoreDAO implements DAO
 {
 
+    // FUTURE TODO: utilizar XQuery para obtener los datos del fichero XML y no 
+    // tener que ir buscando en el arbol de elementos directamente.
+    // ver: http://us1.php.net/domxpath.query
+
     private $filePath;  // ruta al fichero XML
 
     /**
@@ -142,6 +146,7 @@ class FileStoreDAO implements DAO
      */
     public function query($statement)
     {
+        // FUTURE TODO: permitir ejecucion de consultas XQuery arbitrarias.
         trigger_error("No aplicable", E_USER_ERROR);
     }
 

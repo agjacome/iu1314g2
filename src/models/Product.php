@@ -3,7 +3,8 @@
 namespace models;
 
 /**
- * Clase que proporciona soporte para manejar productos.
+ * Modelo para Productos. Soporta todas las operaciones basicas que se 
+ * realizaran con un producto.
  *
  * @author Alberto Gutierrez Jacome <agjacome@esei.uvigo.es>
  * @author Daniel Alvarez Outerelo  <daouterelo@esei.uvigo.es>
@@ -12,15 +13,26 @@ namespace models;
  */
 class Product extends Model
 {
-    private $idProduct;
-    private $owner;
-    public  $state;
-    public  $name;
-    public  $description;
+
+    // FUTURE FIXME: owner no deberia ser un simple identificador, sino una 
+    // referencia a un objeto del modelo User. Con mas tiempo se hubiese hecho 
+    // asi.
+
+    private $idProduct;    // identificador del producto (auto-incremental)
+    private $owner;        // login del propietario del producto
+    public  $state;        // estado del producto (pendiente, subasta, venta)
+    public  $name;         // nombre del producto
+    public  $description;  // descripcion del producto
 
     /**
-     * Construye una nueva instancia de Product a partir de los datos
-     * recibidos como parámetros
+     * Construye un producto a partir de los parametros recibidos.
+     *
+     * @param int $idProduct
+     *     Identificador del producto, null si no creado previamente.
+     * @param String $owner
+     *     Login del propietario del producto, si se ha proporcionado 
+     *     $idProduct no sera necesario proporcionar este, puesto que puede ser 
+     *     recuperado de la BD.
      */
     public function __construct($idProduct = null, $owner = null)
     {
@@ -34,20 +46,26 @@ class Product extends Model
     }
 
     /**
-     * Devuelve un array con todos los productos que
-     * coincidan con los parámetros de la búsqueda SQL
+     * Devuelve un array de objetos Product donde todos ellos cumplen una 
+     * condicion de busqueda dada.
      *
      * @param array $where
-     *      Contiene las condiciones para la búsqueda SQL
+     *     Array asociativo clave => valor para condiciones de busqueda.
      *
-     * @return array $found
-     *     Devuelve los resultados de la búsqueda SQL
+     * @return array
+     *     Array de Product con todos los productos encontrados que cumplan la 
+     *     condicion establecida.
      */
     public static function findby($where)
     {
+        // obtiene todos los identificadores de productos que cumplan la 
+        // condicion
         $ids = \database\DAOFactory::getDAO("product")->select(["idProducto"], $where);
         if (!$ids) return array();
 
+        // genera un array de objetos Product creandolos con los 
+        // identificadores anteriores y llamando a fill() para recuperar todos 
+        // sus datos
         $found = array();
         foreach ($ids as $id) {
             $product = new Product($id["idProducto"]);
@@ -59,22 +77,28 @@ class Product extends Model
     }
 
     /**
-     * Devuelve un array con todos los productos que
-     * coincidan con el nombre dado
+     * Devuelve un array con todos los productos con nombre similar a uno 
+     * proporcionado (uso de "LIKE" en SQL).
      *
-     * @param string $name
-     *      El nombre del producto a buscar
+     * @param String $name
+     *     Nombre para realizar busqueda de producto.
      *
-     * @return array $found
-     *     Devuelve los resultados de la búsqueda SQL
+     * @return array
+     *     Array de Product con todos los productos con un nombre coincidente 
+     *     o similar al dado.
      */
     public static function findByName($name)
     {
+        // realiza la busqueda de todos los identificadores de productos que 
+        // tengan un nombre similar al dado (via SQL LIKE)
         $ids = \database\DAOFactory::getDAO("product")->query(
             "SELECT idProducto FROM PRODUCTO WHERE nombre LIKE ?",
             "%" . $name . "%");
         if (!$ids || !is_array($ids)) return array();
 
+        // genera un array de objetos Product creandolos con los 
+        // identificadores anteriores y llamando a fill() para recuperar todos 
+        // sus datos
         $found = array();
         foreach ($ids as $id) {
             $product = new Product($id["idProducto"]);
@@ -86,19 +110,25 @@ class Product extends Model
     }
 
     /**
-     * Devuelve un array con todos los productos que
-     * estén disponibles
+     * Devuelve un array con todos los productos que tengan estado no pendiente 
+     * (ie: en venta o en subasta).
      *
-     * @return array $found
-     *     Devuelve los resultados de la búsqueda SQL
+     * @return array
+     *     Array de Product con todos los productos que no esten en estado 
+     *     pendiente.
      */
     public static function findByStateAvailable()
     {
+        // realiza la busqueda de todos los identificadores de productos que 
+        // cumplan la condicion de no estar en estado pendiente
         $ids = \database\DAOFactory::getDAO("product")->query(
             "SELECT idProducto FROM PRODUCTO WHERE estado != ?",
             "pendiente");
         if (!$ids || !is_array($ids)) return array();
 
+        // genera un array de objetos Product creandolos con los 
+        // identificadores anteriores y llamando a fill() para recuperar todos 
+        // sus datos
         $found = array();
         foreach ($ids as $id) {
             $product = new Product($id["idProducto"]);
@@ -110,18 +140,21 @@ class Product extends Model
     }
 
     /**
-     * Rellena el objeto con los datos obtenidos
-     * de la base de datos
+     * Rellena el objeto Product con todos los datos, obteniendolos desde la 
+     * base de datos. Es necesario que tenga su atributo "idProduct" 
+     * establecido (no nulo).
      *
      * @return boolean
-     *     True si se encuentran los datos en la
-     *      base de datos
+     *     True si se han podido obtener todos los datos, False en caso 
+     *     contrario.
      */
     public function fill()
     {
+        // obtiene todos los datos del producto con el identificador asignado
         $rows = $this->dao->select(["*"], ["idProducto" => $this->idProduct]);
         if (!$rows) return false;
 
+        // rellena los atributos con los datos obtenidos
         $this->owner       = $rows[0]["propietario"];
         $this->state       = $rows[0]["estado"];
         $this->name        = $rows[0]["nombre"];
@@ -131,35 +164,42 @@ class Product extends Model
     }
 
     /**
-     * Guarda el producto en la base de datos ya sea
-     * una nueva inserción o una actualización
+     * Almacena el producto en la base de datos. Se encarga de comprobar si se 
+     * trata de una nueva insercion o una actualizacion en base a si el 
+     * atributo "idProduct" esta a null (insercion) o no (actualizacion).
      *
      * @return boolean
-     *     True si se consiguen guardar los datos en
-     * la base de datos
+     *     True si la insercion/modificacion se ha realizado correctamente, 
+     *     False en caso contrario.
      */
     public function save()
     {
+        // datos obligatorios para la insercion/modificacion
         $data = [
             "propietario" => $this->owner,
             "estado"      => $this->state,
             "nombre"      => $this->name
         ];
 
+        // datos opcionales, que pueden no estar establecidos para la 
+        // insercion/modificacion
         if (isset($this->description)) $data["descripcion"] = $this->description;
 
+        // si idProduct no es null, entonces es un update
         if (isset($this->idProduct))
             return $this->dao->update($data, ["idProducto" => $this->idProduct]);
-        else
-            return $this->dao->insert($data);
+
+        // sino, es un insert
+        return $this->dao->insert($data);
     }
 
     /**
-     * Elimina el producto de la base de datos
+     * Elimina el producto de la base de datos. El objeto debe haber sido 
+     * previamente creado con el atributo "idProduct" a no nulo.
      *
      * @return boolean
-     *     True si se consiguen eliminar los datos de
-     * la base de datos
+     *     True si la eliminacion se ha realizado correctamente, False en caso 
+     *     contrario.
      */
     public function delete()
     {
@@ -167,14 +207,22 @@ class Product extends Model
     }
 
     /**
-     * Valida los datos que introduce el usuario
+     * Valida los datos existentes en el objeto, para comprobar que cumplan 
+     * una serie de condiciones concretas.
      *
      * @return boolean
-     *     False si alguno de los datos es incorrecto
-     *      o no cumple los requisitos requeridos
+     *     True si todas las condiciones necesarias han sido cumplidas, False 
+     *     en caso contrario.
      */
     public function validate()
     {
+        // FUTURE FIXME: no se deberia retornar un simple true/false, sino que 
+        // si una condicion no se cumple deberia devolverse un mensaje 
+        // indicando qué no se ha cumplido, posiblemente usando una excepcion 
+        // para cada caso, para que el controlador la capture y muestre el 
+        // mensaje adecuado a la vista y no un simple mensaje de error 
+        // generico.
+
         // name solo puede tener letras, números y guiones
         if (!filter_var($this->name, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/[a-zA-Z0-9\-]+/"]]))
             return false;
@@ -190,19 +238,20 @@ class Product extends Model
         if ($this ->state !==  "pendiente" && $this->state !== "subasta" && $this->state !== "venta")
             return false;
 
-        // propietario debe existir (apoyarse en modelo usuario para comprobacion)
+        // el propietario debe existir como usuario en la BD
         $user = new User($this->owner);
-        if (!$user->fill())
-            return false;
+        if (!$user->fill()) return false;
 
+        // todas las condiciones se han cumplido, retorna true
         return true;
     }
 
     /**
-     * Devuelve el id del producto
+     * Devuelve el identificador del producto de esta instancia.
      *
-     * @return string $idProduct
-     *     El id del producto
+     * @return int
+     *     Identificador del producto al que hace referencia este objeto de 
+     *     modelo.
      */
     public function getId()
     {
@@ -210,10 +259,11 @@ class Product extends Model
     }
 
     /**
-     * Devuelve el id del propietario
+     * Devuelve el login del propietario del producto de esta instancia.
      *
-     * @return string $owner
-     *     El id del propietario
+     * @return String
+     *     Login del propietario del producto al que hace referencia este 
+     *     objeto de modelo.
      */
     public function getOwner()
     {

@@ -52,12 +52,12 @@ class BiddingsController extends Controller
         if (!$this->request->product)
             $this->redirect("product");
 
+        // TODO: mover las comprobaciones sobre el modelo a los modelos.
         // el producto debe existir y estar en estado pendiente
         $this->product = new \models\Product($this->request->product);
         if (!$this->product->fill() || $this->product->state !== "pendiente") {
             $this->setFlash($this->lang["bidding"]["create_err"]);
-            $this->redirect("product");
-        }
+            $this->redirect("product"); }
 
         // solo se permite la puesta en subasta al propietario o a un
         // administrador
@@ -119,6 +119,7 @@ class BiddingsController extends Controller
         if (!isset($this->request->id))
             $this->redirect("bidding");
 
+        // TODO: mover las comprobaciones sobre el modelo a los modelos.
         // comprueba si existe la subasta y producto asociado al id dado
         $this->bidding = new \models\Bidding($this->request->id);
         if (!$this->bidding->fill()) {
@@ -167,6 +168,8 @@ class BiddingsController extends Controller
         // obtiene puntuaciones y puntuacion media del producto
         $ratings = \models\Rating::findBy(["idProducto" => $this->product->getId()]);
 
+        // TODO: mover la obtencion de la media de puntuaciones al modelo de 
+        // producto.
         $rateAvg = 0.0;
         foreach ($ratings as $rating) $rateAvg  += intval($rating->rating);
         if (count($ratings) > 0) $rateAvg /= count($ratings);
@@ -261,6 +264,7 @@ class BiddingsController extends Controller
             $this->redirect("bidding");
         }
 
+        // TODO: mover todas las comprobaciones sobre el modelo a los modelos.
         // comprueba que la subasta y el producto asociado existan
         $this->bidding = new \models\Bidding($this->request->bidding);
         if (!$this->bidding->fill()) {
@@ -340,6 +344,7 @@ class BiddingsController extends Controller
             $this->redirect("bidding", "pendingPayments");
         }
 
+        // TODO: mover todas las comprobaciones sobre el modelo a los modelos.
         // comprueba que la puja exista y no tenga un pago asociado
         $this->bid = new \models\Bid($this->request->bid);
         if (!$this->bid->fill() || isset($this->bid->idPayment)) {
@@ -386,6 +391,8 @@ class BiddingsController extends Controller
 
         // segun el metodo de pago elegido, o la cuenta de paypal o la tarjeta 
         // de credito deben haberse proporcionado
+        // FIXME: estas condicionales son feas, buscar una forma mas "limpia" 
+        // de hacer la comprobacion de tipo de pago
         $payment->payMethod = $this->request->payMethod;
         if ($payment->payMethod === "paypal") {
             if (empty($this->request->paypal)) return false;

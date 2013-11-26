@@ -100,6 +100,7 @@ class ProductsController extends Controller
         if (!isset($this->request->id))
             $this->redirect("product");
 
+        // TODO: mover las comprobaciones sobre el modelo a los modelos.
         // el producto a modificar debe existir previamente en la BD
         $this->product = new \models\Product($this->request->id);
         if (!$this->product->fill()) {
@@ -168,6 +169,7 @@ class ProductsController extends Controller
         if (!isset($this->request->id))
             $this->redirect("product");
 
+        // TODO: mover las comprobaciones sobre el modelo a los modelos.
         // comprueba si existe un producto con el identificador dado
         $this->product = new \models\Product($this->request->id);
         if (!$this->product->fill()) {
@@ -221,6 +223,8 @@ class ProductsController extends Controller
         // comentarios y puntuaciones en un array para pasarselo a la vista
         $ratings = \models\Rating::findBy(["idProducto" => $this->product->getId()]);
 
+        // TODO: mover el calculo de la media de puntuaciones al modelo de 
+        // producto.
         $rateAvg  = 0.0; $comments = array();
         foreach ($ratings as $rating) {
             $rateAvg += intval($rating->rating);
@@ -321,6 +325,7 @@ class ProductsController extends Controller
             $this->redirect("product");
         }
 
+        // TODO: mover las comprobaciones sobre el modelo a los modelos.
         // comprueba que el producto exista
         $this->product = new \models\Product($this->request->prod);
         if (!$this->product->fill()) {

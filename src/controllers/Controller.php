@@ -65,6 +65,20 @@ abstract class Controller
      */
     public function redirect($controller = null, $action = null, $url = null)
     {
+        // FIXME: no es una buena idea permitir el redireccionamiento a pelo a 
+        // una URL dada, puede dar pie a Phishing si se proporciona dicha 
+        // direccion como parametro en la peticion HTTP y un atacante pone una 
+        // URL maliciosa en dicho parametro.
+        // Existe para que el cambio de lenguaje redireccione a la pagina 
+        // previa a traves de un parametro "redirect=/index.php...", ver en 
+        // HomeController->changeLanguage, View->getCurrentUrl y 
+        // "/views/layouts/header.php", buscar una forma mas limpia de hacer 
+        // esto.
+
+        // TODO: permitir pasar un array de parametros, para hacer posibles 
+        // ciertos tipos de redireccionamiento, eg: redirect a 
+        // /index.php?controller=product&action=get&id=7.
+
         // crea la URL en base al controlador y accion recibidas
         if (!isset($url)) {
             $url = "/";
@@ -86,6 +100,9 @@ abstract class Controller
      */
     public function isLoggedIn()
     {
+        // TODO: uso de traits para evitar hacer las llamadas a este metodo "a 
+        // pelo" dentro de los metodos de los controladores concretos.
+        // http://php.net/manual/en/language.oop5.traits.php
         return isset($this->session->logged) && $this->session->logged;
     }
 
@@ -98,6 +115,9 @@ abstract class Controller
      */
     public function isAdmin()
     {
+        // TODO: uso de traits para evitar hacer las llamadas a este metodo "a 
+        // pelo" dentro de los metodos de los controladores concretos.
+        // http://php.net/manual/en/language.oop5.traits.php
         return $this->isLoggedIn() && $this->session->userrole === "admin";
     }
 

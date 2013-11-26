@@ -3,7 +3,8 @@
 namespace models;
 
 /**
- * Clase que proporciona soporte para manejar Tiendas.
+ * Modelo para parametros de tienda. Soporta todas las operaciones basicas que 
+ * se realizaran con los parametros de la tienda.
  *
  * @author Alberto Gutierrez Jacome <agjacome@esei.uvigo.es>
  * @author Daniel Alvarez Outerelo  <daouterelo@esei.uvigo.es>
@@ -13,11 +14,10 @@ namespace models;
 class Store extends Model
 {
 
-    public $commission;
+    public $commission;  // comision cobrada por la tienda en toda transaccion economica
 
     /**
-     * Construye una nueva instancia de Store a partir de los datos
-     * recibidos como parámetros
+     * Construye un nuevo modelo de parametros de tienda.
      */
     public function __construct()
     {
@@ -25,7 +25,8 @@ class Store extends Model
     }
 
     /**
-     * No se debería llamar a este método porque no es aplicable
+     * Metodo no aplicable a Store. No tienen sentido una busqueda, solo hay 
+     * un unico resultado posible el objeto de parametros de tienda.
      */
     public static function findBy($where = null)
     {
@@ -33,12 +34,12 @@ class Store extends Model
     }
 
     /**
-     * Rellena el objeto con los datos obtenidos
-     * de la base de datos
-     *
+     * Rellena el objeto Store actual con todos los datos, obteniendolos desde 
+     * el DAO correspondiente.
+     * 
      * @return boolean
-     *     True si se encuentran los datos en la
-     *      base de datos
+     *     True si los datos han podido ser obtenidos correctamente, False en 
+     *     caso contrario.
      */
     public function fill()
     {
@@ -47,12 +48,13 @@ class Store extends Model
     }
 
     /**
-     * Guarda la tienda en la base de datos ya sea
-     * una nueva inserción o una actualización
+     * Almacena los parametros de la tienda en la base de datos (fichero XML). 
+     * Siempre se tratara de una actualizacion, puesto que el fichero se 
+     * asumira creado.
      *
      * @return boolean
-     *     True si se consiguen guardar los datos en
-     * la base de datos
+     *     True si la modificacion se ha realizado correctamente, False en caso 
+     *     contrario.
      */
     public function save()
     {
@@ -60,11 +62,8 @@ class Store extends Model
     }
 
     /**
-     * Elimina la tienda de la base de datos
-     *
-     * @return boolean
-     *     True si se consiguen eliminar los datos de
-     * la base de datos
+     * Metodo no aplicable a parametros de tienda. No tiene sentido borrar la 
+     * tienda.
      */
     public function delete()
     {
@@ -72,18 +71,19 @@ class Store extends Model
     }
 
     /**
-     * Valida los datos que introduce el usuario
+     * Valida los datos existentes en el objeto, para comprobar que cumplan una 
+     * serie de condiciones concretas.
      *
      * @return boolean
-     *     False si alguno de los datos es incorrecto
-     *      o no cumple los requisitos requeridos
+     *     True si todas las condiciones necesarias han sido cumplidas, False 
+     *     en caso contrario.
      */
     public function validate()
     {
+        // valida que la comision sea un valor numerico en coma flotante
         return filter_var($this->commission, FILTER_VALIDATE_FLOAT);
     }
 
 }
-
 
 ?>
