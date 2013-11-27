@@ -22,4 +22,12 @@ horas/persona para realizar el mismo.
 
 Miembros del grupo
 ------------------
-[[members]]
+Célix Fernández, Adrián
+Gutiérrez Jácome, Alberto
+Lorenzo Dacal, David
+Lorenzo Pérez, Laura
+Meire Pérez, Carmen Selina
+Núñez Celeiro, Marcos
+Pavón Llamas, Daniel
+Sánchez Valencia, Daniel
+Álvarez Outerelo, Daniel
